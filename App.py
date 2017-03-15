@@ -1,3 +1,10 @@
-__author__ = 'Carlos PÈrez', 'Diana Camacho', 'Hillary Brenes'
+from flask import Flask, request, json, Response
+
+__author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
+
+# Inicializaci√≥n de Flask
+app = Flask(__name__)
 
 
+if __name__ == '__main__':
+    app.run(port=8000, host='0.0.0.0')
