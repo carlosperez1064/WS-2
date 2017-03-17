@@ -12,7 +12,7 @@ conexion = "host='localhost' dbname='MediosTransporte' user='administrador' pass
 
 print("conectando...\n	->%s" % (conexion))
 
-# Realizar la conexión
+# Realizar la conexión a DB
 conn = psycopg2.connect(conexion)
 
   #para consultas a BD
