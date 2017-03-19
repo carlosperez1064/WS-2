@@ -8,7 +8,6 @@ __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 app = Flask(__name__)
 
-
  # Conexión
 conexion = "host='localhost' dbname='MediosTransporte' user='administrador' password='admin'"
 
@@ -16,6 +15,20 @@ print("conectando...\n	->%s" % (conexion))
 
 # Realizar la conexión a DB
 conn = psycopg2.connect(conexion)
+
+
+#{
+#	"id": 12,
+#	"NombreCompania": "Inconfer",
+#	"Ruta": {
+#		"Origen": "San Jose",
+#		"Destino": "Cartago",
+#		"Horario": "L-D"
+#	}
+#}
+#CREATE TABLE tren (id integer, data json);
+
+#INSERT INTO tren VALUES (12,'{"NombreCompania": "Inconfer","Ruta": {"Origen": "San Jose","Destino": "Cartago","Horario": "L-D"}}');
 
 
 # Grapho
