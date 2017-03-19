@@ -14,27 +14,45 @@ conexion = "host='localhost' dbname='MediosTransporte' user='administrador' pass
 print("conectando...\n	->%s" % (conexion))
 
 # Realizar la conexión a DB
-conn = psycopg2.connect(conexion)
+#conn = psycopg2.connect(conexion)
 
 
-#{
-#	"id": 12,
-#	"NombreCompania": "Inconfer",
-#	"Ruta": {
-#		"Origen": "San Jose",
-#		"Destino": "Cartago",
-#		"Horario": "L-D"
-#	}
-#}
 #CREATE TABLE tren (id integer, data json);
 
 #INSERT INTO tren VALUES (12,'{"NombreCompania": "Inconfer","Ruta": {"Origen": "San Jose","Destino": "Cartago","Horario": "L-D"}}');
 
 
 # Grapho
-G= nx.Graph()
+mapa = nx.Graph() #Crear el grafo
 
-# "Mapeo", nodo origen, nodo destino, distancia en km
+mapa.add_node(1, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(2, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(3, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(4, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :True})
+mapa.add_node(5, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :True})
+mapa.add_node(6, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(7, {"Bus" : True, "Taxi" : True, "Tren" : True, "Avion" :True})
+mapa.add_node(8, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(9, {"Bus" : True, "Taxi" : True, "Tren" : True, "Avion" :False})
+mapa.add_node(10, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(11, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(12, {"Bus" : True, "Taxi" : True, "Tren" : True, "Avion" :False})
+mapa.add_node(13, {"Bus" : True, "Taxi" : True, "Tren" : True, "Avion" :False})
+mapa.add_node(14, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(15, {"Bus" : True, "Taxi" : True, "Tren" : True, "Avion" :False})
+mapa.add_node(16, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(17, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(18, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(19, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :True})
+mapa.add_node(20, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(21, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(22, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :False})
+mapa.add_node(23, {"Bus" : True, "Taxi" : True, "Tren" : True, "Avion" :False})
+mapa.add_node(24, {"Bus" : True, "Taxi" : True, "Tren" : False, "Avion" :True})
+
+print(mapa.nodes(data=True))
+
+# Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
 lista = [(19, 24, 148),
          (19, 6, 52),
          (24, 11, 74),
@@ -73,17 +91,33 @@ lista = [(19, 24, 148),
          (18, 17, 94),
          (17, 10, 190),
          (10, 21, 16),
-         (20, 21, 13)]
+         (20, 21, 13),
+         (19, 4, 364),
+         (19, 5, 505),
+         (19, 7, 275),
+         (24, 4, 286),
+         (24, 5, 426),
+         (24, 7, 196),
+         (5, 4, 480),
+         (5, 7, 391)]
 
-G.add_weighted_edges_from(lista)
-nx.draw_networkx(G,with_labels=True)
+#Agregar los bordes con sus respectivos pesos
+mapa.add_weighted_edges_from(lista)
+#Dibujar rutas del mapa (nodos conectados)
+nx.draw_networkx(mapa,with_labels=True)
 plt.show()
+
 
 origen = 19
 destino = 18
-ilustracionGrafo = nx.dijkstra_path(G, origen,destino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-print (ilustracionGrafo)
+Grafo = nx.dijkstra_path(mapa, origen,destino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+#plt.savefig("path.png")
+print (Grafo)
 
+
+tipoTransporte = 'Avion'
+for nodos in mapa.nodes_iter():
+    print (mapa.node[nodos][tipoTransporte])
 
 if __name__ == '__main__':
     app.run(port=8000, host='0.0.0.0')
