@@ -1,5 +1,6 @@
 # WS-2
-Autores: Carlos Pérez, Diana Camacho, Hillary Brenes
+Autores: Carlos Pérez, Diana Camacho, Hillary Brenes.
+
 Estudiantes de Ulacit de la carrera bachillerato en Ing. Informática, curso: Servicios Web.
 
 La funcionalidad del proyecto consiste en determinar las rutas de viaje más cortas de un punto a otro para los clientes finales de este sistema, proporcionando la mejor experiencia de viaje a dichos clientes finales. 
