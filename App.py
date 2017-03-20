@@ -6,17 +6,16 @@ import matplotlib.pyplot as plt
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 
-#app = Flask(__name__)
-
-#Conexión
-#conexion = "host='localhost' dbname='MediosTransporte' user='administrador' password='admin'"
-#print("conectando...\n	->%s" % (conexion))
-
-# Realizar la conexión a DB
-#conn = psycopg2.connect(conexion)
+app = Flask(__name__)
 
 mapa = nx.Graph() #Crear el grafo
 
+def conectarBaseDatos():
+
+    conexion = "host='localhost' dbname='MediosTransporte' user='administrador' password='admin'"
+    print("conectando...\n	->%s" % (conexion))
+
+    conn = psycopg2.connect(conexion) # Realizar la conexión a DB
 
 def GrafoMapa():
 
@@ -100,10 +99,14 @@ def GrafoMapa():
     nx.draw_networkx(mapa,with_labels=True) #Dibujar rutas del mapa (nodos conectados)
     plt.show()
 
-def consultas(origen, destino, tipoTransporte):
-    #origen = 19
-    #destino = 20
-    # tipoTransporte = 'Avion'
+@app.route('/api/viajando/consultas', methods=['POST'])
+def consultas():
+
+    in_args = request.args  # Obtener todos los parámetros
+
+    origen = in_args['origen'] #Seleccionar parametro con clave origen
+    destino = in_args['destino'] #Seleccionar parametro con clave destino
+    tipoTransporte = in_args['tipoTransporte'] #Seleccionar parametro con clave tipoTransporte
 
     # Determinar Rutas más cortas
     Grafo = nx.dijkstra_path(mapa, origen,destino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
@@ -122,13 +125,12 @@ def consultas(origen, destino, tipoTransporte):
 
     #elif mapa.node[origen]['Avion'] and mapa.neighbors(destino)[]
 
-
-
 #if __name__ == '__main__':
     #app.run(port=8000, host='0.0.0.0')
 
+#conectarBaseDatos()
 GrafoMapa()
-consultas(19,20,'Avion')
+#consultas()
 
 #CREATE TABLE tren (id integer, data json);
 #INSERT INTO tren VALUES (12,'{"NombreCompania": "Inconfer","Ruta": {"Origen": "San Jose","Destino": "Cartago","Horario": "L-D"}}');
