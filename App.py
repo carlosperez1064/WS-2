@@ -127,7 +127,8 @@ def consultas(origen, destino, tipoTransporte):
 #if __name__ == '__main__':
     #app.run(port=8000, host='0.0.0.0')
 
-
+GrafoMapa()
+consultas(19,20,'Avion')
 
 #CREATE TABLE tren (id integer, data json);
 #INSERT INTO tren VALUES (12,'{"NombreCompania": "Inconfer","Ruta": {"Origen": "San Jose","Destino": "Cartago","Horario": "L-D"}}');
