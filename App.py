@@ -26,7 +26,8 @@ __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 # Grapho
 G= nx.Graph();
-
+G.add_nodes_from({1,24})
+G.
 lista=[(19,24,8),
        (19,6,3),
        (24,11,2),
@@ -67,6 +68,6 @@ lista=[(19,24,8),
        (10,21,2),
        (20,21,3)]
 G.add_weighted_edges_from(lista)
-nx.draw_networkx(G,with_labels=True)
-plt.show()
+#nx.draw_networkx(G,with_labels=True)
+#plt.show()
 print (nx.dijkstra_path(G, 19,18))
