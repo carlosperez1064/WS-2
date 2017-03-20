@@ -1,14 +1,16 @@
 # WS-2
-
 Autores: Carlos Pérez, Diana Camacho, Hillary Brenes
+Estudiantes de Ulacit de la carrera bachillerato en Ing. Informática, curso: Servicios Web.
 
-Este proyecto consiste en determinar las rutas más cortas desde un punto a otro mediante el algoritmo Dijkstra e implementando la librería Networkx que colabora con la manipulación de grafos.  Dependiendo de la ruta determinada, se dan opciones de transporte (bus, taxi, tren y avión).
+La funcionalidad del proyecto consiste en determinar las rutas de viaje más cortas de un punto a otro para los clientes finales de este sistema, proporcionando la mejor experiencia de viaje a dichos clientes finales. 
 
-Para el desarrollo del servidor web encargado de manejar las transacciones que el cliente va a realizar, se utiliza en primer lugar el micro-framework de Python llamado Flask, debido a lo sencillo que resulta su implementación. Para la base de datos se implementa PostgreSQL.
+Como parte de la realización de este proyecto se hace uso del algoritmo de Dijkstra, el cual también llamado algoritmo de caminos mínimos, es un algoritmo para la determinación del camino más corto dado un vértice origen al resto de los vértices en un grafo con pesos en cada arista. Así mismo, se hace uso de la implementación de la libreria Networkx para Python la cual es utilizada para la creación, manipulación y estudio de las estructuras, dinámicas y funciones de redes complejas.
 
+Para el desarrollo del servidor web encargado de manejar las transacciones que el cliente va a realizar, se utiliza en primer lugar el micro-framework de Python llamado Flask, debido a lo sencillo que resulta su implementación y no requiere herramientas o bibliotecas particulares. A su vez para la realizacion del sistema se debe hacer la implementacion de una base de datos la cual sirva para guardar todos los datos necesarios para el desarrollo de dicho sistema. Esta se realiza por medio de la implementación de la base de datos Objeto-relacional PostgreSQL, el cual es un potente sistema de base de datos de código abierto.
 
-Puntos o nodos:
+La modalidad de uso depende de la ruta determinada, donde una vez seleccionada la ruta se le brindan al cliente distintas opciones de transporte. Las opciones de transporte son: bus, taxi, tren y avión.
 
+Puntos o nodos establecidos:
 1.    Volcán Arenal (ALAJUELA)
 2.    Quepos (PUNTARENAS)
 3.    Las Juntas (GUANACASTE)
@@ -33,4 +35,3 @@ Puntos o nodos:
 22.   Los chiles (ALAJUELA)
 23.   Volcán Barva (HEREDIA)
 24.   Puerto Moreno Santa Cruz (GUANACASTE)
-
