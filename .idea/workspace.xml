@@ -391,7 +391,14 @@
       <option name="project" value="LOCAL" />
       <updated>1489993440402</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Alistando el método de consultas para que reciba con flask lo que se envíe desde un cliente">
+      <created>1489993462836</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1489993462836</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
