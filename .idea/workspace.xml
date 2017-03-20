@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="83b925ef-fc96-4c3a-89c1-14c5291f2517" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/App.py" afterPath="$PROJECT_DIR$/App.py" />
     </list>
     <ignored path="WS-2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -385,7 +384,14 @@
       <option name="project" value="LOCAL" />
       <updated>1489989260609</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Alistando el método de consultas para que reciba con flask lo que se envíe desde un cliente">
+      <created>1489993440402</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1489993440402</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -430,7 +436,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Métodos" />
     <MESSAGE value="Método" />
-    <option name="LAST_COMMIT_MESSAGE" value="Método" />
+    <MESSAGE value="Alistando el método de consultas para que reciba con flask lo que se envíe desde un cliente" />
+    <option name="LAST_COMMIT_MESSAGE" value="Alistando el método de consultas para que reciba con flask lo que se envíe desde un cliente" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
