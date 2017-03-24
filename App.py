@@ -43,7 +43,7 @@ def GrafoMapa():
     mapa.add_node(22, {"Nombre": "Los Chiles", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(23, {"Nombre": "Volcan Barva", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
     mapa.add_node(24, {"Nombre": "Santa Cruz", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
-    print(mapa.nodes(data=True))
+    #print(mapa.nodes(data=True))
 
     # Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
     lista = [(19, 24, 60),
@@ -94,7 +94,7 @@ def GrafoMapa():
 
     mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
     nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
-    plt.show()
+   # plt.show()
 
 
 def obtengaElNombreDe(param):
@@ -160,14 +160,17 @@ def consultas():
                                       obtengaElNombreDe(elNodoDeDestino))
                 else:
                     rutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,elNodoDeDestino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-                    print("Solo puede ir en bus o Uber, la ruta mas corta es: "+ str(rutaCorta))
+                    print("Solo puede ir en bus o Uber, la ruta mas corta es pasando por: ")
+                    for elNodoRuta in rutaCorta:
+                        nombresDeNodos = obtengaElNombreDe(elNodoRuta)
+                        print(nombresDeNodos)
 
 
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
 
 
-conectarBaseDatos()
+#conectarBaseDatos()
 GrafoMapa()
 consultas()
 # nombres()
