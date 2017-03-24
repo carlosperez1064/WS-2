@@ -17,26 +17,27 @@ def conectarBaseDatos():
     conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
     print(conn)
 
+
 def GrafoMapa():
     # Agregar nodos al grafo con atributos
-    mapa.add_node(1, {"Nombre": "Volcan Arenal", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(1, {"Nombre": "Volcan Arenal", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
     mapa.add_node(2, {"Nombre": "Quepos", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(3, {"Nombre": "Las Juntas", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(4, {"Nombre": "Cariari Pococi", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
     mapa.add_node(5, {"Nombre": "Puerto Jimenez", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
     mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(7, {"Nombre": "Volcan Poas", "Bus": True, "Uber": True, "Tren": True, "Avion": True})
-    mapa.add_node(8, {"Nombre": "Upala", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
-    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(8, {"Nombre": "Upala", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(10, {"Nombre": "Cahuita", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(11, {"Nombre": "Filadelfia", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
-    mapa.add_node(12, {"Nombre": "Volcan Turrialba", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(12, {"Nombre": "Volcan Turrialba", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(13, {"Nombre": "San isidro del General", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
     mapa.add_node(14, {"Nombre": "Uvita", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(15, {"Nombre": "Volcan Irazu", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
-    mapa.add_node(16, {"Nombre": "Volcan Tenorio", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(16, {"Nombre": "Volcan Tenorio", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
     mapa.add_node(17, {"Nombre": "Moravia", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
-    mapa.add_node(18, {"Nombre": "Cerro Chirripo", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(18, {"Nombre": "Cerro Chirripo", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
     mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
     mapa.add_node(20, {"Nombre": "Bribri", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
@@ -85,12 +86,7 @@ def GrafoMapa():
              (18, 17, 40),
              (17, 10, 20),
              (10, 21, 16),
-             (20, 21, 13),
-             (19, 4, 300),
-             (19, 5, 500),
-             (19, 7, 275),
-             (5, 4, 390),
-             (5, 7, 400)]
+             (20, 21, 13)]
 
     mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
     nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
@@ -115,8 +111,8 @@ def consultas():
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
-    elNodoDeOrigen = 22
-    elNodoDeDestino = 8
+    elNodoDeOrigen = 11
+    elNodoDeDestino = 13
     elTipoTransporte = 'Tren'
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -145,7 +141,7 @@ def consultas():
                         print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino),
                               "en bus o Uber y luego de", obtengaElNombreDe(elVecino), "a",
                               obtengaElNombreDe(elNodoDeDestino),
-                              "en avion")
+                              "en", elTipoTransporte)
             else:
                 lasOpcionesCercanasAlNodoDeOrigen = []
                 lasOpcionesCercanasAlNodoDeDestino = []
@@ -155,15 +151,15 @@ def consultas():
                             if mapa.node[elVecinodeNodoDestino][elTipoTransporte]:
                                 print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a",
                                       obtengaElNombreDe(elVecinodeNodoOrigen), "en bus o Uber, luego de",
-                                      obtengaElNombreDe(elVecinodeNodoOrigen), "en avion a",
+                                      obtengaElNombreDe(elVecinodeNodoOrigen), "en",elTipoTransporte,"a",
                                       obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o Uber a",
                                       obtengaElNombreDe(elNodoDeDestino))
                 else:
-                    rutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,elNodoDeDestino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+                    laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,elNodoDeDestino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
                     print("Solo puede ir en bus o Uber, la ruta mas corta es pasando por: ")
-                    for elNodoRuta in rutaCorta:
-                        nombresDeNodos = obtengaElNombreDe(elNodoRuta)
-                        print(nombresDeNodos)
+                    for elNodoRuta in laRutaCorta:
+                        losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
+                        print(losNombresDeLosNodos)
 
 
 # if __name__ == '__main__':
