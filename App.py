@@ -17,6 +17,12 @@ def conectarBaseDatos():
     conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
     print(conn)
 
+    cursor = conn.cursor()
+    cursor.execute("""SELECT * FROM pg_database""")
+    rows = cursor.fetchall()
+    print ("\nShow me the databases:\n")
+    for row in rows:
+        print("   ", row[0])
 
 def GrafoMapa():
     # Agregar nodos al grafo con atributos
