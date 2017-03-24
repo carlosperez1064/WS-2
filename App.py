@@ -19,30 +19,30 @@ def conectarBaseDatos():
 
 def GrafoMapa():
     # Agregar nodos al grafo con atributos
-    mapa.add_node(1, {"Nombre": "Volcan Arenal", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(2, {"Nombre": "Quepos", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(3, {"Nombre": "Las Juntas", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(4, {"Nombre": "Cariari Pococi", "Bus": True, "Taxi": True, "Tren": False, "Avion": True})
-    mapa.add_node(5, {"Nombre": "Puerto Jimenez", "Bus": True, "Taxi": True, "Tren": False, "Avion": True})
-    mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(7, {"Nombre": "Volcan Poas", "Bus": True, "Taxi": True, "Tren": True, "Avion": True})
-    mapa.add_node(8, {"Nombre": "Upala", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "Bus": True, "Taxi": True, "Tren": True, "Avion": False})
-    mapa.add_node(10, {"Nombre": "Cahuita", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(11, {"Nombre": "Filadelfia", "Bus": True, "Taxi": True, "Tren": True, "Avion": False})
-    mapa.add_node(12, {"Nombre": "Volcan Turrialba", "Bus": True, "Taxi": True, "Tren": True, "Avion": False})
-    mapa.add_node(13, {"Nombre": "San isidro del General", "Bus": True, "Taxi": True, "Tren": True, "Avion": False})
-    mapa.add_node(14, {"Nombre": "Uvita", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(15, {"Nombre": "Volcan Irazu", "Bus": True, "Taxi": True, "Tren": True, "Avion": False})
-    mapa.add_node(16, {"Nombre": "Volcan Tenorio", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(17, {"Nombre": "Moravia", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(18, {"Nombre": "Cerro Chirripo", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "Bus": True, "Taxi": True, "Tren": False, "Avion": True})
-    mapa.add_node(20, {"Nombre": "Bribri", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "Bus": True, "Taxi": True, "Tren": False, "Avion": True})
-    mapa.add_node(22, {"Nombre": "Los Chiles", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
-    mapa.add_node(23, {"Nombre": "Volcan Barva", "Bus": True, "Taxi": True, "Tren": True, "Avion": False})
-    mapa.add_node(24, {"Nombre": "Santa Cruz", "Bus": True, "Taxi": True, "Tren": False, "Avion": False})
+    mapa.add_node(1, {"Nombre": "Volcan Arenal", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(2, {"Nombre": "Quepos", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(3, {"Nombre": "Las Juntas", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(4, {"Nombre": "Cariari Pococi", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
+    mapa.add_node(5, {"Nombre": "Puerto Jimenez", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
+    mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(7, {"Nombre": "Volcan Poas", "Bus": True, "Uber": True, "Tren": True, "Avion": True})
+    mapa.add_node(8, {"Nombre": "Upala", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(10, {"Nombre": "Cahuita", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(11, {"Nombre": "Filadelfia", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(12, {"Nombre": "Volcan Turrialba", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(13, {"Nombre": "San isidro del General", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(14, {"Nombre": "Uvita", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(15, {"Nombre": "Volcan Irazu", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(16, {"Nombre": "Volcan Tenorio", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(17, {"Nombre": "Moravia", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(18, {"Nombre": "Cerro Chirripo", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
+    mapa.add_node(20, {"Nombre": "Bribri", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "Bus": True, "Uber": True, "Tren": False, "Avion": True})
+    mapa.add_node(22, {"Nombre": "Los Chiles", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
+    mapa.add_node(23, {"Nombre": "Volcan Barva", "Bus": True, "Uber": True, "Tren": True, "Avion": False})
+    mapa.add_node(24, {"Nombre": "Santa Cruz", "Bus": True, "Uber": True, "Tren": False, "Avion": False})
     print(mapa.nodes(data=True))
 
     # Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
@@ -89,9 +89,6 @@ def GrafoMapa():
              (19, 4, 300),
              (19, 5, 500),
              (19, 7, 275),
-             (24, 4, 260),
-             (24, 5, 420),
-             (24, 7, 190),
              (5, 4, 390),
              (5, 7, 400)]
 
@@ -100,7 +97,7 @@ def GrafoMapa():
     plt.show()
 
 
-def nombres(param):
+def obtengaElNombreDe(param):
     for nodo in mapa.node:
         if nodo == param:
             return (mapa.node[nodo]["Nombre"])
@@ -115,40 +112,55 @@ def medios(nodo1, nodo2, medio):
 def consultas():
     # in_args = request.args  # Obtener todos los parámetros
 
-    # origen = in_args['origen'] #Seleccionar parametro con clave origen
-    # destino = in_args['destino'] #Seleccionar parametro con clave destino
-    # tipoTransporte = in_args['tipoTransporte'] #Seleccionar parametro con clave tipoTransporte
-    origen = 19
-    destino = 10
-    tipoTransporte = 'Avion'
-    vecinosO = mapa.neighbors(origen)
-    vecinosD = mapa.neighbors(destino)
+    # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
+    # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
+    # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
+    elNodoDeOrigen = 22
+    elNodoDeDestino = 8
+    elTipoTransporte = 'Tren'
+    losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
+    losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
-    # Determinar Rutas más cortas
-    # Grafo = nx.dijkstra_path(mapa, origen,destino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-    # plt.savefig("path.png")
-    # print (Grafo)
-
-    # Determinar si en los nodos vecinos al destino final, existe un medio de transporte más rápido (avión o tren)
+    # Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
     # en cuyo caso, enviaría a la persona hasta ese nodo en cualquiera de esos dos medios de transporte, y luego al
-    # nodo de destino final en bus o en taxi.
-
-    if tipoTransporte == 'Avion' or tipoTransporte == 'Tren':
-        if mapa.node[origen][tipoTransporte] and mapa.node[destino][tipoTransporte]:
-            print("Viaje directo de ", nombres(origen), "a", nombres(destino), "en", tipoTransporte)
+    # nodo de elNodoDeDestino final en bus o en Uber.
+    elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
+    elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
+    if elTipoTransporte == 'Avion' or elTipoTransporte == 'Tren':
+        if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
+            print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino), "en",
+                  elTipoTransporte)
         else:
-            if mapa.node[origen][tipoTransporte]:
-                for vecino in vecinosD:
-                    if mapa.node[vecino][tipoTransporte]:
-                        print("Viaje de", origen, "a", vecino, "en", tipoTransporte, "y luego a", destino,
-                              "en bus o taxi")
-            elif mapa.node[destino][tipoTransporte]:
-                for vecino in vecinosO:
-                    if mapa.node[vecino][tipoTransporte]:
-                        print("Viaje de", origen, "a", vecino, "en bus o taxi", "y luego de", vecino, "a", destino,
+            if elNodoOrigenTieneTipoDeTransporte:
+                for elVecino in losVecinosDelNodoDestino:
+                    elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
+                    if elVecinoTieneTipoDeTransporte:
+                        print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
+                              elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
+                              "en bus o Uber")
+            elif elNodoDestinoTieneTipoDeTransporte:
+                for elVecino in losVecinosDelNodoOrigen:
+                    elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
+                    if elVecinoTieneTipoDeTransporte:
+                        print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino),
+                              "en bus o Uber y luego de", obtengaElNombreDe(elVecino), "a",
+                              obtengaElNombreDe(elNodoDeDestino),
                               "en avion")
             else:
-                
+                lasOpcionesCercanasAlNodoDeOrigen = []
+                lasOpcionesCercanasAlNodoDeDestino = []
+                for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
+                    if mapa.node[elVecinodeNodoOrigen][elTipoTransporte]:
+                        for elVecinodeNodoDestino in losVecinosDelNodoDestino:
+                            if mapa.node[elVecinodeNodoDestino][elTipoTransporte]:
+                                print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a",
+                                      obtengaElNombreDe(elVecinodeNodoOrigen), "en bus o Uber, luego de",
+                                      obtengaElNombreDe(elVecinodeNodoOrigen), "en avion a",
+                                      obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o Uber a",
+                                      obtengaElNombreDe(elNodoDeDestino))
+                else:
+                    rutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,elNodoDeDestino) #Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+                    print("Solo puede ir en bus o Uber, la ruta mas corta es: "+ str(rutaCorta))
 
 
 # if __name__ == '__main__':
