@@ -119,7 +119,7 @@ def consultas():
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
     elNodoDeOrigen = 11
     elNodoDeDestino = 13
-    elTipoTransporte = 'Tren'
+    elTipoTransporte = 'Avion'
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
@@ -128,7 +128,7 @@ def consultas():
     # nodo de elNodoDeDestino final en bus o en Uber.
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
-    if elTipoTransporte == 'Avion' or elTipoTransporte == 'Tren':
+    if elTipoTransporte == 'Avion':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
             print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino), "en",
                   elTipoTransporte)
