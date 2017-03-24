@@ -11,11 +11,11 @@ mapa = nx.Graph()  # Crear el grafo
 
 
 def conectarBaseDatos():
-    conexion = "host='localhost' dbname='MediosTransporte' user='administrador' password='admin'"
-    print("conectando...\n	->%s" % (conexion))
+
+    conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 
     conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
-
+    print(conn)
 
 def GrafoMapa():
     # Agregar nodos al grafo con atributos
@@ -167,7 +167,7 @@ def consultas():
 # app.run(port=8000, host='0.0.0.0')
 
 
-# conectarBaseDatos()
+conectarBaseDatos()
 GrafoMapa()
 consultas()
 # nombres()
