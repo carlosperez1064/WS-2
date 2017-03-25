@@ -111,15 +111,15 @@ def medios(nodo1, nodo2, medio):
 
 
 @app.route('/api/viajando/consultas', methods=['POST'])
-def consultas():
+def consulteAvionOTren():
     # in_args = request.args  # Obtener todos los parámetros
 
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
-    elNodoDeOrigen = 11
+    elNodoDeOrigen = 8
     elNodoDeDestino = 13
-    elTipoTransporte = 'Avion'
+    elTipoTransporte = 'Tren'
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
@@ -128,10 +128,15 @@ def consultas():
     # nodo de elNodoDeDestino final en bus o en Uber.
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
-    if elTipoTransporte == 'Avion':
+    print(elNodoOrigenTieneTipoDeTransporte, elNodoDestinoTieneTipoDeTransporte)
+    if elTipoTransporte == 'Avion' or elTipoTransporte=='Tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-            print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino), "en",
-                  elTipoTransporte)
+            if elTipoTransporte=='Avion':
+                print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino), "en",
+                    elTipoTransporte)
+            else:
+                lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
+                print(lasEstaciones)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -167,14 +172,30 @@ def consultas():
                         losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
                         print(losNombresDeLosNodos)
 
+def consulteTrenes(elNodoDeOrigen,elNodoDeDestino):
+    lasEstacionesDelTren=[11,8,16,1,7,23,15,13,18]
+    elMensaje= []
+    elNodoDeOrigen= lasEstacionesDelTren.index(elNodoDeOrigen)
+    elNodoDeDestino=lasEstacionesDelTren.index(elNodoDeDestino)
+    print(elNodoDeOrigen,elNodoDeDestino)
 
+    if elNodoDeDestino>elNodoDeOrigen:
+        for laEstacion in lasEstacionesDelTren:
+            if lasEstacionesDelTren.index(laEstacion)>=elNodoDeOrigen and lasEstacionesDelTren.index(laEstacion)<=elNodoDeDestino:
+                elMensaje.append(laEstacion)
+    elif elNodoDeDestino<elNodoDeOrigen:
+        for laEstacion in range(len(lasEstacionesDelTren)-1,-1,-1):
+            if laEstacion>=elNodoDeDestino and laEstacion<=elNodoDeOrigen:
+                elMensaje.append(lasEstacionesDelTren[laEstacion])
+    print(elMensaje)
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
-
-
-#conectarBaseDatos()
 GrafoMapa()
-consultas()
+consulteAvionOTren();
+#conectarBaseDatos()
+
+#consulteAvionOTren()
+
 # nombres()
 
 # CREATE TABLE tren (id integer, data json);
