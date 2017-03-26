@@ -167,16 +167,18 @@ def consulteMediosDeTransporte():
                                       obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
                                       obtengaElNombreDe(elNodoDeDestino))
                 else:
-                    laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,
-                                                   elNodoDeDestino)  # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-                    print("Solo puede ir en bus o taxi, la ruta mas corta es pasando por: ")
-                    for elNodoRuta in laRutaCorta:
-                        losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
-                        print(losNombresDeLosNodos)
+                    print("Imposible ir en Avión o Tren, solo puede ir en Bus o Taxi")
 
-    if elTipoTransporte == 'bus' or elTipoTransporte == 'taxi':
+    if elTipoTransporte == 'taxi':
+        # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+                laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,elNodoDeDestino)
+                print("La ruta mas corta es pasando por: ")
+                for elNodoRuta in laRutaCorta:
+                    losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
+                    print(losNombresDeLosNodos)
 
                 zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
+
                 if zonaOrigen == 'A':
                     cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
                     rows = cursor.fetchall()
@@ -197,6 +199,8 @@ def consulteMediosDeTransporte():
                     print("Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                     for row in rows:
                         print(row)
+
+    #if elTipoTransporte == 'bus':
 
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
