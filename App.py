@@ -128,7 +128,6 @@ def consulteAvionOTren():
     # nodo de elNodoDeDestino final en bus o en Uber.
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
-    print(elNodoOrigenTieneTipoDeTransporte, elNodoDestinoTieneTipoDeTransporte)
     if elTipoTransporte == 'Avion' or elTipoTransporte=='Tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
             if elTipoTransporte=='Avion':
@@ -136,7 +135,14 @@ def consulteAvionOTren():
                     elTipoTransporte)
             else:
                 lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
-                print(lasEstaciones)
+                lasIndicaciones="Sus estaciones son: "
+                for laEstacion in lasEstaciones[0]:
+                    lasIndicaciones+=obtengaElNombreDe(laEstacion)
+                    lasIndicaciones+=", "
+
+                if lasEstaciones[1]==True:
+                    lasIndicaciones+= "haciendo cambio en Volcan Poas o parada numero 7"
+                print(lasIndicaciones)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -177,7 +183,6 @@ def consulteTrenes(elNodoDeOrigen,elNodoDeDestino):
     elMensaje= []
     elNodoDeOrigen= lasEstacionesDelTren.index(elNodoDeOrigen)
     elNodoDeDestino=lasEstacionesDelTren.index(elNodoDeDestino)
-    print(elNodoDeOrigen,elNodoDeDestino)
 
     if elNodoDeDestino>elNodoDeOrigen:
         for laEstacion in lasEstacionesDelTren:
@@ -187,7 +192,11 @@ def consulteTrenes(elNodoDeOrigen,elNodoDeDestino):
         for laEstacion in range(len(lasEstacionesDelTren)-1,-1,-1):
             if laEstacion>=elNodoDeDestino and laEstacion<=elNodoDeOrigen:
                 elMensaje.append(lasEstacionesDelTren[laEstacion])
-    print(elMensaje)
+    if elMensaje.count(7)>0:
+        laPosicion=elMensaje.index(7)
+        if laPosicion>0 and laPosicion<elMensaje.__len__()-1:
+            tieneQueHacerCambioDeTren=True
+    return(elMensaje, tieneQueHacerCambioDeTren)
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
 GrafoMapa()
