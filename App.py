@@ -117,8 +117,8 @@ def consulteAvionOtren():
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
-    elNodoDeOrigen = 8
-    elNodoDeDestino = 13
+    elNodoDeOrigen = 11
+    elNodoDeDestino = 23
     elTipoTransporte = 'tren'
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -130,7 +130,6 @@ def consulteAvionOtren():
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
 
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
-
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
             if elTipoTransporte == 'avion':
                 print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
@@ -138,13 +137,8 @@ def consulteAvionOtren():
                       elTipoTransporte)
             else:
                 lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
-                lasIndicaciones="Sus estaciones son: "
-                for laEstacion in lasEstaciones[0]:
-                    lasIndicaciones+=obtengaElNombreDe(laEstacion)
-                    lasIndicaciones+=", "
-                if lasEstaciones[1]==True:
-                    lasIndicaciones+= "haciendo cambio en Volcan Poas o parada numero 7"
-                print(lasIndicaciones)
+                print(lasEstaciones)
+
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -194,12 +188,15 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
                 elMensaje.append(lasEstacionesDelTren[laEstacion])
-
+    lasIndicaciones="Sus estaciones son: "
+    for laEstacion in elMensaje:
+        lasIndicaciones+=obtengaElNombreDe(laEstacion)
+        lasIndicaciones+=", "
     if elMensaje.count(7)>0:
         laPosicion=elMensaje.index(7)
         if laPosicion>0 and laPosicion<elMensaje.__len__()-1:
-            tieneQueHacerCambioDeTren=True
-    return(elMensaje, tieneQueHacerCambioDeTren)
+            lasIndicaciones+="y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
+    return(lasIndicaciones)
 
 
 def taxisPorZona():
