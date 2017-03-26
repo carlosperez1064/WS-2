@@ -9,19 +9,9 @@ app = Flask(__name__)
 
 mapa = nx.Graph()  # Crear el grafo
 
-
-def conectarBaseDatos():
-    conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-
-    conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
-    print(conn)
-
-    cursor = conn.cursor()
-    cursor.execute("""SELECT * FROM pg_database""")
-    rows = cursor.fetchall()
-    print("\nShow me the databases:\n")
-    for row in rows:
-        print("   ", row[0])
+conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
+cursor = conn.cursor()
 
 
 def GrafoMapa():
@@ -31,27 +21,34 @@ def GrafoMapa():
     mapa.add_node(3, {"Nombre": "Las Juntas", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
     mapa.add_node(4, {"Nombre": "Cariari Pococi", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": True})
     mapa.add_node(5, {"Nombre": "Puerto Jimenez", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
-    mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
+    mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "zona": "A", "bus": True, "taxi": True, "tren": False,
+                      "avion": False})
     mapa.add_node(7, {"Nombre": "Volcan Poas", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
     mapa.add_node(8, {"Nombre": "Upala", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
+    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False,
+                      "avion": False})
     mapa.add_node(10, {"Nombre": "Cahuita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
     mapa.add_node(11, {"Nombre": "Filadelfia", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(12, {"Nombre": "Volcan Turrialba", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(13, {"Nombre": "San isidro del General", "zona": "C", "bus": True, "taxi": True, "tren": True, "avion": False})
+    mapa.add_node(12,
+                  {"Nombre": "Volcan Turrialba", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
+    mapa.add_node(13, {"Nombre": "San isidro del General", "zona": "C", "bus": True, "taxi": True, "tren": True,
+                       "avion": False})
     mapa.add_node(14, {"Nombre": "Uvita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
     mapa.add_node(15, {"Nombre": "Volcan Irazu", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(16, {"Nombre": "Volcan Tenorio", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
+    mapa.add_node(16,
+                  {"Nombre": "Volcan Tenorio", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
     mapa.add_node(17, {"Nombre": "Moravia", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(18, {"Nombre": "Cerro Chirripo", "zona": "C", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": True})
+    mapa.add_node(18,
+                  {"Nombre": "Cerro Chirripo", "zona": "C", "bus": True, "taxi": True, "tren": True, "avion": False})
+    mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "zona": "A", "bus": True, "taxi": True, "tren": False,
+                       "avion": True})
     mapa.add_node(20, {"Nombre": "Bribri", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
+    mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "zona": "C", "bus": True, "taxi": True, "tren": False,
+                       "avion": True})
     mapa.add_node(22, {"Nombre": "Los Chiles", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
     mapa.add_node(23, {"Nombre": "Volcan Barva", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
     mapa.add_node(24, {"Nombre": "Santa Cruz", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
     # print(mapa.nodes(data=True))
-
     # Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
     lista = [(19, 24, 60),
              (19, 6, 40),
@@ -105,21 +102,33 @@ def obtengaElNombreDe(param):
             return (mapa.node[nodo]["Nombre"])
 
 
+def obtengaLaZonaDe(param):
+    for nodo in mapa.node:
+        if nodo == param:
+            return (mapa.node[nodo]["zona"])
+
+
 def medios(nodo1, nodo2, medio):
     if mapa.node[nodo1][medio] and mapa.node[nodo2][medio]:
         return True
 
 
 @app.route('/api/viajando/consulta/tren-avion', methods=['POST'])
-def consulteAvionOtren():
+def consulteMediosDeTransporte():
     # in_args = request.args  # Obtener todos los parámetros
 
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
+<<<<<<< HEAD
     elNodoDeOrigen = 11
     elNodoDeDestino = 23
     elTipoTransporte = 'tren'
+=======
+    elNodoDeOrigen = 23
+    elNodoDeDestino = 13
+    elTipoTransporte = 'taxi'
+>>>>>>> origin/master
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
@@ -136,9 +145,20 @@ def consulteAvionOtren():
                       "en",
                       elTipoTransporte)
             else:
+<<<<<<< HEAD
                 lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
                 print(lasEstaciones)
 
+=======
+                lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
+                lasIndicaciones = "Sus estaciones son: "
+                for laEstacion in lasEstaciones[0]:
+                    lasIndicaciones += obtengaElNombreDe(laEstacion)
+                    lasIndicaciones += ", "
+                if lasEstaciones[1] == True:
+                    lasIndicaciones += "haciendo cambio en Volcan Poas o parada numero 7"
+                print(lasIndicaciones)
+>>>>>>> origin/master
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -166,12 +186,44 @@ def consulteAvionOtren():
                                       obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
                                       obtengaElNombreDe(elNodoDeDestino))
                 else:
-                    laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,
-                                                   elNodoDeDestino)  # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-                    print("Solo puede ir en bus o taxi, la ruta mas corta es pasando por: ")
-                    for elNodoRuta in laRutaCorta:
-                        losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
-                        print(losNombresDeLosNodos)
+                    print("Imposible ir en Avión o Tren, solo puede ir en Bus o Taxi")
+
+    if elTipoTransporte == 'taxi':
+        # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+        laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
+        print("La ruta mas corta es pasando por: ")
+        for elNodoRuta in laRutaCorta:
+            losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
+            print(losNombresDeLosNodos)
+
+        zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
+
+        if zonaOrigen == 'A':
+            cursor.execute(
+                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
+            rows = cursor.fetchall()
+            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+            for row in rows:
+                print("   ",row)
+
+        if zonaOrigen == 'B':
+            cursor.execute(
+                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
+            rows = cursor.fetchall()
+            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+            for row in rows:
+                print("   ", row)
+
+        if zonaOrigen == 'C':
+            cursor.execute(
+                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
+            rows = cursor.fetchall()
+            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+            for row in rows:
+                print("   ", row)
+
+                # if elTipoTransporte == 'bus':
+
 
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
@@ -188,6 +240,7 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
                 elMensaje.append(lasEstacionesDelTren[laEstacion])
+<<<<<<< HEAD
     lasIndicaciones="Sus estaciones son: "
     for laEstacion in elMensaje:
         lasIndicaciones+=obtengaElNombreDe(laEstacion)
@@ -198,14 +251,20 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
             lasIndicaciones+="y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
     return(lasIndicaciones)
 
+=======
 
-def taxisPorZona():
-    return 0
+    if elMensaje.count(7) > 0:
+        laPosicion = elMensaje.index(7)
+        if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
+            tieneQueHacerCambioDeTren = True
+    return (elMensaje, tieneQueHacerCambioDeTren)
+>>>>>>> origin/master
+
 
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
 GrafoMapa()
-consulteAvionOtren()
+consulteMediosDeTransporte()
 # conectarBaseDatos()
 
 
