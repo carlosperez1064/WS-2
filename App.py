@@ -162,8 +162,6 @@ def consulteAvionOtren():
                               obtengaElNombreDe(elNodoDeDestino),
                               "en", elTipoTransporte)
             else:
-                lasOpcionesCercanasAlNodoDeOrigen = []
-                lasOpcionesCercanasAlNodoDeDestino = []
                 for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
                     if mapa.node[elVecinodeNodoOrigen][elTipoTransporte]:
                         for elVecinodeNodoDestino in losVecinosDelNodoDestino:
@@ -180,12 +178,6 @@ def consulteAvionOtren():
                     for elNodoRuta in laRutaCorta:
                         losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
                         print(losNombresDeLosNodos)
-
-def consulteTrenes(elNodoDeOrigen,elNodoDeDestino):
-    lasEstacionesDelTren=[11,8,16,1,7,23,15,13,18]
-    elMensaje= []
-    elNodoDeOrigen= lasEstacionesDelTren.index(elNodoDeOrigen)
-    elNodoDeDestino=lasEstacionesDelTren.index(elNodoDeDestino)
 
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
