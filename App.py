@@ -128,32 +128,23 @@ def consulteAvionOtren():
     # nodo de elNodoDeDestino final en bus o en taxi.
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
-<<<<<<< HEAD
-    if elTipoTransporte == 'Avion' or elTipoTransporte=='Tren':
-=======
-    print(elNodoOrigenTieneTipoDeTransporte, elNodoDestinoTieneTipoDeTransporte)
+
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
->>>>>>> origin/master
+
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
             if elTipoTransporte == 'avion':
                 print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
                       "en",
                       elTipoTransporte)
             else:
-<<<<<<< HEAD
                 lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
                 lasIndicaciones="Sus estaciones son: "
                 for laEstacion in lasEstaciones[0]:
                     lasIndicaciones+=obtengaElNombreDe(laEstacion)
                     lasIndicaciones+=", "
-
                 if lasEstaciones[1]==True:
                     lasIndicaciones+= "haciendo cambio en Volcan Poas o parada numero 7"
                 print(lasIndicaciones)
-=======
-                lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
-                print(lasEstaciones)
->>>>>>> origin/master
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -190,21 +181,17 @@ def consulteAvionOtren():
                         losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
                         print(losNombresDeLosNodos)
 
-<<<<<<< HEAD
 def consulteTrenes(elNodoDeOrigen,elNodoDeDestino):
     lasEstacionesDelTren=[11,8,16,1,7,23,15,13,18]
     elMensaje= []
     elNodoDeOrigen= lasEstacionesDelTren.index(elNodoDeOrigen)
     elNodoDeDestino=lasEstacionesDelTren.index(elNodoDeDestino)
-=======
->>>>>>> origin/master
 
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
     elMensaje = []
     elNodoDeOrigen = lasEstacionesDelTren.index(elNodoDeOrigen)
     elNodoDeDestino = lasEstacionesDelTren.index(elNodoDeDestino)
-    print(elNodoDeOrigen, elNodoDeDestino)
 
     if elNodoDeDestino > elNodoDeOrigen:
         for laEstacion in lasEstacionesDelTren:
@@ -215,21 +202,17 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
                 elMensaje.append(lasEstacionesDelTren[laEstacion])
-<<<<<<< HEAD
+
     if elMensaje.count(7)>0:
         laPosicion=elMensaje.index(7)
         if laPosicion>0 and laPosicion<elMensaje.__len__()-1:
             tieneQueHacerCambioDeTren=True
     return(elMensaje, tieneQueHacerCambioDeTren)
-=======
-    print(elMensaje)
 
 
 def taxisPorZona():
     return 0
 
-
->>>>>>> origin/master
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
 GrafoMapa()
