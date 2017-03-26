@@ -183,7 +183,7 @@ def consulteAvionOtren():
                         print(losNombresDeLosNodos)
 
     if elTipoTransporte == 'bus' or elTipoTransporte == 'taxi':
-
+#Consultas a Base de datos para ver taxis cercanos a las zonas de origen del cliente
                 zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
                 if zonaOrigen == 'A':
                     cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
