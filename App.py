@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 mapa = nx.Graph()  # Crear el grafo
 
-<<<<<<< HEAD
+
 #conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 #conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
 #cursor = conn.cursor()
@@ -18,8 +18,6 @@ mapa = nx.Graph()  # Crear el grafo
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
->>>>>>> origin/master
-
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 def GrafoMapa():
@@ -132,17 +130,15 @@ def consulteMediosDeTransporte():
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
-<<<<<<< HEAD
+
     elNodoDeOrigen = 11
     elNodoDeDestino = 20
     elTipoTransporte = 'tren'
 
-=======
-
     elNodoDeOrigen = 23
     elNodoDeDestino = 13
     elTipoTransporte = 'taxi'
->>>>>>> origin/master
+
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
@@ -210,7 +206,6 @@ def consulteMediosDeTransporte():
             losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
             print(losNombresDeLosNodos)
 
-<<<<<<< HEAD
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
         #ESTOS IFs NO SON NECESARIOS, SE PUEDEN REDUCIR A POCAS LINEAS
         if zonaOrigen == 'A':
@@ -238,9 +233,7 @@ def consulteMediosDeTransporte():
                 print("   ", row)
 
                 # if elTipoTransporte == 'bus':
-=======
                                  # --------------------------- TAXIS --------------------------#
->>>>>>> origin/master
 
         # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
