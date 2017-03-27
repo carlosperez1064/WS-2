@@ -9,10 +9,6 @@ app = Flask(__name__)
 
 mapa = nx.Graph()  # Crear el grafo
 
-
-# conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-# conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
-# cursor = conn.cursor()
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 conn = psycopg2.connect(conexion)
@@ -193,7 +189,7 @@ def consulteMediosDeTransporte():
                                 lasEstaciones = consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino)
                                 print(lasEstaciones)
                 else:
-                    print("Imposible ir en Avión o Tren,verifique en Bus o Taxi")
+                    print("Imposible ir en Avión o Tren, verifique en Bus o Taxi")
 
 
                     # --------------------------- BUSES Y TAXIS --------------------------#
@@ -207,74 +203,40 @@ def consulteMediosDeTransporte():
             losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
             print(losNombresDeLosNodos)
 
-        zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
-        # ESTOS IFs NO SON NECESARIOS, SE PUEDEN REDUCIR A POCAS LINEAS
-        if zonaOrigen == 'A':
-            cursor.execute(
-                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
-            rows = cursor.fetchall()
-            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            for row in rows:
-                print("   ", row)
-
-        if zonaOrigen == 'B':
-            cursor.execute(
-                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
-            rows = cursor.fetchall()
-            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            for row in rows:
-                print("   ", row)
-
-        if zonaOrigen == 'C':
-            cursor.execute(
-                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
-            rows = cursor.fetchall()
-            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            for row in rows:
-                print("   ", row)
-
-                # if elTipoTransporte == 'bus':
-                # --------------------------- TAXIS --------------------------#
+                        # --------------------------- TAXIS --------------------------#
 
         # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
         if elTipoTransporte == 'taxi':
             if zonaOrigen == 'A':
+                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                 cursor.execute(
                     """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
                 rows = cursor.fetchall()
-                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                 for row in rows:
                     print("   ", row)
 
             if zonaOrigen == 'B':
+                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                 cursor.execute(
                     """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
                 rows = cursor.fetchall()
-                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                 for row in rows:
                     print("   ", row)
 
             if zonaOrigen == 'C':
+                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                 cursor.execute(
                     """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
                 rows = cursor.fetchall()
-                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
                 for row in rows:
                     print("   ", row)
 
                     # --------------------------- BUSES --------------------------#
 
             if elTipoTransporte == 'bus':
-
-                if zonaOrigen == 'A':
-                    cursor.execute(
-                        """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Bus" WHERE "Informacion" ->> 'Zona' = 'A';""")
-                    rows = cursor.fetchall()
-                    print(" " + obtengaElNombreDe(elNodoDeOrigen))
-                    for row in rows:
-                        print("   ", row)
+                print("")
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
