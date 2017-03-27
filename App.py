@@ -9,9 +9,9 @@ app = Flask(__name__)
 
 mapa = nx.Graph()  # Crear el grafo
 
-conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
-cursor = conn.cursor()
+#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+#conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
+#cursor = conn.cursor()
 
 
 def GrafoMapa():
@@ -120,15 +120,10 @@ def consulteMediosDeTransporte():
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
-<<<<<<< HEAD
     elNodoDeOrigen = 11
-    elNodoDeDestino = 23
+    elNodoDeDestino = 20
     elTipoTransporte = 'tren'
-=======
-    elNodoDeOrigen = 23
-    elNodoDeDestino = 13
-    elTipoTransporte = 'taxi'
->>>>>>> origin/master
+
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
@@ -140,33 +135,22 @@ def consulteMediosDeTransporte():
 
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-            if elTipoTransporte == 'avion':
-                print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
-                      "en",
-                      elTipoTransporte)
-            else:
-<<<<<<< HEAD
+            print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
+                      "en",elTipoTransporte)
+            if elTipoTransporte=='tren':
                 lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
                 print(lasEstaciones)
-
-=======
-                lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
-                lasIndicaciones = "Sus estaciones son: "
-                for laEstacion in lasEstaciones[0]:
-                    lasIndicaciones += obtengaElNombreDe(laEstacion)
-                    lasIndicaciones += ", "
-                if lasEstaciones[1] == True:
-                    lasIndicaciones += "haciendo cambio en Volcan Poas o parada numero 7"
-                print(lasIndicaciones)
->>>>>>> origin/master
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
                         print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
-                              elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
-                              "en bus o taxi")
+                                elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
+                                "en bus o taxi")
+                        if elTipoTransporte=='tren':
+                            lasEstaciones= consulteTrenes(elNodoDeOrigen,elVecino)
+                            print(lasEstaciones)
             elif elNodoDestinoTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoOrigen:
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
@@ -175,6 +159,9 @@ def consulteMediosDeTransporte():
                               "en bus o taxi y luego de", obtengaElNombreDe(elVecino), "a",
                               obtengaElNombreDe(elNodoDeDestino),
                               "en", elTipoTransporte)
+                        if elTipoTransporte=='tren':
+                            lasEstaciones= consulteTrenes(elVecino,elNodoDeDestino)
+                            print(lasEstaciones)
             else:
                 for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
                     if mapa.node[elVecinodeNodoOrigen][elTipoTransporte]:
@@ -185,6 +172,9 @@ def consulteMediosDeTransporte():
                                       obtengaElNombreDe(elVecinodeNodoOrigen), "en", elTipoTransporte, "a",
                                       obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
                                       obtengaElNombreDe(elNodoDeDestino))
+                            if elTipoTransporte=='tren':
+                                lasEstaciones= consulteTrenes(elVecinodeNodoOrigen,elVecinodeNodoDestino)
+                                print(lasEstaciones)
                 else:
                     print("Imposible ir en Avión o Tren, solo puede ir en Bus o Taxi")
 
@@ -197,7 +187,7 @@ def consulteMediosDeTransporte():
             print(losNombresDeLosNodos)
 
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
-
+        #ESTOS IFs NO SON NECESARIOS, SE PUEDEN REDUCIR A POCAS LINEAS
         if zonaOrigen == 'A':
             cursor.execute(
                 """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
@@ -240,7 +230,6 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
                 elMensaje.append(lasEstacionesDelTren[laEstacion])
-<<<<<<< HEAD
     lasIndicaciones="Sus estaciones son: "
     for laEstacion in elMensaje:
         lasIndicaciones+=obtengaElNombreDe(laEstacion)
@@ -250,16 +239,6 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         if laPosicion>0 and laPosicion<elMensaje.__len__()-1:
             lasIndicaciones+="y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
     return(lasIndicaciones)
-
-=======
-
-    if elMensaje.count(7) > 0:
-        laPosicion = elMensaje.index(7)
-        if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
-            tieneQueHacerCambioDeTren = True
-    return (elMensaje, tieneQueHacerCambioDeTren)
->>>>>>> origin/master
-
 
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
