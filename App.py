@@ -9,11 +9,13 @@ app = Flask(__name__)
 
 mapa = nx.Graph()  # Crear el grafo
 
+#---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
+conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
 
 
+#---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 def GrafoMapa():
     # Agregar nodos al grafo con atributos
     mapa.add_node(1, {"Nombre": "Volcan Arenal", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
@@ -48,7 +50,7 @@ def GrafoMapa():
     mapa.add_node(22, {"Nombre": "Los Chiles", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
     mapa.add_node(23, {"Nombre": "Volcan Barva", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
     mapa.add_node(24, {"Nombre": "Santa Cruz", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
-    # print(mapa.nodes(data=True))
+
     # Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
     lista = [(19, 24, 60),
              (19, 6, 40),
@@ -95,24 +97,27 @@ def GrafoMapa():
     nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
     # plt.show()
 
-
+#-------------------------------------- MÉTODO PARA OBTENER NOMBRES DE LOS NODOS --------------------------------------#
 def obtengaElNombreDe(param):
     for nodo in mapa.node:
         if nodo == param:
             return (mapa.node[nodo]["Nombre"])
 
 
+#---------------------------------------- MÉTODO PARA OBTENER ZONAS DE LOS NODOS --------------------------------------#
 def obtengaLaZonaDe(param):
     for nodo in mapa.node:
         if nodo == param:
             return (mapa.node[nodo]["zona"])
 
 
+#---------------------------------------- MÉTODO PARA  --------------------------------------#
 def medios(nodo1, nodo2, medio):
     if mapa.node[nodo1][medio] and mapa.node[nodo2][medio]:
         return True
 
 
+#--------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 @app.route('/api/viajando/consulta/tren-avion', methods=['POST'])
 def consulteMediosDeTransporte():
     # in_args = request.args  # Obtener todos los parámetros
@@ -177,7 +182,8 @@ def consulteMediosDeTransporte():
                 else:
                     print("Imposible ir en Avión o Tren, solo puede ir en Bus o Taxi")
 
-    if elTipoTransporte == 'taxi':
+    if elTipoTransporte == 'taxi' or elTipoTransporte == 'bus':
+
         # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
         laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
         print("La ruta mas corta es pasando por: ")
@@ -185,35 +191,46 @@ def consulteMediosDeTransporte():
             losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
             print(losNombresDeLosNodos)
 
+        #Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
+
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
+        if elTipoTransporte == 'taxi':
+            if zonaOrigen == 'A':
+                cursor.execute(
+                    """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
+                rows = cursor.fetchall()
+                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+                for row in rows:
+                    print("   ",row)
 
-        if zonaOrigen == 'A':
-            cursor.execute(
-                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
-            rows = cursor.fetchall()
-            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            for row in rows:
-                print("   ",row)
+            if zonaOrigen == 'B':
+                cursor.execute(
+                    """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
+                rows = cursor.fetchall()
+                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+                for row in rows:
+                    print("   ", row)
 
-        if zonaOrigen == 'B':
-            cursor.execute(
-                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
-            rows = cursor.fetchall()
-            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            for row in rows:
-                print("   ", row)
+            if zonaOrigen == 'C':
+                cursor.execute(
+                    """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
+                rows = cursor.fetchall()
+                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+                for row in rows:
+                    print("   ", row)
 
-        if zonaOrigen == 'C':
-            cursor.execute(
-                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
-            rows = cursor.fetchall()
-            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            for row in rows:
-                print("   ", row)
+            if elTipoTransporte == 'bus':
+                if zonaOrigen == 'A':
+                    cursor.execute(
+                        """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Bus" WHERE "Informacion" ->> 'Zona' = 'A';""")
+                    rows = cursor.fetchall()
+                    print(" " + obtengaElNombreDe(elNodoDeOrigen))
+                    for row in rows:
+                        print("   ", row)
 
-                # if elTipoTransporte == 'bus':
 
 
+#------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
     elMensaje = []
@@ -237,14 +254,9 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     return (elMensaje, tieneQueHacerCambioDeTren)
 
 
-# if __name__ == '__main__':
-# app.run(port=8000, host='0.0.0.0')
+#----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 GrafoMapa()
 consulteMediosDeTransporte()
-# conectarBaseDatos()
 
-
-# nombres()
-
-# CREATE TABLE tren (id integer, data json);
-# INSERT INTO tren VALUES (12,'{"NombreCompania": "Inconfer","Ruta": {"Origen": "San Jose","Destino": "Cartago","Horario": "L-D"}}');
+# if __name__ == '__main__':
+# app.run(port=8000, host='0.0.0.0')
