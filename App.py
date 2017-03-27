@@ -10,14 +10,14 @@ app = Flask(__name__)
 mapa = nx.Graph()  # Crear el grafo
 
 
-#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-#conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
-#cursor = conn.cursor()
-=======
+# conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+# conn = psycopg2.connect(conexion)  # Realizar la conexión a DB
+# cursor = conn.cursor()
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
+
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 def GrafoMapa():
@@ -29,7 +29,7 @@ def GrafoMapa():
     mapa.add_node(5, {"Nombre": "Puerto Jimenez", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
     mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "zona": "A", "bus": True, "taxi": True, "tren": False,
                       "avion": False})
-    mapa.add_node(7, {"Nombre": "Volcan Poas", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
+    mapa.add_node(7, {"Nombre": "San Jose", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
     mapa.add_node(8, {"Nombre": "Upala", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
     mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False,
                       "avion": False})
@@ -148,14 +148,14 @@ def consulteMediosDeTransporte():
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
 
-                        # --------------------------- AVIONES Y TRENES --------------------------#
+    # --------------------------- AVIONES Y TRENES --------------------------#
 
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
             print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
-                      "en",elTipoTransporte)
-            if elTipoTransporte=='tren':
-                lasEstaciones= consulteTrenes(elNodoDeOrigen,elNodoDeDestino)
+                  "en", elTipoTransporte)
+            if elTipoTransporte == 'tren':
+                lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
                 print(lasEstaciones)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
@@ -163,10 +163,10 @@ def consulteMediosDeTransporte():
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
                         print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
-                                elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
-                                "en bus o taxi")
-                        if elTipoTransporte=='tren':
-                            lasEstaciones= consulteTrenes(elNodoDeOrigen,elVecino)
+                              elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
+                              "en bus o taxi")
+                        if elTipoTransporte == 'tren':
+                            lasEstaciones = consulteTrenes(elNodoDeOrigen, elVecino)
                             print(lasEstaciones)
             elif elNodoDestinoTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoOrigen:
@@ -176,8 +176,8 @@ def consulteMediosDeTransporte():
                               "en bus o taxi y luego de", obtengaElNombreDe(elVecino), "a",
                               obtengaElNombreDe(elNodoDeDestino),
                               "en", elTipoTransporte)
-                        if elTipoTransporte=='tren':
-                            lasEstaciones= consulteTrenes(elVecino,elNodoDeDestino)
+                        if elTipoTransporte == 'tren':
+                            lasEstaciones = consulteTrenes(elVecino, elNodoDeDestino)
                             print(lasEstaciones)
             else:
                 for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
@@ -189,32 +189,33 @@ def consulteMediosDeTransporte():
                                       obtengaElNombreDe(elVecinodeNodoOrigen), "en", elTipoTransporte, "a",
                                       obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
                                       obtengaElNombreDe(elNodoDeDestino))
-                            if elTipoTransporte=='tren':
-                                lasEstaciones= consulteTrenes(elVecinodeNodoOrigen,elVecinodeNodoDestino)
+                            if elTipoTransporte == 'tren':
+                                lasEstaciones = consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino)
                                 print(lasEstaciones)
                 else:
                     print("Imposible ir en Avión o Tren,verifique en Bus o Taxi")
 
 
-                          # --------------------------- BUSES Y TAXIS --------------------------#
+                    # --------------------------- BUSES Y TAXIS --------------------------#
 
     if elTipoTransporte == 'taxi' or elTipoTransporte == 'bus':
 
-        laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)  # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+        laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,
+                                       elNodoDeDestino)  # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
         print("La ruta mas corta es pasando por: ")
         for elNodoRuta in laRutaCorta:
             losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
             print(losNombresDeLosNodos)
 
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
-        #ESTOS IFs NO SON NECESARIOS, SE PUEDEN REDUCIR A POCAS LINEAS
+        # ESTOS IFs NO SON NECESARIOS, SE PUEDEN REDUCIR A POCAS LINEAS
         if zonaOrigen == 'A':
             cursor.execute(
                 """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
             rows = cursor.fetchall()
             print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
             for row in rows:
-                print("   ",row)
+                print("   ", row)
 
         if zonaOrigen == 'B':
             cursor.execute(
@@ -233,7 +234,7 @@ def consulteMediosDeTransporte():
                 print("   ", row)
 
                 # if elTipoTransporte == 'bus':
-                                 # --------------------------- TAXIS --------------------------#
+                # --------------------------- TAXIS --------------------------#
 
         # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
@@ -263,7 +264,7 @@ def consulteMediosDeTransporte():
                 for row in rows:
                     print("   ", row)
 
-                                     # --------------------------- BUSES --------------------------#
+                    # --------------------------- BUSES --------------------------#
 
             if elTipoTransporte == 'bus':
 
@@ -274,7 +275,6 @@ def consulteMediosDeTransporte():
                     print(" " + obtengaElNombreDe(elNodoDeOrigen))
                     for row in rows:
                         print("   ", row)
-
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -293,15 +293,16 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
                 elMensaje.append(lasEstacionesDelTren[laEstacion])
-    lasIndicaciones="Sus estaciones son: "
+    lasIndicaciones = "Sus estaciones son: "
     for laEstacion in elMensaje:
-        lasIndicaciones+=obtengaElNombreDe(laEstacion)
-        lasIndicaciones+=", "
-    if elMensaje.count(7)>0:
-        laPosicion=elMensaje.index(7)
-        if laPosicion>0 and laPosicion<elMensaje.__len__()-1:
-            lasIndicaciones+="y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
-    return(lasIndicaciones)
+        lasIndicaciones += obtengaElNombreDe(laEstacion)
+        lasIndicaciones += ", "
+    if elMensaje.count(7) > 0:
+        laPosicion = elMensaje.index(7)
+        if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
+            lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
+    return (lasIndicaciones)
+
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 GrafoMapa()
