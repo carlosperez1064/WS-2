@@ -128,12 +128,8 @@ def consulteMediosDeTransporte():
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
 
     elNodoDeOrigen = 11
-    elNodoDeDestino = 20
+    elNodoDeDestino = 9
     elTipoTransporte = 'tren'
-
-    elNodoDeOrigen = 23
-    elNodoDeDestino = 13
-    elTipoTransporte = 'taxi'
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -232,11 +228,12 @@ def consulteMediosDeTransporte():
                 rows = cursor.fetchall()
                 for row in rows:
                     print("   ", row)
+        facturacion(600, elNodoDeOrigen, elNodoDeDestino)
 
                     # --------------------------- BUSES --------------------------#
 
-            if elTipoTransporte == 'bus':
-                print("")
+    else:
+        print("")
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -265,37 +262,18 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
             lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
     return (lasIndicaciones)
 
-@app.route('/api/viajando/facturacion', methods=['POST'])
-def facturacion():
-#Version preliminar de cálculo del total
+def facturacion(kmHr,origen, destino):
 
-    tipoDeTransporte = "taxi"
-    distancia = nx.dijkstra_path_length(mapa, 19, 11)
+    distancia = nx.dijkstra_path_length(mapa, origen, destino)
+    total = kmHr * distancia
 
-    if tipoDeTransporte == 'avion':
-        kilometroPorHora = 100
-        total = kilometroPorHora * distancia
-        print("El costo es de",total)
-
-    if tipoDeTransporte == 'tren':
-        precioKilometro = 18
-        total = precioKilometro * distancia
-        print("El costo es de",total)
-
-    if tipoDeTransporte == 'taxi':
-        precioKilometro = 600
-        total = precioKilometro * distancia
-        print("El costo es de",total)
-
-    if tipoDeTransporte == 'bus':
-        precioKilometro = 20
-        total = precioKilometro * distancia
-        print("El costo es de",total)
+    print ("El costo es de", total)
 
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 GrafoMapa()
-#consulteMediosDeTransporte()
-facturacion()
+consulteMediosDeTransporte()
+#facturacion(18,22,23)
+
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
