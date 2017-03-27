@@ -119,7 +119,7 @@ def medios(nodo1, nodo2, medio):
 
 
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
-@app.route('/api/viajando/consulta/tren-avion', methods=['POST'])
+@app.route('/api/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
     # in_args = request.args  # Obtener todos los parámetros
 
@@ -265,10 +265,37 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
             lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
     return (lasIndicaciones)
 
+@app.route('/api/viajando/facturacion', methods=['POST'])
+def facturacion():
+#Version preliminar de cálculo del total
+
+    tipoDeTransporte = "taxi"
+    distancia = nx.dijkstra_path_length(mapa, 19, 11)
+
+    if tipoDeTransporte == 'avion':
+        kilometroPorHora = 100
+        total = kilometroPorHora * distancia
+        print("El costo es de",total)
+
+    if tipoDeTransporte == 'tren':
+        precioKilometro = 18
+        total = precioKilometro * distancia
+        print("El costo es de",total)
+
+    if tipoDeTransporte == 'taxi':
+        precioKilometro = 600
+        total = precioKilometro * distancia
+        print("El costo es de",total)
+
+    if tipoDeTransporte == 'bus':
+        precioKilometro = 20
+        total = precioKilometro * distancia
+        print("El costo es de",total)
+
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 GrafoMapa()
-consulteMediosDeTransporte()
-
+#consulteMediosDeTransporte()
+facturacion()
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
