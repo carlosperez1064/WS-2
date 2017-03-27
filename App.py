@@ -188,52 +188,72 @@ def consulteMediosDeTransporte():
                     print("Imposible ir en Avión o Tren, verifique en Bus o Taxi")
 
 
-                    # --------------------------- BUSES Y TAXIS --------------------------#
+    # --------------------------- BUSES Y TAXIS --------------------------#
+    # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
 
-    if elTipoTransporte == 'taxi' or elTipoTransporte == 'bus':
+    laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
+    print("La ruta mas corta es pasando por: ")
+    for elNodoRuta in laRutaCorta:
+        losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
+        print(losNombresDeLosNodos)
 
-        laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen,
-                                       elNodoDeDestino)  # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-        print("La ruta mas corta es pasando por: ")
-        for elNodoRuta in laRutaCorta:
-            losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
-            print(losNombresDeLosNodos)
+    # --------------------------- TAXIS --------------------------#
 
-                        # --------------------------- TAXIS --------------------------#
+            # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
-        # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
+    zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
 
-        zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
-        if elTipoTransporte == 'taxi':
-            if zonaOrigen == 'A':
-                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-                cursor.execute(
-                    """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
-                rows = cursor.fetchall()
-                for row in rows:
-                    print("   ", row)
-
-            if zonaOrigen == 'B':
-                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-                cursor.execute(
-                    """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
-                rows = cursor.fetchall()
-                for row in rows:
-                    print("   ", row)
-
-            if zonaOrigen == 'C':
-                print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-                cursor.execute(
-                    """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
-                rows = cursor.fetchall()
-                for row in rows:
-                    print("   ", row)
+    if elTipoTransporte == 'taxi':
         facturacion(600, elNodoDeOrigen, elNodoDeDestino)
+        if zonaOrigen == 'A':
+            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+            cursor.execute(
+                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
+            rows = cursor.fetchall()
+            for row in rows:
+                print("   ", row)
 
-                    # --------------------------- BUSES --------------------------#
+        if zonaOrigen == 'B':
+            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+            cursor.execute(
+                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
+            rows = cursor.fetchall()
+            for row in rows:
+                print("   ", row)
 
-    else:
-        print("")
+        if zonaOrigen == 'C':
+            print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+            cursor.execute(
+                """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
+            rows = cursor.fetchall()
+            for row in rows:
+                print("   ", row)
+
+    # --------------------------- BUSES --------------------------#
+
+    if elTipoTransporte == 'bus':
+
+    #Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
+    #Cada bus tiene sus botones (en update modificamos ID)...
+
+        cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
+        cursor.execute(""" COMMIT; """)
+
+        #empresaEnElOrigen = cursor.execute("""SELECT "NombreCompania" FROM public."Bus" WHERE "RutaOrigen"= elNodoDeOrigen""")
+        #empresaEnElDestino = cursor.execute("""SELECT "NombreCompania" FROM public."Bus" WHERE "RutaDestino"= elNodoDeDestino""")
+
+        empresaEnElOrigen = "Marvin S.A"
+        empresaEnElDestino= "Marvin S.A"
+
+
+    if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
+        for viaje in laRutaCorta:
+            if empresaEnElOrigen == empresaEnElDestino:
+                print("Viaje directo hasta", viaje, obtengaElNombreDe(elNodoDeDestino))
+
+
+
+    facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
