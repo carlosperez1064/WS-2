@@ -2,7 +2,8 @@ from flask import Flask, request, json, Response
 import psycopg2
 import networkx as nx
 import matplotlib.pyplot as plt
-import htmlPy
+import re, string
+#import htmlPy
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -96,7 +97,7 @@ def GrafoMapa():
 
     mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
     nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
-    # plt.show()
+    #plt.show()
 
 
 # -------------------------------------- MÉTODO PARA OBTENER NOMBRES DE LOS NODOS --------------------------------------#
@@ -128,9 +129,9 @@ def consulteMediosDeTransporte():
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
 
-    elNodoDeOrigen = 11
+    elNodoDeOrigen = 19
     elNodoDeDestino = 9
-    elTipoTransporte = 'tren'
+    elTipoTransporte = 'bus'
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -234,27 +235,44 @@ def consulteMediosDeTransporte():
 
     if elTipoTransporte == 'bus':
 
-    #Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
-    #Cada bus tiene sus botones (en update modificamos ID)...
+
+        cursor.execute("""SELECT "RutaOrigen" FROM public."Bus"; """)
+        fila = cursor.fetchall()
+        for filas in fila:
+            texto = str(filas)
+        origenDelBus = int(texto.strip(')').strip('(').strip(',')) #Da num de nodo de RutaOrigen en BD
+
+        if origenDelBus == elNodoDeOrigen:
+            cursor.execute("""SELECT "NombreCompania" FROM public."Bus"; """)
+            companiaOrigen = cursor.fetchall()
+
+        cursor.execute("""SELECT "RutaDestino" FROM public."Bus"; """)
+        fila = cursor.fetchall()
+        for filas in fila:
+            texto = str(filas)
+        destinoDelBus = int(texto.strip(')').strip('(').strip(','))
+
+        if destinoDelBus == elNodoDeDestino:
+            cursor.execute("""SELECT "NombreCompania" FROM public."Bus"; """)
+            companiaDestino = cursor.fetchall()
+
+        respuesta = 'Bus directo'
+
+        if companiaOrigen == companiaDestino:
+            print(respuesta)
+        elif origenDelBus == elVecinodeNodoOrigen:
+            print("El bus directo se toma en",elVecinodeNodoOrigen,'hasta',elNodoDeDestino)
+        elif origenDelBus == elVecinodeNodoDestino:
+            print("El bus directo llega hasta",elVecinodeNodoDestino,', luego debe tomar otra medio hasta',elNodoDeDestino)
+
+
+        facturacion(20, elNodoDeOrigen, elNodoDeDestino)
+
+        #Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
+        #Cada bus tiene sus botones (en update modificamos ID)...
 
         cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
         cursor.execute(""" COMMIT; """)
-
-        #empresaEnElOrigen = cursor.execute("""SELECT "NombreCompania" FROM public."Bus" WHERE "RutaOrigen"= elNodoDeOrigen""")
-        #empresaEnElDestino = cursor.execute("""SELECT "NombreCompania" FROM public."Bus" WHERE "RutaDestino"= elNodoDeDestino""")
-
-        empresaEnElOrigen = "Marvin S.A"
-        empresaEnElDestino= "Marvin S.A"
-
-
-    if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-        for viaje in laRutaCorta:
-            if empresaEnElOrigen == empresaEnElDestino:
-                print("Viaje directo hasta", viaje, obtengaElNombreDe(elNodoDeDestino))
-
-
-
-    facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -293,14 +311,14 @@ def facturacion(kmHr,origen, destino):
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 
-class BackEnd (htmlPy.Object):
-    def __init__(self, app):
-        super(BackEnd,self).__init__()
-        self.app = app
+#class BackEnd (htmlPy.Object):
+ #   def __init__(self, app):
+  #      super(BackEnd,self).__init__()
+   #     self.app = app
 
-        @htmlPy.Slot()
-        def myApp (self):
-            self.app.html = u"Hola"
+    #    @htmlPy.Slot()
+     #   def myApp (self):
+      #      self.app.html = u"Hola"
 
 
 GrafoMapa()
