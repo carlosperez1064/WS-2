@@ -1,4 +1,3 @@
-import htmlpy as htmlpy
 from flask import Flask, request, json, Response
 import psycopg2
 import networkx as nx
@@ -294,12 +293,12 @@ def facturacion(kmHr,origen, destino):
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 
-class BackEnd (htmlpy.Object):
+class BackEnd (htmlPy.Object):
     def __init__(self, app):
         super(BackEnd,self).__init__()
         self.app = app
 
-        @htmlpy.Slot()
+        @htmlPy.Slot()
         def myApp (self):
             self.app.html = u"Hola"
 
