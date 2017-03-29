@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../ClienteWS-2/.idea/ClienteWS-2.iml" filepath="$PROJECT_DIR$/../ClienteWS-2/.idea/ClienteWS-2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../TareaReposicion/.idea/TareaReposicion.iml" filepath="$PROJECT_DIR$/../TareaReposicion/.idea/TareaReposicion.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/WS-2.iml" filepath="$PROJECT_DIR$/.idea/WS-2.iml" />
     </modules>
   </component>
