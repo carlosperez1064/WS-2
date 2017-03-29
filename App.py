@@ -114,12 +114,6 @@ def obtengaLaZonaDe(param):
             return (mapa.node[nodo]["zona"])
 
 
-# ---------------------------------------- MÉTODO PARA  --------------------------------------#
-def medios(nodo1, nodo2, medio):
-    if mapa.node[nodo1][medio] and mapa.node[nodo2][medio]:
-        return True
-
-
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 @app.route('/api/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
@@ -131,7 +125,7 @@ def consulteMediosDeTransporte():
 
     elNodoDeOrigen = 19
     elNodoDeDestino = 9
-    elTipoTransporte = 'bus'
+    elTipoTransporte = 'taxi'
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -235,42 +229,11 @@ def consulteMediosDeTransporte():
 
     if elTipoTransporte == 'bus':
 
-
-        cursor.execute("""SELECT "RutaOrigen" FROM public."Bus"; """)
-        fila = cursor.fetchall()
-        for filas in fila:
-            texto = str(filas)
-        origenDelBus = int(texto.strip(')').strip('(').strip(',')) #Da num de nodo de RutaOrigen en BD
-
-        if origenDelBus == elNodoDeOrigen:
-            cursor.execute("""SELECT "NombreCompania" FROM public."Bus"; """)
-            companiaOrigen = cursor.fetchall()
-
-        cursor.execute("""SELECT "RutaDestino" FROM public."Bus"; """)
-        fila = cursor.fetchall()
-        for filas in fila:
-            texto = str(filas)
-        destinoDelBus = int(texto.strip(')').strip('(').strip(','))
-
-        if destinoDelBus == elNodoDeDestino:
-            cursor.execute("""SELECT "NombreCompania" FROM public."Bus"; """)
-            companiaDestino = cursor.fetchall()
-
-        respuesta = 'Bus directo'
-
-        if companiaOrigen == companiaDestino:
-            print(respuesta)
-        elif origenDelBus == elVecinodeNodoOrigen:
-            print("El bus directo se toma en",elVecinodeNodoOrigen,'hasta',elNodoDeDestino)
-        elif origenDelBus == elVecinodeNodoDestino:
-            print("El bus directo llega hasta",elVecinodeNodoDestino,', luego debe tomar otra medio hasta',elNodoDeDestino)
-
-
+        consulteBuses(elNodoDeOrigen, elNodoDeDestino)
         facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
         #Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
         #Cada bus tiene sus botones (en update modificamos ID)...
-
         cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
         cursor.execute(""" COMMIT; """)
 
@@ -301,13 +264,48 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
             lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
     return (lasIndicaciones)
 
+# ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
+def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
+
+    ruta1:[19,24,11,3,7]
+    ruta2:[6,22,8,16,7]
+    ruta3:[16,9,4,10,21,20,5]
+    ruta4:[7,23,15,13,14,5]
+    ruta5: [7,23,15,12,11,18,20,5]
+    ruta6: [7,2,14,5]
+
+    ruta = ruta1
+
+    elMensaje = []
+    elNodoDeOrigen = ruta.index(elNodoDeOrigen)
+    elNodoDeDestino = ruta.index(elNodoDeDestino)
+
+    if elNodoDeDestino > elNodoDeOrigen:
+        for laEstacion in ruta:
+            if ruta.index(laEstacion) >= elNodoDeOrigen and ruta.index(
+                    laEstacion) <= elNodoDeDestino:
+                elMensaje.append(laEstacion)
+    elif elNodoDeDestino < elNodoDeOrigen:
+        for laEstacion in range(len(ruta) - 1, -1, -1):
+            if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
+                elMensaje.append(ruta[laEstacion])
+    lasIndicaciones = "Sus estaciones son: "
+    for laEstacion in elMensaje:
+        lasIndicaciones += obtengaElNombreDe(laEstacion)
+        lasIndicaciones += ", "
+    if elMensaje.count(7) > 0:
+        laPosicion = elMensaje.index(7)
+        if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
+            lasIndicaciones += "y no olvide hacer cambio de bus"
+    return (lasIndicaciones)
+
+# ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 def facturacion(kmHr,origen, destino):
 
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
     total = kmHr * distancia
 
     print ("El costo es de", total)
-
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 
