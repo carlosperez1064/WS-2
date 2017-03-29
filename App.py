@@ -184,8 +184,8 @@ def consulteMediosDeTransporte():
                             if elTipoTransporte == 'tren':
                                 lasEstaciones = consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino)
                                 print(lasEstaciones)
-                else:
-                    print("Imposible ir en Avión o Tren, verifique en Bus o Taxi")
+                    else:
+                        print("Imposible ir en Avión o Tren, verifique en Bus o Taxi")
 
 
     # --------------------------- BUSES Y TAXIS --------------------------#
