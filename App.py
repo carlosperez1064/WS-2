@@ -1,7 +1,9 @@
+import htmlpy as htmlpy
 from flask import Flask, request, json, Response
 import psycopg2
 import networkx as nx
 import matplotlib.pyplot as plt
+import htmlPy
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -291,9 +293,23 @@ def facturacion(kmHr,origen, destino):
 
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
+
+class BackEnd (htmlpy.Object):
+    def __init__(self, app):
+        super(BackEnd,self).__init__()
+        self.app = app
+
+        @htmlpy.Slot()
+        def myApp (self):
+            self.app.html = u"Hola"
+
+
 GrafoMapa()
 consulteMediosDeTransporte()
+
 #facturacion(18,22,23)
 
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
+
+#http://amol-mandhane.github.io/htmlPy/
