@@ -2,6 +2,8 @@ from flask import Flask, request, json, Response
 import psycopg2
 import networkx as nx
 import matplotlib.pyplot as plt
+import re, string
+#import htmlPy
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -95,7 +97,7 @@ def GrafoMapa():
 
     mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
     nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
-    # plt.show()
+    #plt.show()
 
 
 # -------------------------------------- MÉTODO PARA OBTENER NOMBRES DE LOS NODOS --------------------------------------#
@@ -112,12 +114,6 @@ def obtengaLaZonaDe(param):
             return (mapa.node[nodo]["zona"])
 
 
-# ---------------------------------------- MÉTODO PARA  --------------------------------------#
-def medios(nodo1, nodo2, medio):
-    if mapa.node[nodo1][medio] and mapa.node[nodo2][medio]:
-        return True
-
-
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 @app.route('/api/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
@@ -127,9 +123,9 @@ def consulteMediosDeTransporte():
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
     # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
 
-    elNodoDeOrigen = 11
+    elNodoDeOrigen = 19
     elNodoDeDestino = 9
-    elTipoTransporte = 'tren'
+    elTipoTransporte = 'taxi'
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -233,27 +229,13 @@ def consulteMediosDeTransporte():
 
     if elTipoTransporte == 'bus':
 
-    #Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
-    #Cada bus tiene sus botones (en update modificamos ID)...
+        consulteBuses(elNodoDeOrigen, elNodoDeDestino)
+        facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
+        #Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
+        #Cada bus tiene sus botones (en update modificamos ID)...
         cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
         cursor.execute(""" COMMIT; """)
-
-        #empresaEnElOrigen = cursor.execute("""SELECT "NombreCompania" FROM public."Bus" WHERE "RutaOrigen"= elNodoDeOrigen""")
-        #empresaEnElDestino = cursor.execute("""SELECT "NombreCompania" FROM public."Bus" WHERE "RutaDestino"= elNodoDeDestino""")
-
-        empresaEnElOrigen = "Marvin S.A"
-        empresaEnElDestino= "Marvin S.A"
-
-
-    if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-        for viaje in laRutaCorta:
-            if empresaEnElOrigen == empresaEnElDestino:
-                print("Viaje directo hasta", viaje, obtengaElNombreDe(elNodoDeDestino))
-
-
-
-    facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -282,6 +264,42 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
             lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
     return (lasIndicaciones)
 
+# ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
+def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
+
+    ruta1:[19,24,11,3,7]
+    ruta2:[6,22,8,16,7]
+    ruta3:[16,9,4,10,21,20,5]
+    ruta4:[7,23,15,13,14,5]
+    ruta5: [7,23,15,12,11,18,20,5]
+    ruta6: [7,2,14,5]
+
+    ruta = ruta1
+
+    elMensaje = []
+    elNodoDeOrigen = ruta.index(elNodoDeOrigen)
+    elNodoDeDestino = ruta.index(elNodoDeDestino)
+
+    if elNodoDeDestino > elNodoDeOrigen:
+        for laEstacion in ruta:
+            if ruta.index(laEstacion) >= elNodoDeOrigen and ruta.index(
+                    laEstacion) <= elNodoDeDestino:
+                elMensaje.append(laEstacion)
+    elif elNodoDeDestino < elNodoDeOrigen:
+        for laEstacion in range(len(ruta) - 1, -1, -1):
+            if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen:
+                elMensaje.append(ruta[laEstacion])
+    lasIndicaciones = "Sus estaciones son: "
+    for laEstacion in elMensaje:
+        lasIndicaciones += obtengaElNombreDe(laEstacion)
+        lasIndicaciones += ", "
+    if elMensaje.count(7) > 0:
+        laPosicion = elMensaje.index(7)
+        if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
+            lasIndicaciones += "y no olvide hacer cambio de bus"
+    return (lasIndicaciones)
+
+# ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 def facturacion(kmHr,origen, destino):
 
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
@@ -289,11 +307,24 @@ def facturacion(kmHr,origen, destino):
 
     print ("El costo es de", total)
 
-
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
+
+#class BackEnd (htmlPy.Object):
+ #   def __init__(self, app):
+  #      super(BackEnd,self).__init__()
+   #     self.app = app
+
+    #    @htmlPy.Slot()
+     #   def myApp (self):
+      #      self.app.html = u"Hola"
+
+
 GrafoMapa()
 consulteMediosDeTransporte()
+
 #facturacion(18,22,23)
 
 # if __name__ == '__main__':
 # app.run(port=8000, host='0.0.0.0')
+
+#http://amol-mandhane.github.io/htmlPy/
