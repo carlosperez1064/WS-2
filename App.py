@@ -3,7 +3,6 @@ import psycopg2
 import networkx as nx
 import matplotlib.pyplot as plt
 import re, string
-#import htmlPy
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -12,9 +11,9 @@ app = Flask(__name__)
 mapa = nx.Graph()  # Crear el grafo
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-conn = psycopg2.connect(conexion)
-cursor = conn.cursor()
+#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+#conn = psycopg2.connect(conexion)
+#cursor = conn.cursor()
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
@@ -267,14 +266,16 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 
-    ruta1:[19,24,11,3,7]
-    ruta2:[6,22,8,16,7]
-    ruta3:[16,9,4,10,21,20,5]
-    ruta4:[7,23,15,13,14,5]
-    ruta5: [7,23,15,12,11,18,20,5]
-    ruta6: [7,2,14,5]
+    rutas= [[19,24,11,3,7],
+        [6,22,8,16,7],
+        [16,9,4,10,21,20,5],
+        [7,23,15,13,14,5],
+        [7,23,15,12,11,18,20,5],
+        [7,2,14,5]]
 
-    ruta = ruta1
+    for ruta in rutas:
+        if ruta.count(elNodoDeOrigen)>0:
+            print("Encontrado en ruta", rutas.index(ruta))
 
     elMensaje = []
     elNodoDeOrigen = ruta.index(elNodoDeOrigen)
@@ -309,18 +310,9 @@ def facturacion(kmHr,origen, destino):
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 
-#class BackEnd (htmlPy.Object):
- #   def __init__(self, app):
-  #      super(BackEnd,self).__init__()
-   #     self.app = app
-
-    #    @htmlPy.Slot()
-     #   def myApp (self):
-      #      self.app.html = u"Hola"
-
-
 GrafoMapa()
-consulteMediosDeTransporte()
+#consulteMediosDeTransporte()
+consulteBuses(19,7)
 
 #facturacion(18,22,23)
 
