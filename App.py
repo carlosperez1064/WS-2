@@ -184,7 +184,7 @@ def consulteMediosDeTransporte():
                         print("Imposible ir en Avión o Tren, verifique en Bus o Taxi")
 
 
-    # --------------------------- BUSES Y TAXIS --------------------------#
+    # --------------------------- TAXIS --------------------------#
     # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
 
     laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
@@ -306,7 +306,7 @@ def facturacion(kmHr, origen, destino):
 
 GrafoMapa()
 # consulteMediosDeTransporte()
-consulteBuses(19, 7)
+consulteBuses(5, 19)
 
 # facturacion(18,22,23)
 
