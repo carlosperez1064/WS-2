@@ -3,6 +3,8 @@ import psycopg2
 import networkx as nx
 import matplotlib.pyplot as plt
 import re, string
+from flask import render_template
+
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -15,6 +17,10 @@ mapa = nx.Graph()  # Crear el grafo
 # conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 # conn = psycopg2.connect(conexion)
 # cursor = conn.cursor()
+
+@app.route('/registrar')
+def signUp():
+    return render_template('App.html')
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
