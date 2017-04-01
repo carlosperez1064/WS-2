@@ -14,20 +14,21 @@ mapa = nx.Graph()  # Crear el grafo
 
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-# conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-# conn = psycopg2.connect(conexion)
-# cursor = conn.cursor()
+conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+conn = psycopg2.connect(conexion)
+cursor = conn.cursor()
 
-#@app.route('/registro')
-#def registro():
- #   return render_template('App.html')
+@app.route('/signUp')
+def signUp():
+    return render_template('AppHTML.html')
 
 
-#@app.route('/registrar', methods=['POST'])
-#def registrar():
- #   user =  request.form['username']
-  #  password = request.form['password']
-   # return json.dumps({'status':'OK','user':user,'pass':password})
+@app.route('/signUpUser', methods=['POST'])
+def signUpUser():
+    user =  request.form['username'];
+    password = request.form['password'];
+    return json.dumps({'status':'OK','user':user,'pass':password});
+
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 def GrafoMapa():
@@ -108,7 +109,7 @@ def GrafoMapa():
              (20, 21, 13)]
 
     mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
-    nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
+    #nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
     # plt.show()
 
 
@@ -318,13 +319,13 @@ def facturacion(kmHr, origen, destino):
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 
-GrafoMapa()
-consulteMediosDeTransporte()
+#GrafoMapa()
+#consulteMediosDeTransporte()
 #consulteBuses(5, 19)
 
 # facturacion(18,22,23)
 
-# if __name__ == '__main__':
-# app.run(port=8000, host='0.0.0.0')
+if __name__ == '__main__':
+ app.run(port=5000, host='127.0.0.1')
 
 # http://amol-mandhane.github.io/htmlPy/
