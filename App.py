@@ -238,7 +238,7 @@ def consulteMediosDeTransporte():
             #rows = cursor.fetchall()
             #for row in rows:
                 #print("   ", row)
-
+#teythdt
     # --------------------------- BUSES --------------------------#
 
     if elTipoTransporte == 'bus':
