@@ -4,14 +4,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import re, string
 from flask import render_template
-from flask_httpauth import HTTPBasicAuth
+#from flask_httpauth import HTTPBasicAuth
 
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 app = Flask(__name__)
 mapa = nx.Graph()  # Crear el grafo
-auth = HTTPBasicAuth()
+#auth = HTTPBasicAuth()
 
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
@@ -248,8 +248,8 @@ def consulteMediosDeTransporte():
 
         # Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
         # Cada bus tiene sus botones (en update modificamos ID)...
-        cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
-        cursor.execute(""" COMMIT; """)
+#        cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
+ #       cursor.execute(""" COMMIT; """)
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -310,10 +310,10 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
-def facturacion(kmHr, origen, destino):
+def facturacion(laDistancia, origen, destino):
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
-    total = kmHr * distancia
-
+    total = laDistancia * distancia
+    print(mapa.get_edge_data(origen,destino))
     print("El costo es de", total)
 
 
