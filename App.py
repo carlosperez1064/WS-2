@@ -18,16 +18,16 @@ mapa = nx.Graph()  # Crear el grafo
 # conn = psycopg2.connect(conexion)
 # cursor = conn.cursor()
 
-@app.route('/registro')
-def registro():
-    return render_template('App.html')
+#@app.route('/registro')
+#def registro():
+ #   return render_template('App.html')
 
 
-@app.route('/registrar', methods=['POST'])
-def registrar():
-    user =  request.form['username']
-    password = request.form['password']
-    return json.dumps({'status':'OK','user':user,'pass':password})
+#@app.route('/registrar', methods=['POST'])
+#def registrar():
+ #   user =  request.form['username']
+  #  password = request.form['password']
+   # return json.dumps({'status':'OK','user':user,'pass':password})
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 def GrafoMapa():
