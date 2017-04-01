@@ -15,13 +15,13 @@ mapa = nx.Graph()  # Crear el grafo
 
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-conn = psycopg2.connect(conexion)
-cursor = conn.cursor()
+#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+#conn = psycopg2.connect(conexion)
+#cursor = conn.cursor()
 
 @app.route('/signUp')
 def signUp():
-    return render_template('AppHTML.html')
+    return render_template('/AppHTML.html')
 
 
 @app.route('/signUpUser', methods=['POST'])
