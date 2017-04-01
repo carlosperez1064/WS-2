@@ -19,14 +19,8 @@ auth = HTTPBasicAuth()
 #conn = psycopg2.connect(conexion)
 #cursor = conn.cursor()
 
-<<<<<<< HEAD
-@app.route('/signUp')
-
-def signUp():
-=======
 @app.route('/formulario')
 def formulario():
->>>>>>> origin/master
     return render_template('/AppHTML.html')
 
 
