@@ -1,5 +1,5 @@
 import networkx as nx
-from flask import Flask, request, json, Response
+from flask import Flask, request, json
 from flask import render_template
 from flask_httpauth import HTTPBasicAuth
 
@@ -20,12 +20,14 @@ auth = HTTPBasicAuth()
 def formulario():
     return render_template('registro.html')
 
+
 # ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
+
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 
@@ -105,6 +107,8 @@ lista = [(19, 24, 60),
          (20, 21, 13)]
 
 mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
+
+
 # nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
 # plt.show()
 
@@ -131,9 +135,12 @@ def consultas():
 
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 
+# Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
+# en cuyo caso, enviaría a la persona hasta ese nodo en cualquiera de esos dos medios de transporte, y luego al
+# nodo de elNodoDeDestino final en bus o en taxi.
+
 @app.route('/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
-
     unOrigen = request.form['origen']
     unDestino = request.form['destino']
     elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
@@ -144,9 +151,6 @@ def consulteMediosDeTransporte():
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
 
-    # Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
-    # en cuyo caso, enviaría a la persona hasta ese nodo en cualquiera de esos dos medios de transporte, y luego al
-    # nodo de elNodoDeDestino final en bus o en taxi.
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
 
@@ -154,20 +158,22 @@ def consulteMediosDeTransporte():
 
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-            resultado = ("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
-                  "en", elTipoTransporte)
+            resultado = (
+            "Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
+            "en", elTipoTransporte)
             if elTipoTransporte == 'tren':
                 lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
                 resultado = (lasEstaciones)
-                costo = facturacion(17,elNodoDeOrigen,elNodoDeDestino)
+                costo = facturacion(17, elNodoDeOrigen, elNodoDeDestino)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
-                        resultado = ("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
-                              elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
-                              "en bus o taxi")
+                        resultado = (
+                        "Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
+                        elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
+                        "en bus o taxi")
                         if elTipoTransporte == 'tren':
                             lasEstaciones = consulteTrenes(elNodoDeOrigen, elVecino)
                             resultado = (lasEstaciones)
@@ -176,9 +182,9 @@ def consulteMediosDeTransporte():
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
                         resultado = ("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino),
-                              "en bus o taxi y luego de", obtengaElNombreDe(elVecino), "a",
-                              obtengaElNombreDe(elNodoDeDestino),
-                              "en", elTipoTransporte)
+                                     "en bus o taxi y luego de", obtengaElNombreDe(elVecino), "a",
+                                     obtengaElNombreDe(elNodoDeDestino),
+                                     "en", elTipoTransporte)
                         if elTipoTransporte == 'tren':
                             lasEstaciones = consulteTrenes(elVecino, elNodoDeDestino)
                             resultado = (lasEstaciones)
@@ -188,10 +194,10 @@ def consulteMediosDeTransporte():
                         for elVecinodeNodoDestino in losVecinosDelNodoDestino:
                             if mapa.node[elVecinodeNodoDestino][elTipoTransporte]:
                                 resultado = ("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a",
-                                      obtengaElNombreDe(elVecinodeNodoOrigen), "en bus o taxi, luego de",
-                                      obtengaElNombreDe(elVecinodeNodoOrigen), "en", elTipoTransporte, "a",
-                                      obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
-                                      obtengaElNombreDe(elNodoDeDestino))
+                                             obtengaElNombreDe(elVecinodeNodoOrigen), "en bus o taxi, luego de",
+                                             obtengaElNombreDe(elVecinodeNodoOrigen), "en", elTipoTransporte, "a",
+                                             obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
+                                             obtengaElNombreDe(elNodoDeDestino))
                                 if elTipoTransporte == 'tren':
                                     print(elVecinodeNodoOrigen, elVecinodeNodoDestino)
                                     lasEstaciones = consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino)
@@ -203,7 +209,7 @@ def consulteMediosDeTransporte():
     # --------------------------- TAXIS --------------------------#
 
     elif elTipoTransporte == 'taxi':
-        resultado = consulteTaxis(elNodoDeOrigen,elNodoDeDestino)
+        resultado = consulteTaxis(elNodoDeOrigen, elNodoDeDestino)
         costo = facturacion(600, elNodoDeOrigen, elNodoDeDestino)
 
     # --------------------------- BUSES --------------------------#
@@ -214,11 +220,11 @@ def consulteMediosDeTransporte():
 
     # ----------------------- GUARDAR EN LOG -----------------------#
 
-    #logBD = {'origen': elNodoDeOrigen, 'destino': elNodoDeDestino, 'tipoTransporte': elTipoTransporte})
+    # logBD = {'origen': elNodoDeOrigen, 'destino': elNodoDeDestino, 'tipoTransporte': elTipoTransporte})
 
     # --------------------------- RESPUESTA ------------------------#
 
-    respuesta = {"Costo":costo,"Respuesta ": resultado}
+    respuesta = {"Costo": costo, "Respuesta ": resultado}
     jsonConRespuesta = json.dumps(respuesta)
 
     return jsonConRespuesta
@@ -312,30 +318,32 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
     if laRuta1 != laRuta2:
         for i in laRuta1:
             if i in laRuta2:
-                resultado = "Su viaje es directo hasta " +str(obtengaElNombreDe(i))+", en donde debe realizar " \
-                                                                                    "un transbordo hacia su destino"
+                resultado = "Su viaje es directo hasta " + str(obtengaElNombreDe(i)) + ", en donde debe realizar " \
+                                                                                       "un transbordo hacia su destino"
     else:
         resultado = "Viaje directo"
 
     return resultado
 
+
 # APARTAR ESPACIOS EN EL BUS
-    #       cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
-    #       cursor.execute(""" COMMIT; """)
+#       cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
+#       cursor.execute(""" COMMIT; """)
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 def facturacion(laDistancia, origen, destino):
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
     total = laDistancia * distancia
-    #print(mapa.get_edge_data(origen, destino))
-    return "El costo es de "+ str(total)
+    # print(mapa.get_edge_data(origen, destino))
+    return "El costo es de " + str(total)
+
 
 # ------------------------------------------- MÉTODO PARA GUARDAR EN LOG -----------------------------------------------#
 def logEnBD():
     return ""
 
+
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
     app.run(port=5000, host='127.0.0.1')
-
