@@ -1,11 +1,11 @@
-from flask import Flask, request, json, Response
+from flask import Flask, request, json, Response, jsonify
 import psycopg2
 import networkx as nx
 import matplotlib.pyplot as plt
 import re, string
 from flask import render_template
+#from flask-HTTPBasicAuthttpauth import HTTPBasicAuth
 from flask_httpauth import HTTPBasicAuth
-
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -29,7 +29,6 @@ def registro():
     usuario =  request.form['usuario']
     contrasena = request.form['contrasena']
     return json.dumps({'status':'OK','usuario':usuario,'contrasena':contrasena})
-
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 def GrafoMapa():
