@@ -15,19 +15,19 @@ auth = HTTPBasicAuth()
 # conn = psycopg2.connect(conexion)
 # cursor = conn.cursor()
 
+# ------------------------------------------------ MOSTRAR FORMULARIO --------------------------------------------------#
 @app.route('/formulario')
 def formulario():
-    return render_template('login.html')
+    return render_template('registro.html')
 
-
+# ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
-    # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
-    # Agregar nodos al grafo con atributos
+# ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 
 mapa.add_node(1, {"Nombre": "Volcan Arenal", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
 mapa.add_node(2, {"Nombre": "Quepos", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
@@ -123,12 +123,13 @@ def obtengaLaZonaDe(param):
             return (mapa.node[nodo]["zona"])
 
 
-# --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
-
+# ------------------------------------------ MOSTRAR HTML PARA CONSULTAS -----------------------------------------------#
 @app.route('/consultas')
 def consultas():
     return render_template('consultas.html')
 
+
+# --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 
 @app.route('/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
