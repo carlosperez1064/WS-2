@@ -1,10 +1,6 @@
-from flask import Flask, request, json, Response, jsonify
-import psycopg2
 import networkx as nx
-import matplotlib.pyplot as plt
-import re, string
+from flask import Flask, request, json
 from flask import render_template
-#from flask-HTTPBasicAuthttpauth import HTTPBasicAuth
 from flask_httpauth import HTTPBasicAuth
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
@@ -15,102 +11,103 @@ auth = HTTPBasicAuth()
 
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-#conn = psycopg2.connect(conexion)
-#cursor = conn.cursor()
+# conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+# conn = psycopg2.connect(conexion)
+# cursor = conn.cursor()
 
 @app.route('/formulario')
 def formulario():
-    return render_template('/login.html')
+    return render_template('login.html')
 
 
 @app.route('/registro', methods=['POST'])
 def registro():
-    usuario =  request.form['usuario']
+    usuario = request.form['usuario']
     contrasena = request.form['contrasena']
-    return json.dumps({'status':'OK','usuario':usuario,'contrasena':contrasena})
+    print(type(usuario), contrasena)
+    return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
-# ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
-def GrafoMapa():
+    # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
     # Agregar nodos al grafo con atributos
-    mapa.add_node(1, {"Nombre": "Volcan Arenal", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(2, {"Nombre": "Quepos", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(3, {"Nombre": "Las Juntas", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(4, {"Nombre": "Cariari Pococi", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": True})
-    mapa.add_node(5, {"Nombre": "Puerto Jimenez", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
-    mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "zona": "A", "bus": True, "taxi": True, "tren": False,
-                      "avion": False})
-    mapa.add_node(7, {"Nombre": "San Jose", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
-    mapa.add_node(8, {"Nombre": "Upala", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False,
-                      "avion": False})
-    mapa.add_node(10, {"Nombre": "Cahuita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(11, {"Nombre": "Filadelfia", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(12,
-                  {"Nombre": "Volcan Turrialba", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(13, {"Nombre": "San isidro del General", "zona": "C", "bus": True, "taxi": True, "tren": True,
-                       "avion": False})
-    mapa.add_node(14, {"Nombre": "Uvita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(15, {"Nombre": "Volcan Irazu", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(16,
-                  {"Nombre": "Volcan Tenorio", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(17, {"Nombre": "Moravia", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(18,
-                  {"Nombre": "Cerro Chirripo", "zona": "C", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "zona": "A", "bus": True, "taxi": True, "tren": False,
-                       "avion": True})
-    mapa.add_node(20, {"Nombre": "Bribri", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "zona": "C", "bus": True, "taxi": True, "tren": False,
-                       "avion": True})
-    mapa.add_node(22, {"Nombre": "Los Chiles", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
-    mapa.add_node(23, {"Nombre": "Volcan Barva", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
-    mapa.add_node(24, {"Nombre": "Santa Cruz", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 
-    # Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
-    lista = [(19, 24, 60),
-             (19, 6, 40),
-             (19, 11, 50),
-             (24, 11, 74),
-             (11, 6, 92),
-             (11, 3, 112),
-             (6, 8, 69),
-             (6, 22, 60),
-             (8, 16, 46),
-             (22, 16, 70),
-             (16, 9, 120),
-             (16, 1, 69),
-             (3, 1, 30),
-             (3, 7, 60),
-             (1, 9, 90),
-             (7, 23, 43),
-             (7, 2, 107),
-             (7, 15, 40),
-             (9, 23, 50),
-             (9, 4, 87),
-             (2, 13, 60),
-             (2, 14, 61),
-             (15, 23, 30),
-             (15, 12, 10),
-             (15, 13, 32),
-             (23, 4, 70),
-             (4, 10, 120),
-             (4, 12, 80),
-             (14, 18, 70),
-             (14, 5, 90),
-             (14, 13, 55),
-             (13, 18, 20),
-             (12, 18, 60),
-             (12, 17, 61),
-             (5, 20, 180),
-             (18, 20, 50),
-             (18, 17, 40),
-             (17, 10, 20),
-             (10, 21, 16),
-             (20, 21, 13)]
+mapa.add_node(1, {"Nombre": "Volcan Arenal", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(2, {"Nombre": "Quepos", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(3, {"Nombre": "Las Juntas", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(4, {"Nombre": "Cariari Pococi", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": True})
+mapa.add_node(5, {"Nombre": "Puerto Jimenez", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
+mapa.add_node(6, {"Nombre": "Volcan Rincon de la Vieja", "zona": "A", "bus": True, "taxi": True, "tren": False,
+                  "avion": False})
+mapa.add_node(7, {"Nombre": "San Jose", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
+mapa.add_node(8, {"Nombre": "Upala", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False,
+                  "avion": False})
+mapa.add_node(10, {"Nombre": "Cahuita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(11, {"Nombre": "Filadelfia", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(12,
+              {"Nombre": "Volcan Turrialba", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(13, {"Nombre": "San isidro del General", "zona": "C", "bus": True, "taxi": True, "tren": True,
+                   "avion": False})
+mapa.add_node(14, {"Nombre": "Uvita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(15, {"Nombre": "Volcan Irazu", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(16,
+              {"Nombre": "Volcan Tenorio", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(17, {"Nombre": "Moravia", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(18,
+              {"Nombre": "Cerro Chirripo", "zona": "C", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(19, {"Nombre": "La Casona Santa Rosa", "zona": "A", "bus": True, "taxi": True, "tren": False,
+                   "avion": True})
+mapa.add_node(20, {"Nombre": "Bribri", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(21, {"Nombre": "Puerto Viejo Talamanca", "zona": "C", "bus": True, "taxi": True, "tren": False,
+                   "avion": True})
+mapa.add_node(22, {"Nombre": "Los Chiles", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
+mapa.add_node(23, {"Nombre": "Volcan Barva", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
+mapa.add_node(24, {"Nombre": "Santa Cruz", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 
-    mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
-    #nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
-    # plt.show()
+# Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
+lista = [(19, 24, 60),
+         (19, 6, 40),
+         (19, 11, 50),
+         (24, 11, 74),
+         (11, 6, 92),
+         (11, 3, 112),
+         (6, 8, 69),
+         (6, 22, 60),
+         (8, 16, 46),
+         (22, 16, 70),
+         (16, 9, 120),
+         (16, 1, 69),
+         (3, 1, 30),
+         (3, 7, 60),
+         (1, 9, 90),
+         (7, 23, 43),
+         (7, 2, 107),
+         (7, 15, 40),
+         (9, 23, 50),
+         (9, 4, 87),
+         (2, 13, 60),
+         (2, 14, 61),
+         (15, 23, 30),
+         (15, 12, 10),
+         (15, 13, 32),
+         (23, 4, 70),
+         (4, 10, 120),
+         (4, 12, 80),
+         (14, 18, 70),
+         (14, 5, 90),
+         (14, 13, 55),
+         (13, 18, 20),
+         (12, 18, 60),
+         (12, 17, 61),
+         (5, 20, 180),
+         (18, 20, 50),
+         (18, 17, 40),
+         (17, 10, 20),
+         (10, 21, 16),
+         (20, 21, 13)]
+
+mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
+# nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
+# plt.show()
 
 
 # -------------------------------------- MÉTODO PARA OBTENER NOMBRES DE LOS NODOS --------------------------------------#
@@ -128,17 +125,30 @@ def obtengaLaZonaDe(param):
 
 
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
-@app.route('/api/viajando/consultas', methods=['POST'])
+
+@app.route('/consultas')
+def consultas():
+    return render_template('consultas.html')
+
+
+@app.route('/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
+    unOrigen = request.form['origen']
+    unDestino = request.form['destino']
+    elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
+
+    elNodoDeOrigen = int(unOrigen)
+    elNodoDeDestino = int(unDestino)
+
+    print(elNodoDeOrigen)
     # in_args = request.args  # Obtener todos los parámetros
 
     # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
     # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
-    # elTipoTransporte = in_args['elTipoTransporte'] #Seleccionar parametro con clave elTipoTransporte
 
-    elNodoDeOrigen = 19
-    elNodoDeDestino = 21
-    elTipoTransporte = 'taxi'
+    # elNodoDeOrigen = 19
+    # elNodoDeDestino = 21
+    # elTipoTransporte = 'taxi'
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -200,7 +210,7 @@ def consulteMediosDeTransporte():
 
     # --------------------------- TAXIS --------------------------#
     # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
-    elif elTipoTransporte=='taxi':
+    elif elTipoTransporte == 'taxi':
         laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
         print("La ruta mas corta es pasando por: ")
         for elNodoRuta in laRutaCorta:
@@ -214,31 +224,31 @@ def consulteMediosDeTransporte():
 
 
 
-    #if elTipoTransporte == 'taxi':
+        # if elTipoTransporte == 'taxi':
 
-        #if zonaOrigen == 'A':
-            #print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            #cursor.execute(
-                #"""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
-            #rows = cursor.fetchall()
-            #for row in rows:
-                #print("   ", row)
+        # if zonaOrigen == 'A':
+        # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+        # cursor.execute(
+        # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
+        # rows = cursor.fetchall()
+        # for row in rows:
+        # print("   ", row)
 
-        #if zonaOrigen == 'B':
-            #print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            #cursor.execute(
-                #"""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
-            #rows = cursor.fetchall()
-            #for row in rows:
-                #print("   ", row)
+        # if zonaOrigen == 'B':
+        # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+        # cursor.execute(
+        # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
+        # rows = cursor.fetchall()
+        # for row in rows:
+        # print("   ", row)
 
-        #if zonaOrigen == 'C':
-            #print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-            #cursor.execute(
-                #"""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
-            #rows = cursor.fetchall()
-            #for row in rows:
-                #print("   ", row)
+        # if zonaOrigen == 'C':
+        # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+        # cursor.execute(
+        # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
+        # rows = cursor.fetchall()
+        # for row in rows:
+        # print("   ", row)
     # --------------------------- BUSES --------------------------#
 
     if elTipoTransporte == 'bus':
@@ -247,8 +257,13 @@ def consulteMediosDeTransporte():
 
         # Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
         # Cada bus tiene sus botones (en update modificamos ID)...
-#        cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
- #       cursor.execute(""" COMMIT; """)
+    #        cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
+    #       cursor.execute(""" COMMIT; """)
+
+    resp = json.dumps(
+        {'status': 'OK', 'origen': elNodoDeOrigen, 'destino': elNodoDeDestino, 'tipoTransporte': elTipoTransporte})
+
+    return resp
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -303,7 +318,7 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
     if laRuta1 != laRuta2:
         for i in laRuta1:
             if i in laRuta2:
-                print("Transbordo en",obtengaElNombreDe(i))
+                print("Transbordo en", obtengaElNombreDe(i))
     else:
         print("Viaje directo")
 
@@ -312,19 +327,18 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 def facturacion(laDistancia, origen, destino):
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
     total = laDistancia * distancia
-    print(mapa.get_edge_data(origen,destino))
+    print(mapa.get_edge_data(origen, destino))
     print("El costo es de", total)
 
 
 # ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
 
-#GrafoMapa()
-#consulteMediosDeTransporte()
-#consulteBuses(5, 19)
+# consulteMediosDeTransporte()
+# consulteBuses(5, 19)
 
 # facturacion(18,22,23)
 
 if __name__ == '__main__':
- app.run(port=5000, host='127.0.0.1')
+    app.run(port=5000, host='127.0.0.1')
 
 # http://amol-mandhane.github.io/htmlPy/
