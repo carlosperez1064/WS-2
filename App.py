@@ -21,7 +21,7 @@ auth = HTTPBasicAuth()
 
 @app.route('/formulario')
 def formulario():
-    return render_template('/AppHTML.html')
+    return render_template('/login.html')
 
 
 @app.route('/registro', methods=['POST'])
