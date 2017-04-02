@@ -1,5 +1,5 @@
 import networkx as nx
-from flask import Flask, request, json
+from flask import Flask, request, json, Response
 from flask import render_template
 from flask_httpauth import HTTPBasicAuth
 
@@ -24,7 +24,6 @@ def formulario():
 def registro():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
-    print(type(usuario), contrasena)
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
     # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
@@ -133,22 +132,13 @@ def consultas():
 
 @app.route('/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
+
     unOrigen = request.form['origen']
     unDestino = request.form['destino']
     elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
 
     elNodoDeOrigen = int(unOrigen)
     elNodoDeDestino = int(unDestino)
-
-    print(elNodoDeOrigen)
-    # in_args = request.args  # Obtener todos los parámetros
-
-    # elNodoDeOrigen = in_args['elNodoDeOrigen'] #Seleccionar parametro con clave elNodoDeOrigen
-    # elNodoDeDestino = in_args['elNodoDeDestino'] #Seleccionar parametro con clave elNodoDeDestino
-
-    # elNodoDeOrigen = 19
-    # elNodoDeDestino = 21
-    # elTipoTransporte = 'taxi'
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -163,39 +153,40 @@ def consulteMediosDeTransporte():
 
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-            print("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
+            resultado = ("Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
                   "en", elTipoTransporte)
             if elTipoTransporte == 'tren':
                 lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
-                print(lasEstaciones)
+                resultado = (lasEstaciones)
+                costo = facturacion(17,elNodoDeOrigen,elNodoDeDestino)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
-                        print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
+                        resultado = ("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
                               elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
                               "en bus o taxi")
                         if elTipoTransporte == 'tren':
                             lasEstaciones = consulteTrenes(elNodoDeOrigen, elVecino)
-                            print(lasEstaciones)
+                            resultado = (lasEstaciones)
             elif elNodoDestinoTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoOrigen:
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
-                        print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino),
+                        resultado = ("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino),
                               "en bus o taxi y luego de", obtengaElNombreDe(elVecino), "a",
                               obtengaElNombreDe(elNodoDeDestino),
                               "en", elTipoTransporte)
                         if elTipoTransporte == 'tren':
                             lasEstaciones = consulteTrenes(elVecino, elNodoDeDestino)
-                            print(lasEstaciones)
+                            resultado = (lasEstaciones)
             else:
                 for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
                     if mapa.node[elVecinodeNodoOrigen][elTipoTransporte]:
                         for elVecinodeNodoDestino in losVecinosDelNodoDestino:
                             if mapa.node[elVecinodeNodoDestino][elTipoTransporte]:
-                                print("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a",
+                                resultado = ("Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a",
                                       obtengaElNombreDe(elVecinodeNodoOrigen), "en bus o taxi, luego de",
                                       obtengaElNombreDe(elVecinodeNodoOrigen), "en", elTipoTransporte, "a",
                                       obtengaElNombreDe(elVecinodeNodoDestino), "y por ultimo en bus o taxi a",
@@ -203,67 +194,33 @@ def consulteMediosDeTransporte():
                                 if elTipoTransporte == 'tren':
                                     print(elVecinodeNodoOrigen, elVecinodeNodoDestino)
                                     lasEstaciones = consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino)
-                                    print(lasEstaciones)
+                                    resultado = (lasEstaciones)
                             else:
-                                print("Imposible ir en Avión o Tren, verifique en Bus o Taxi")
+                                resultado = "Imposible ir en Avion o Tren, verifique en Bus o Taxi"
 
 
     # --------------------------- TAXIS --------------------------#
-    # Tomar parametros para determinar ruta corta (usa algoritmo Dijkstra)
+
     elif elTipoTransporte == 'taxi':
-        laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
-        print("La ruta mas corta es pasando por: ")
-        for elNodoRuta in laRutaCorta:
-            losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
-            print(losNombresDeLosNodos)
-        zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
-        facturacion(600, elNodoDeOrigen, elNodoDeDestino)
-        # --------------------------- TAXIS --------------------------#
+        resultado = consulteTaxis(elNodoDeOrigen,elNodoDeDestino)
+        costo = facturacion(600, elNodoDeOrigen, elNodoDeDestino)
 
-        # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
-
-
-
-        # if elTipoTransporte == 'taxi':
-
-        # if zonaOrigen == 'A':
-        # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-        # cursor.execute(
-        # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
-        # rows = cursor.fetchall()
-        # for row in rows:
-        # print("   ", row)
-
-        # if zonaOrigen == 'B':
-        # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-        # cursor.execute(
-        # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
-        # rows = cursor.fetchall()
-        # for row in rows:
-        # print("   ", row)
-
-        # if zonaOrigen == 'C':
-        # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-        # cursor.execute(
-        # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
-        # rows = cursor.fetchall()
-        # for row in rows:
-        # print("   ", row)
     # --------------------------- BUSES --------------------------#
 
     if elTipoTransporte == 'bus':
-        consulteBuses(elNodoDeOrigen, elNodoDeDestino)
-        facturacion(20, elNodoDeOrigen, elNodoDeDestino)
+        resultado = consulteBuses(elNodoDeOrigen, elNodoDeDestino)
+        costo = facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
-        # Cada asiento debería ser un botoncito, que se puede tocar un sola vez, al tocarse se actualiza en la BD la plaza ocupada
-        # Cada bus tiene sus botones (en update modificamos ID)...
-    #        cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
-    #       cursor.execute(""" COMMIT; """)
+    # ----------------------- GUARDAR EN LOG -----------------------#
 
-    resp = json.dumps(
-        {'status': 'OK', 'origen': elNodoDeOrigen, 'destino': elNodoDeDestino, 'tipoTransporte': elTipoTransporte})
+    #logBD = {'origen': elNodoDeOrigen, 'destino': elNodoDeDestino, 'tipoTransporte': elTipoTransporte})
 
-    return resp
+    # --------------------------- RESPUESTA ------------------------#
+
+    respuesta = {"Costo":costo,"Respuesta ": resultado}
+    jsonConRespuesta = json.dumps(respuesta)
+
+    return jsonConRespuesta
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -293,6 +250,42 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     return (lasIndicaciones)
 
 
+# ------------------------------------------ MÉTODO PARA RECORRIDOS DE TAXIS -------------------------------------------#
+def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
+    laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
+    print("La ruta mas corta es pasando por: ")
+    for elNodoRuta in laRutaCorta:
+        losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
+        print(losNombresDeLosNodos)
+    zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
+
+    # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
+
+    # if zonaOrigen == 'A':
+    # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+    # cursor.execute(
+    # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
+    # rows = cursor.fetchall()
+    # for row in rows:
+    # print("   ", row)
+
+    # if zonaOrigen == 'B':
+    # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+    # cursor.execute(
+    # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
+    # rows = cursor.fetchall()
+    # for row in rows:
+    # print("   ", row)
+
+    # if zonaOrigen == 'C':
+    # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
+    # cursor.execute(
+    # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
+    # rows = cursor.fetchall()
+    # for row in rows:
+    # print("   ", row)
+
+
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
     lasRutas = [[19, 24, 11, 3, 7],
@@ -303,7 +296,7 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
                 [7, 2, 14, 5]]
     elOrigenHaSidoEncontrado = False
     elDestinoHaSidoEncontrado = False
-    elMensaje = ""
+
     for laRuta in lasRutas:
         if laRuta.count(elNodoDeOrigen) > 0 and not elOrigenHaSidoEncontrado:
             origen = "Origen encontrado en ruta " + str(lasRutas.index(laRuta))
@@ -313,32 +306,35 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
             destino = "y Destino encontrado en ruta " + str(lasRutas.index(laRuta))
             elDestinoHaSidoEncontrado = True
             laRuta2 = laRuta
-    print(origen, destino)
+    resultado = (origen, destino)
 
     if laRuta1 != laRuta2:
         for i in laRuta1:
             if i in laRuta2:
-                print("Transbordo en", obtengaElNombreDe(i))
+                resultado = "Su viaje es directo hasta " +str(obtengaElNombreDe(i))+", en donde debe realizar " \
+                                                                                    "un transbordo hacia su destino"
     else:
-        print("Viaje directo")
+        resultado = "Viaje directo"
+
+    return resultado
+
+# APARTAR ESPACIOS EN EL BUS
+    #       cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
+    #       cursor.execute(""" COMMIT; """)
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 def facturacion(laDistancia, origen, destino):
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
     total = laDistancia * distancia
-    print(mapa.get_edge_data(origen, destino))
-    print("El costo es de", total)
+    #print(mapa.get_edge_data(origen, destino))
+    return "El costo es de "+ str(total)
 
+# ------------------------------------------- MÉTODO PARA GUARDAR EN LOG -----------------------------------------------#
+def logEnBD():
+    return ""
 
-# ----------------------------------------------- EJECUCIÓN DE MÉTODOS -------------------------------------------------#
-
-# consulteMediosDeTransporte()
-# consulteBuses(5, 19)
-
-# facturacion(18,22,23)
-
+# ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
     app.run(port=5000, host='127.0.0.1')
 
-# http://amol-mandhane.github.io/htmlPy/
