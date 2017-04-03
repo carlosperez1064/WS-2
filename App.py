@@ -3,6 +3,7 @@ import psycopg2
 from flask import Flask, request, json
 import time
 from flask_httpauth import HTTPBasicAuth
+import simplejson as json
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -350,20 +351,34 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
 
-    cadena1 = "SELECT * FROM public."
-    cadena2 = transporteSelecionado + " WHERE"
-    cadena3 = elNodoDeOrigen
-    paraConsulta = cadena1 + cadena2 + cadena3
+    #Muestra los medios de transporte que están en el punto de origen solicitado
+
+    cadena1 = """SELECT "Informacion" FROM public."""
+    cadena2 = transporteSelecionado
+    paraConsulta = cadena1 + cadena2
 
     resultado = ""
-    print(paraConsulta)
+    #print(paraConsulta)
 
+    origenKey = {}
+    nodoOrigenDelTransporte = 0
     cursor.execute(paraConsulta)
     rows = cursor.fetchall()
     for row in rows:
-        resultado += str(row)
+        jsons = json.dumps(row)
+        data = json.loads(jsons)
+        for item in data:
+            origenKey = item["Ruta"]
+        for i in origenKey:
+            nodoOrigenDelTransporte = origenKey["Origen"]
+        if nodoOrigenDelTransporte == elNodoDeOrigen:
+            print(jsons)
 
-    return ". Estos son los medios disponibles : " + str(resultado)
+
+
+
+
+    #return ". Estos son los medios disponibles : " + str(resultado)
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
@@ -392,5 +407,7 @@ def muestreInfoEnBaseDatosDe(transporteSelecionado, elID):
     return resultado
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
-if __name__ == '__main__':
-    app.run(port=8000, host='127.0.0.1')
+#if __name__ == '__main__':
+ #   app.run(port=8000, host='127.0.0.1')
+
+ExistentesEnBaseDatos("tren",11)
