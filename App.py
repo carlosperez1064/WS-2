@@ -214,6 +214,7 @@ def consulteMediosDeTransporte():
 
     respuesta = {"Costo": costo, "Respuesta ": resultado}
     jsonConRespuesta = json.dumps(respuesta)
+    print(jsonConRespuesta)
 
     return jsonConRespuesta
 
