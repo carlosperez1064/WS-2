@@ -37,7 +37,7 @@ Puntos o nodos establecidos:
 23.   Volcán Barva (HEREDIA)
 24.   Puerto Moreno Santa Cruz (GUANACASTE)
 
-FUNCIONAMIENTO PARA DETERMINAR LOS MEDIOS DE TRASNPORTE POR NODO
+FUNCIONAMIENTO PARA DETERMINAR LOS MEDIOS DE TRANSPORTE POR NODO
 
 Solicitud de parámetros:  Primeramente al usuario se le solicitan 3 parámetros necesarios para determinar el tipo de transporte a elegir: 
 
