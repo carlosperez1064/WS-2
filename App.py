@@ -348,11 +348,7 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 
     return resultado + str(medioDisponible)
 
-
-# APARTAR ESPACIOS EN EL BUS
-#       cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
-#       cursor.execute(""" COMMIT; """)
-
+# ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
 
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
 
@@ -394,7 +390,7 @@ def facturacion(laDistancia, origen, destino):
     # print(mapa.get_edge_data(origen, destino))
     return "El costo es de " + str(total)
 
-# ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
+# -------------------------------------------- MÉTODO PARA RESERVACIONES -----------------------------------------------#
 def reservaciones(transporteSelecionado, elID):
     #Actualizar espacio en BD (reservaciones), el cliente selecciona un ID de los mostrados en las consultas
 
@@ -410,6 +406,10 @@ def reservaciones(transporteSelecionado, elID):
     rows = cursor.fetchall()
     for row in rows:
         resultado += str(row)
+
+    # APARTAR ESPACIOS EN EL BUS
+    #       cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
+    #       cursor.execute(""" COMMIT; """)
 
     return resultado
 
