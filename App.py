@@ -1,6 +1,5 @@
 import networkx as nx
 from flask import Flask, request, json
-from flask import render_template
 from flask_httpauth import HTTPBasicAuth
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
@@ -9,23 +8,17 @@ app = Flask(__name__)
 mapa = nx.Graph()  # Crear el grafo
 auth = HTTPBasicAuth()
 
-
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 # conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 # conn = psycopg2.connect(conexion)
 # cursor = conn.cursor()
-
-# ------------------------------------------------ MOSTRAR FORMULARIO --------------------------------------------------#
-@app.route('/formulario')
-def formulario():
-    return render_template('registro.html')
-
 
 # ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
+    print(usuario)
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
 
@@ -125,12 +118,6 @@ def obtengaLaZonaDe(param):
     for nodo in mapa.node:
         if nodo == param:
             return (mapa.node[nodo]["zona"])
-
-
-# ------------------------------------------ MOSTRAR HTML PARA CONSULTAS -----------------------------------------------#
-@app.route('/consultas')
-def consultas():
-    return render_template('consultas.html')
 
 
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
@@ -346,4 +333,4 @@ def logEnBD():
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
-    app.run(port=5000, host='127.0.0.1')
+    app.run(port=8000, host='127.0.0.1')
