@@ -50,25 +50,36 @@ c.	Tipo-transporte
 A su vez, el sistema determina los nodos vecinos de los nodos que están ingresando por parámetros, esto para determinar si en los nodos vecinos al Nodo-Destino final, existe un medio de transporte más rápido (avión o tren) con el fin de buscar el viaje más corto y rápido. Si este fuera el escenario se enviaría a la persona hasta ese nodo-vecino en cualquiera de esos dos medios de transporte, y luego al nodo del Nodo-Destino final en bus o en taxi. 
 
 Posibles casos:
+
 •	AVIONES Y TRENES: 
 
 DIRECTO
+
 Si el tipo de transporte es avión o tren y tanto en el nodo-origen como en el nodo-destino seleccionado por el usuario hay presentes alguno de estos dos tipos de transporte, el viaje será directo de un punto a otro, en caso del tren esta consulta las estaciones por las cuales pasa el tren hasta el nodo-destino.  
 
 INDIRECTO
+
 Nodo-Origen tiene tipo de transporte, pero nodo-destino no: 
+
 Para este caso, ya que el nodo-destino no tiene el tipo de transporte avión o tren igual que el nodo-origen, este busca entre los vecinos del nodo-destino para así poder ver cual tiene estos tipos de transporte y si esto es verdadero el sistema hace que el usuario viaje del nodo-origen al nodo-vecino en avión o tren y posteriormente se dirija a el nodo-destino en bus o taxi. 
+
 Nodo-destino tiene tipo transporte, pero nodo-origen no: 
+
 Para este caso, ya que el nodo-origen no posee el tipo de transporte avión o tren igual que el nodo-destino, el sistema busca entre los vecinos del nodo-origen para así poder ver cual tiene estos tipos de transporte y si esto es verdadero el sistema hace que el usuario viaje del nodo-origen al nodo-vecino en taxi o bus y posteriormente se dirija a el nodo-vecino al nodo-destino en avión o tren. 
+
 Nodo-origen no tiene tipo de transporte ni nodo-destino:  
+
 Para esta posible situación, el sistema es capaz de buscar los nodos-vecinos de cada nodo (origen y destino), dirigiéndose de la siguiente manera: de nodo-origen a nodo-vecino en bus y taxi, de nodo-vecino de nodo-origen a nodo-vecino de nodo-destino en avión o tren, y por último de nodo-vecino de destino a nodo-destino en bus o taxi nuevamente. 
 Si ninguna de las anteriores opciones se pudiera realizar, el sistema brinda un mensaje al usuario especificando que es imposible ir en Avión o Tren, verifique en Bus o Taxi. 
 
 •	TAXIS y BUSES GENERAL
+
 Primeramente, se toman los parámetros el nodo-origen y nodo-destino para determinar la ruta más corta mediante el algoritmo de Dijkstra.  Posteriormente, se obtiene la zona desde donde se requiere el servicio (nodo-origen) para ofrecer un taxi que opere en dicha zona. 
 
 •	TAXIS
+
 Para el caso de los taxis, el grafo se divide en tres zonas A, B y C, donde en cada zona se encuentran los taxis cercanos al nodo-origen y al nodo-destino. 
 
 •	BUSES
+
 El sistema busca los buses del nodo-origen y el nodo-destino. Al usuario reservar un espacio en el bus este debe asignarle el número de campo y reservarlo quitando la disponibilidad de este a otro usuario. 
