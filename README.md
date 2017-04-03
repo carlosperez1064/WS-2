@@ -38,15 +38,20 @@ Puntos o nodos establecidos:
 24.   Puerto Moreno Santa Cruz (GUANACASTE)
 
 FUNCIONAMIENTO PARA DETERMINAR LOS MEDIOS DE TRASNPORTE POR NODO
+
 Solicitud de parámetros:  Primeramente al usuario se le solicitan 3 parámetros necesarios para determinar el tipo de transporte a elegir: 
+
 a.	Nodo-origen
+
 b.	Nodo-destino 
+
 c.	Tipo-transporte
 
 A su vez, el sistema determina los nodos vecinos de los nodos que están ingresando por parámetros, esto para determinar si en los nodos vecinos al Nodo-Destino final, existe un medio de transporte más rápido (avión o tren) con el fin de buscar el viaje más corto y rápido. Si este fuera el escenario se enviaría a la persona hasta ese nodo-vecino en cualquiera de esos dos medios de transporte, y luego al nodo del Nodo-Destino final en bus o en taxi. 
 
 Posibles casos:
 •	AVIONES Y TRENES: 
+
 DIRECTO
 Si el tipo de transporte es avión o tren y tanto en el nodo-origen como en el nodo-destino seleccionado por el usuario hay presentes alguno de estos dos tipos de transporte, el viaje será directo de un punto a otro, en caso del tren esta consulta las estaciones por las cuales pasa el tren hasta el nodo-destino.  
 
