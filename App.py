@@ -19,6 +19,9 @@ def registro():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     print(usuario)
+
+    #buscar en log este usuario, si no existe, lo registra, sino, indica dar en login
+
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
 
