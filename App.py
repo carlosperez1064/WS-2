@@ -275,13 +275,6 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
             lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
 
-
-    resultado = []
-    cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
-    rows = cursor.fetchall()
-    for row in rows:
-        resultado += [row]
-
     return (lasIndicaciones)
 
 
