@@ -234,10 +234,10 @@ def consulteMediosDeTransporte():
         # --------------------------- RESPUESTA ------------------------#
 
     medios = ""
-    if elTipoTransporte == 'avion' or elTipoTransporte == 'bus' or elTipoTransporte == 'tren':
-        medios = ExistentesEnBaseDatos(elTipoTransporte, elNodoDeOrigen)
+    if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
+        medios = ExistentesEnBaseDatos(elTipoTransporte, elNodoDeOrigen) #Muestra los medios de transporte que están en el punto de origen solicitado
 
-    respuesta = {"Costo": costo, "Respuesta ": resultado + medios}
+    respuesta = {"Costo": costo, "Respuesta ": str(resultado) + str(medios)}
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
@@ -286,26 +286,26 @@ def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
 
     if zonaOrigen == 'A':
         cursor.execute(
-            """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
+            """SELECT "ID","Informacion" FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
     if zonaOrigen == 'B':
         cursor.execute(
-            """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
+            """SELECT "ID","Informacion" FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
     if zonaOrigen == 'C':
         cursor.execute(
-            """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
+            """SELECT "ID","Informacion" FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
-    respuesta = "La ruta mas corta es pasando por " + str(ruta) + ". Estos son los taxis de la zona (ID y Zona) " + str(
+    respuesta = "La ruta mas corta es pasando por " + str(ruta) + ". Estos son los taxis de la zona " + str(
         resultado)
 
     return respuesta
@@ -341,7 +341,9 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
     else:
         resultado = "Viaje directo"
 
-    return resultado
+    medioDisponible = ExistentesEnBaseDatos("bus", elNodoDeOrigen)
+
+    return resultado + str(medioDisponible)
 
 
 # APARTAR ESPACIOS EN EL BUS
@@ -352,33 +354,34 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
 
     #Muestra los medios de transporte que están en el punto de origen solicitado
+    if transporteSelecionado != "bus":
+        cadena1 = """SELECT "Informacion" FROM public."""
+        cadena2 = transporteSelecionado
+        paraConsulta = cadena1 + cadena2
 
-    cadena1 = """SELECT "Informacion" FROM public."""
-    cadena2 = transporteSelecionado
-    paraConsulta = cadena1 + cadena2
+        resultado = ""
 
-    resultado = ""
-    #print(paraConsulta)
+        origenKey = {}
+        nodoOrigenDelTransporte = 0
 
-    origenKey = {}
-    nodoOrigenDelTransporte = 0
-    cursor.execute(paraConsulta)
-    rows = cursor.fetchall()
-    for row in rows:
-        jsons = json.dumps(row)
-        data = json.loads(jsons)
-        for item in data:
-            origenKey = item["Ruta"]
-        for i in origenKey:
-            nodoOrigenDelTransporte = origenKey["Origen"]
-        if nodoOrigenDelTransporte == elNodoDeOrigen:
-            print(jsons)
+        cursor.execute(paraConsulta)
+        rows = cursor.fetchall()
+        for row in rows:
+            jsons = json.dumps(row)
+            data = json.loads(jsons)
+            for item in data:
+                origenKey = item["Ruta"]
+            for i in origenKey:
+                nodoOrigenDelTransporte = origenKey["Origen"]
+            if nodoOrigenDelTransporte == elNodoDeOrigen:
+                resultado = jsons
+    else:
+        cursor.execute("""SELECT * FROM public."bus" WHERE "RutaNodo" = """ + str(elNodoDeOrigen))
+        rows = cursor.fetchall()
+        for row in rows:
+            resultado = rows
 
-
-
-
-
-    #return ". Estos son los medios disponibles : " + str(resultado)
+    return ". Estos son los medios disponibles : " + str(resultado)
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
@@ -407,7 +410,6 @@ def muestreInfoEnBaseDatosDe(transporteSelecionado, elID):
     return resultado
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
-#if __name__ == '__main__':
- #   app.run(port=8000, host='127.0.0.1')
+if __name__ == '__main__':
+    app.run(port=8000, host='127.0.0.1')
 
-ExistentesEnBaseDatos("tren",11)
