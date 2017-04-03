@@ -83,3 +83,6 @@ Para el caso de los taxis, el grafo se divide en tres zonas A, B y C, donde en c
 •	BUSES
 
 El sistema busca los buses del nodo-origen y el nodo-destino. Al usuario reservar un espacio en el bus este debe asignarle el número de campo y reservarlo quitando la disponibilidad de este a otro usuario. 
+
+
+Cliente: https://github.com/DianaCM11/WS-2-cliente
