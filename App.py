@@ -235,7 +235,10 @@ def consulteMediosDeTransporte():
 
     medios = ""
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
-        medios = ExistentesEnBaseDatos(elTipoTransporte, elNodoDeOrigen) #Muestra los medios de transporte que están en el punto de origen solicitado
+        medios = ExistentesEnBaseDatos(elTipoTransporte, elNodoDeOrigen)
+    #Muestra los datos por medios de transporte que existen en el punto de origen solicitado, si no hay avion,
+    # no muestra nada, debe seleccionar, otro medio que lo lleve a donde exista avion,
+    # (esas instrucciones también son dadas anteriorme, se le sugiere ir a otros nodos donde sí hay ese medio).
 
     respuesta = {"Costo": costo, "Respuesta ": str(resultado) + str(medios)}
     jsonConRespuesta = json.dumps(respuesta)
@@ -391,9 +394,10 @@ def facturacion(laDistancia, origen, destino):
     # print(mapa.get_edge_data(origen, destino))
     return "El costo es de " + str(total)
 
-
 # ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
-def muestreInfoEnBaseDatosDe(transporteSelecionado, elID):
+def reservaciones(transporteSelecionado, elID):
+    #Actualizar espacio en BD (reservaciones), el cliente selecciona un ID de los mostrados en las consultas
+
     cadena1 = "SELECT * FROM public."
     cadena2 = transporteSelecionado + " WHERE"
     cadena3 = ' "ID" = '
