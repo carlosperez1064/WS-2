@@ -134,7 +134,22 @@ def obtengaLaZonaDe(param):
         if nodo == param:
             return (mapa.node[nodo]["zona"])
 
+def muestreInfoEnBaseDatosDe(transporteSelecionado, elNodoDeOrigen):
 
+#FALTA
+    cadena1 = "SELECT * FROM public."
+    cadena2 = transporteSelecionado
+    paraConsulta = cadena1 + cadena2 + str(elNodoDeOrigen)
+
+    resultado = ""
+    print(paraConsulta)
+
+    cursor.execute(paraConsulta)
+    rows = cursor.fetchall()
+    for row in rows:
+        resultado += str(row)
+
+    return resultado
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 
 # Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
@@ -236,6 +251,7 @@ def consulteMediosDeTransporte():
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
+
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
     elMensaje = []
     elNodoDeOrigen = lasEstacionesDelTren.index(elNodoDeOrigen)
@@ -258,6 +274,14 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
         laPosicion = elMensaje.index(7)
         if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
             lasIndicaciones += "y no olvide hacer cambio de tren en Volcan Poas (estacion #7)"
+
+
+    resultado = []
+    cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
+    rows = cursor.fetchall()
+    for row in rows:
+        resultado += [row]
+
     return (lasIndicaciones)
 
 
@@ -276,19 +300,19 @@ def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
     # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
     if zonaOrigen == 'A':
-        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
+        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
     if zonaOrigen == 'B':
-        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
+        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
     if zonaOrigen == 'C':
-        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
+        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
@@ -298,6 +322,7 @@ def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
     return respuesta
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
+
     lasRutas = [[19, 24, 11, 3, 7],
                 [19, 6, 22, 8, 16, 1, 7],
                 [7, 1, 9, 4, 10, 21, 20, 5],
@@ -341,6 +366,24 @@ def facturacion(laDistancia, origen, destino):
     # print(mapa.get_edge_data(origen, destino))
     return "El costo es de " + str(total)
 
+# ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
+def muestreInfoEnBaseDatosDe(transporteSelecionado, elID):
+
+    cadena1 = "SELECT * FROM public."
+    cadena2 = transporteSelecionado + " WHERE"
+    cadena3 = ' "ID" = '
+    paraConsulta = cadena1 + cadena2 + cadena3 + str(elID)
+
+    resultado = ""
+    print(paraConsulta)
+
+    cursor.execute(paraConsulta)
+    rows = cursor.fetchall()
+    for row in rows:
+        resultado += str(row)
+
+    return resultado
+
 
 # ------------------------------------------- MÉTODO PARA GUARDAR EN LOG -----------------------------------------------#
 def logEnBD():
@@ -348,5 +391,7 @@ def logEnBD():
 
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
-if __name__ == '__main__':
-    app.run(port=8000, host='127.0.0.1')
+#if __name__ == '__main__':
+ #   app.run(port=8000, host='127.0.0.1')
+
+muestreInfoEnBaseDatosDe("avion",2)
