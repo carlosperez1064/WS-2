@@ -1,7 +1,8 @@
 import networkx as nx
-from flask import Flask, request, json
-from flask_httpauth import HTTPBasicAuth
 import psycopg2
+from flask import Flask, request, json
+import time
+from flask_httpauth import HTTPBasicAuth
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -14,6 +15,7 @@ conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password=
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
 
+user = ''
 # ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
@@ -21,18 +23,19 @@ def registro():
     contrasena = request.form['contrasena']
     print(usuario)
 
-    #buscar en BD este usuario, si no existe, lo registra, sino, indica dar en login
+    # buscar en BD este usuario, si no existe, lo registra, sino, indica dar en login
 
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
+
 
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
 @app.route('/login', methods=['POST'])
 def loginUser():
-    usuario = request.form['user']
-    contrasena = request.form['pass']
-    print(usuario)
+    user = request.form['user']
+    passw = request.form['pass']
+    print(user)
 
-    #Buscar en BD, si no existe, dar en registrar, si existe, verificar contrasena
+    # Buscar en BD, si no existe, dar en registrar, si existe, verificar contrasena
 
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
@@ -134,22 +137,7 @@ def obtengaLaZonaDe(param):
         if nodo == param:
             return (mapa.node[nodo]["zona"])
 
-def muestreInfoEnBaseDatosDe(transporteSelecionado, elNodoDeOrigen):
 
-#FALTA
-    cadena1 = "SELECT * FROM public."
-    cadena2 = transporteSelecionado
-    paraConsulta = cadena1 + cadena2 + str(elNodoDeOrigen)
-
-    resultado = ""
-    print(paraConsulta)
-
-    cursor.execute(paraConsulta)
-    rows = cursor.fetchall()
-    for row in rows:
-        resultado += str(row)
-
-    return resultado
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 
 # Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
@@ -173,12 +161,11 @@ def consulteMediosDeTransporte():
 
     costo = 0
     # --------------------------- AVIONES Y TRENES --------------------------#
-
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
             resultado = (
-            "Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
-            "en", elTipoTransporte)
+                "Viaje directo de ", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elNodoDeDestino),
+                "en", elTipoTransporte)
             if elTipoTransporte == 'tren':
                 lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
                 resultado = (lasEstaciones)
@@ -189,9 +176,9 @@ def consulteMediosDeTransporte():
                     elVecinoTieneTipoDeTransporte = mapa.node[elVecino][elTipoTransporte]
                     if elVecinoTieneTipoDeTransporte:
                         resultado = (
-                        "Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
-                        elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
-                        "en bus o taxi")
+                            "Viaje de", obtengaElNombreDe(elNodoDeOrigen), "a", obtengaElNombreDe(elVecino), "en",
+                            elTipoTransporte, "y luego a", obtengaElNombreDe(elNodoDeDestino),
+                            "en bus o taxi")
                         if elTipoTransporte == 'tren':
                             lasEstaciones = consulteTrenes(elNodoDeOrigen, elVecino)
                             resultado = (lasEstaciones)
@@ -236,22 +223,27 @@ def consulteMediosDeTransporte():
         resultado = consulteBuses(elNodoDeOrigen, elNodoDeDestino)
         costo = facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
-    # ----------------------- GUARDAR EN LOG -----------------------#
+        # ----------------------- GUARDAR EN LOG -----------------------#
 
-    # logBD = {'origen': elNodoDeOrigen, 'destino': elNodoDeDestino, 'tipoTransporte': elTipoTransporte})
+    jsonToBD = '{"usuario": "'+str(user)+'", "fecha": "'+str(time.strftime("%c"))+'", "origen": "'+str(elNodoDeOrigen)+'", "destino": "'+str(elNodoDeDestino)+'", "tipoTransporte": "'+str(elTipoTransporte)+'"}'
+    toLog= "'"+jsonToBD+"'"
+    cursor.execute("INSERT INTO public.log(historial) VALUES ("  +toLog+  ");")
+    cursor.execute("COMMIT;")
 
-    # --------------------------- RESPUESTA ------------------------#
+        # --------------------------- RESPUESTA ------------------------#
 
-    respuesta = {"Costo": costo, "Respuesta ": resultado}
+    medios = ""
+    if elTipoTransporte == 'avion' or elTipoTransporte == 'bus' or elTipoTransporte == 'tren':
+        medios = ExistentesEnBaseDatos(elTipoTransporte, elNodoDeOrigen)
+
+    respuesta = {"Costo": costo, "Respuesta ": resultado + medios}
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
     return jsonConRespuesta
 
-
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
-
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
     elMensaje = []
     elNodoDeOrigen = lasEstacionesDelTren.index(elNodoDeOrigen)
@@ -280,7 +272,6 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DE TAXIS -------------------------------------------#
 def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
-
     ruta = []
     laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
     for elNodoRuta in laRutaCorta:
@@ -293,29 +284,34 @@ def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
     # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
     if zonaOrigen == 'A':
-        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
+        cursor.execute(
+            """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
     if zonaOrigen == 'B':
-        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
+        cursor.execute(
+            """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
     if zonaOrigen == 'C':
-        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
+        cursor.execute(
+            """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
         rows = cursor.fetchall()
         for row in rows:
             resultado += [row]
 
-    respuesta = "La ruta mas corta es pasando por " +str(ruta) + ". Estos son los taxis de la zona (ID y Zona) " + str(resultado)
+    respuesta = "La ruta mas corta es pasando por " + str(ruta) + ". Estos son los taxis de la zona (ID y Zona) " + str(
+        resultado)
 
     return respuesta
+
+
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
-
     lasRutas = [[19, 24, 11, 3, 7],
                 [19, 6, 22, 8, 16, 1, 7],
                 [7, 1, 9, 4, 10, 21, 20, 5],
@@ -352,6 +348,24 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 #       cursor.execute(""" COMMIT; """)
 
 
+def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
+
+    cadena1 = "SELECT * FROM public."
+    cadena2 = transporteSelecionado + " WHERE"
+    cadena3 = elNodoDeOrigen
+    paraConsulta = cadena1 + cadena2 + cadena3
+
+    resultado = ""
+    print(paraConsulta)
+
+    cursor.execute(paraConsulta)
+    rows = cursor.fetchall()
+    for row in rows:
+        resultado += str(row)
+
+    return ". Estos son los medios disponibles : " + str(resultado)
+
+
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 def facturacion(laDistancia, origen, destino):
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
@@ -359,9 +373,9 @@ def facturacion(laDistancia, origen, destino):
     # print(mapa.get_edge_data(origen, destino))
     return "El costo es de " + str(total)
 
+
 # ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
 def muestreInfoEnBaseDatosDe(transporteSelecionado, elID):
-
     cadena1 = "SELECT * FROM public."
     cadena2 = transporteSelecionado + " WHERE"
     cadena3 = ' "ID" = '
@@ -384,7 +398,7 @@ def logEnBD():
 
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
-#if __name__ == '__main__':
- #   app.run(port=8000, host='127.0.0.1')
+if __name__ == '__main__':
+    app.run(port=8000, host='127.0.0.1')
 
-muestreInfoEnBaseDatosDe("avion",2)
+# muestreInfoEnBaseDatosDe("avion",2)
