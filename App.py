@@ -37,7 +37,7 @@ def loginUser():
 
     # Buscar en BD, si no existe, dar en registrar, si existe, verificar contrasena
 
-    return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
+    return json.dumps({'status': 'OK', 'usuario': user, 'contrasena': passw})
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
