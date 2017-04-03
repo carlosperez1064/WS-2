@@ -1,6 +1,7 @@
 import networkx as nx
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
+import psycopg2
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -9,9 +10,9 @@ mapa = nx.Graph()  # Crear el grafo
 auth = HTTPBasicAuth()
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-# conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-# conn = psycopg2.connect(conexion)
-# cursor = conn.cursor()
+conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+conn = psycopg2.connect(conexion)
+cursor = conn.cursor()
 
 # ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
 @app.route('/registro', methods=['POST'])
@@ -20,7 +21,18 @@ def registro():
     contrasena = request.form['contrasena']
     print(usuario)
 
-    #buscar en log este usuario, si no existe, lo registra, sino, indica dar en login
+    #buscar en BD este usuario, si no existe, lo registra, sino, indica dar en login
+
+    return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
+
+# ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
+@app.route('/login', methods=['POST'])
+def loginUser():
+    usuario = request.form['user']
+    contrasena = request.form['pass']
+    print(usuario)
+
+    #Buscar en BD, si no existe, dar en registrar, si existe, verificar contrasena
 
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
@@ -251,40 +263,39 @@ def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DE TAXIS -------------------------------------------#
 def consulteTaxis(elNodoDeOrigen, elNodoDeDestino):
+
+    ruta = []
     laRutaCorta = nx.dijkstra_path(mapa, elNodoDeOrigen, elNodoDeDestino)
-    print("La ruta mas corta es pasando por: ")
     for elNodoRuta in laRutaCorta:
         losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
-        print(losNombresDeLosNodos)
+        ruta += [losNombresDeLosNodos]
+
     zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
+    resultado = []
 
     # Se obtiene la zona desde donde se requiere el servicio (origen) para ofrecer un taxi que opere en dicha zona
 
-    # if zonaOrigen == 'A':
-    # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-    # cursor.execute(
-    # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'A';""")
-    # rows = cursor.fetchall()
-    # for row in rows:
-    # print("   ", row)
+    if zonaOrigen == 'A':
+        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'A';""")
+        rows = cursor.fetchall()
+        for row in rows:
+            resultado += [row]
 
-    # if zonaOrigen == 'B':
-    # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-    # cursor.execute(
-    # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'B';""")
-    # rows = cursor.fetchall()
-    # for row in rows:
-    # print("   ", row)
+    if zonaOrigen == 'B':
+        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'B';""")
+        rows = cursor.fetchall()
+        for row in rows:
+            resultado += [row]
 
-    # if zonaOrigen == 'C':
-    # print("--- Estos son los ID de los taxis cercanos a " + obtengaElNombreDe(elNodoDeOrigen))
-    # cursor.execute(
-    # """SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Uber" WHERE "Informacion" ->> 'Zona' = 'C';""")
-    # rows = cursor.fetchall()
-    # for row in rows:
-    # print("   ", row)
+    if zonaOrigen == 'C':
+        cursor.execute("""SELECT "ID","Informacion" ->> 'Zona' AS Zona FROM public."Taxi" WHERE "Informacion" ->> 'Zona' = 'C';""")
+        rows = cursor.fetchall()
+        for row in rows:
+            resultado += [row]
 
+    respuesta = "La ruta mas corta es pasando por " +str(ruta) + ". Estos son los taxis de la zona (ID y Zona) " + str(resultado)
 
+    return respuesta
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
     lasRutas = [[19, 24, 11, 3, 7],
