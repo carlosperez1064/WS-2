@@ -401,7 +401,11 @@ def facturacion(laDistancia, origen, destino):
 #Primero se obtiene la cantidad que hay en la BD y luego, se le resta la cantidad de asientos
 
 @app.route('/viajando/reservacion', methods=['POST'])
-def reservaciones(transporteSelecionado, elID, cantidadReservaciones):
+def reservaciones():
+
+    transporteSelecionado = request.form['tipoTransporte']
+    elID = int(request.form['ID'])
+    cantidadReservaciones = int(request.form['cantidad'])
 
     resultado =""
 
@@ -429,9 +433,9 @@ def reservaciones(transporteSelecionado, elID, cantidadReservaciones):
 
 
     else:
-        resultado = "No es posible realizar la reservación. " \
-                    "Para tren debe ir a la estación, y para taxi" \
-                    "debe contactar al conductor."
+        resultado = "No es posible realizar la reservacion. " \
+                    "Para tren debe ir a la estacion, y para taxi " \
+                    "debe contactar al conductor"
 
     respuesta = {"Respuesta ": resultado}
     jsonConRespuesta = json.dumps(respuesta)
@@ -441,7 +445,6 @@ def reservaciones(transporteSelecionado, elID, cantidadReservaciones):
 
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
-#if __name__ == '__main__':
- #   app.run(port=8000, host='127.0.0.1')
+if __name__ == '__main__':
+    app.run(port=8000, host='127.0.0.1')
 
-reservaciones("bus",9,4)
