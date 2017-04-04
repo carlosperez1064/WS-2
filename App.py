@@ -233,8 +233,9 @@ def consulteMediosDeTransporte():
         elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
         elTipoTransporte) + '"}'
     toLog = "'" + jsonToBD + "'"
-    cursor.execute("INSERT INTO public.log(historial) VALUES (" + toLog + ");")
+    cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
     cursor.execute("COMMIT;")
+    #ID es un secuencia automática creada en al BD
 
     # --------------------------- RESPUESTA ------------------------#
 
@@ -469,4 +470,4 @@ def reservaciones():
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
-    app.run(port=8000, host='127.0.0.1')
+    app.run(port=5000, host='127.0.0.1')
