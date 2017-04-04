@@ -244,6 +244,8 @@ def consulteMediosDeTransporte():
     # Muestra los datos por medios de transporte que existen en el punto de origen solicitado, si no hay avion,
     # no muestra nada, debe seleccionar, otro medio que lo lleve a donde exista avion,
     # (esas instrucciones también son dadas anteriorme, se le sugiere ir a otros nodos donde sí hay ese medio).
+    if elTipoTransporte == 'avion':
+        costo = facturacion(900,elNodoDeOrigen,elNodoDeDestino)
 
     respuesta = {"Costo": costo, "Respuesta ": str(resultado) + str(medios)}
     jsonConRespuesta = json.dumps(respuesta)
