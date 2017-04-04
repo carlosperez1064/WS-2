@@ -395,6 +395,7 @@ def facturacion(laDistancia, origen, destino):
 
 
 # -------------------------------------------- MÉTODO PARA RESERVACIONES -----------------------------------------------#
+
 #Actualizar espacio en BD (reservaciones en bus y avion), el cliente selecciona un ID de los mostrados en las consultas
 #Primero se obtiene la cantidad que hay en la BD y luego, se le resta la cantidad de asientos
 
@@ -414,17 +415,38 @@ def reservaciones():
         for row in rows:
             capacidad = int(str(row).replace("(","").replace(")","").replace(",",""))
 
-        if cantidadReservaciones < capacidad:
-            paraActualizar = "UPDATE public."+ transporteSelecionado + " SET " + '"Capacidad" ' +"= " + str(capacidad-cantidadReservaciones)+" WHERE "+ '"ID"' +"= " + str(elID)
+        if cantidadReservaciones <= capacidad:
+            paraActualizar = "UPDATE public.bus"+ " SET " + '"Capacidad" ' +"= " + str(capacidad-cantidadReservaciones)+" WHERE "+ '"ID"' +"= " + str(elID)
 
             cursor.execute(paraActualizar)
             cursor.execute("COMMIT;")
-            resultado = str(cantidadReservaciones)+" asiento(s) reservado(s)."
+            resultado = str(cantidadReservaciones)+" asiento(s) reservado(s)"
         else:
-            resultado = "Lo sentimos. Solo hay "+str (capacidad) + " espacio(s)"
+            resultado = "Lo sentimos. Hay "+str (capacidad) + " espacio(s)"
 
     elif transporteSelecionado == "avion":
-        cadena1 = "UPDATE public."
+
+        paraConsulta = """SELECT "Informacion" FROM public."avion"; """
+
+        cantidad = 0
+        cursor.execute(paraConsulta)
+        rows = cursor.fetchall()
+        for row in rows:
+            jsons = json.dumps(row)
+            data = json.loads(jsons)
+            for item in data:
+                cantidad = item["CantidadPasajeros"]
+            if cantidadReservaciones <= cantidad:
+                paraActualizar = "UPDATE public.avion"+ " SET " + '"Informacion" ' +"= " + \
+                                 '"Informacion"' +":: jsonb -" +" 'CantidadPasajeros' " + "||" + \
+                                 "'{"'"CantidadPasajeros"'":"+str(cantidad-cantidadReservaciones)+"}'"+":: jsonb" + " WHERE "+ '"ID"' +"= " + str(elID);
+
+                cursor.execute(paraActualizar)
+                cursor.execute("COMMIT;")
+                resultado = str(cantidadReservaciones)+" asiento(s) reservado(s)"
+
+            else:
+                resultado = "Lo sentimos. Hay "+str (cantidad) + " espacio(s)"
 
 
     else:
