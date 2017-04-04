@@ -251,7 +251,9 @@ def consulteMediosDeTransporte():
 
     return jsonConRespuesta
 
+
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
+
 def consulteTrenes(elNodoDeOrigen, elNodoDeDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
     elMensaje = []
@@ -359,7 +361,7 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
     # Muestra los medios de transporte que están en el punto de origen solicitado
     if transporteSelecionado != "bus":
-        paraConsulta = """SELECT "Informacion" FROM public."""+transporteSelecionado
+        paraConsulta = """SELECT "Informacion" FROM public.""" + transporteSelecionado
 
         resultado = ""
 
@@ -396,33 +398,34 @@ def facturacion(laDistancia, origen, destino):
 
 # -------------------------------------------- MÉTODO PARA RESERVACIONES -----------------------------------------------#
 
-#Actualizar espacio en BD (reservaciones en bus y avion), el cliente selecciona un ID de los mostrados en las consultas
-#Primero se obtiene la cantidad que hay en la BD y luego, se le resta la cantidad de asientos
+# Actualizar espacio en BD (reservaciones en bus y avion), el cliente selecciona un ID de los mostrados en las consultas
+# Primero se obtiene la cantidad que hay en la BD y luego, se le resta la cantidad de asientos
 
 @app.route('/viajando/reservacion', methods=['POST'])
 def reservaciones():
-
     transporteSelecionado = request.form['tipoTransporte']
     elID = int(request.form['ID'])
     cantidadReservaciones = int(request.form['cantidad'])
 
-    resultado =""
+    resultado = ""
 
     if transporteSelecionado == "bus":
 
         cursor.execute("""SELECT "Capacidad" FROM public."bus" WHERE "ID" = """ + str(elID))
         rows = cursor.fetchall()
         for row in rows:
-            capacidad = int(str(row).replace("(","").replace(")","").replace(",",""))
+            capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
 
         if cantidadReservaciones <= capacidad:
-            paraActualizar = "UPDATE public.bus"+ " SET " + '"Capacidad" ' +"= " + str(capacidad-cantidadReservaciones)+" WHERE "+ '"ID"' +"= " + str(elID)
+            paraActualizar = "UPDATE public.bus" + " SET " + '"Capacidad" ' + "= " + str(
+                capacidad - cantidadReservaciones) + \
+                             " WHERE " + '"ID"' + "= " + str(elID)
 
             cursor.execute(paraActualizar)
             cursor.execute("COMMIT;")
-            resultado = str(cantidadReservaciones)+" asiento(s) reservado(s)"
+            resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
         else:
-            resultado = "Lo sentimos. Hay "+str (capacidad) + " espacio(s)"
+            resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
 
     elif transporteSelecionado == "avion":
 
@@ -439,14 +442,15 @@ def reservaciones():
             if cantidadReservaciones <= cantidad:
                 paraActualizar = "UPDATE public.avion"+ " SET " + '"Informacion" ' +"= " + \
                                  '"Informacion"' +":: jsonb -" +" 'CantidadPasajeros' " + "||" + \
-                                 "'{"'"CantidadPasajeros"'":"+str(cantidad-cantidadReservaciones)+"}'"+":: jsonb" + " WHERE "+ '"ID"' +"= " + str(elID);
+                                 "'{"'"CantidadPasajeros"'":"+str(cantidad-cantidadReservaciones)+"}'"+":: jsonb" + \
+                                 " WHERE "+ '"ID"' +"= " + str(elID);
 
                 cursor.execute(paraActualizar)
                 cursor.execute("COMMIT;")
-                resultado = str(cantidadReservaciones)+" asiento(s) reservado(s)"
+                resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
 
             else:
-                resultado = "Lo sentimos. Hay "+str (cantidad) + " espacio(s)"
+                resultado = "Lo sentimos. Hay " + str(cantidad) + " espacio(s)"
 
 
     else:
@@ -464,4 +468,3 @@ def reservaciones():
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
     app.run(port=8000, host='127.0.0.1')
-
