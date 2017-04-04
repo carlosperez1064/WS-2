@@ -1,9 +1,10 @@
+import time
+
 import networkx as nx
 import psycopg2
-from flask import Flask, request, json
-import time
-from flask_httpauth import HTTPBasicAuth
 import simplejson as json
+from flask import Flask, request, json
+from flask_httpauth import HTTPBasicAuth
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
@@ -17,6 +18,8 @@ conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
 
 user = ''
+
+
 # ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
@@ -226,17 +229,19 @@ def consulteMediosDeTransporte():
 
         # ----------------------- GUARDAR EN LOG -----------------------#
 
-    jsonToBD = '{"usuario": "'+str(user)+'", "fecha": "'+str(time.strftime("%c"))+'", "origen": "'+str(elNodoDeOrigen)+'", "destino": "'+str(elNodoDeDestino)+'", "tipoTransporte": "'+str(elTipoTransporte)+'"}'
-    toLog= "'"+jsonToBD+"'"
-    cursor.execute("INSERT INTO public.log(historial) VALUES ("  +toLog+  ");")
+    jsonToBD = '{"usuario": "' + str(user) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(
+        elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
+        elTipoTransporte) + '"}'
+    toLog = "'" + jsonToBD + "'"
+    cursor.execute("INSERT INTO public.log(historial) VALUES (" + toLog + ");")
     cursor.execute("COMMIT;")
 
-        # --------------------------- RESPUESTA ------------------------#
+    # --------------------------- RESPUESTA ------------------------#
 
     medios = ""
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         medios = ExistentesEnBaseDatos(elTipoTransporte, elNodoDeOrigen)
-    #Muestra los datos por medios de transporte que existen en el punto de origen solicitado, si no hay avion,
+    # Muestra los datos por medios de transporte que existen en el punto de origen solicitado, si no hay avion,
     # no muestra nada, debe seleccionar, otro medio que lo lleve a donde exista avion,
     # (esas instrucciones también son dadas anteriorme, se le sugiere ir a otros nodos donde sí hay ese medio).
 
@@ -348,11 +353,11 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 
     return resultado + str(medioDisponible)
 
+
 # ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
 
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
-
-    #Muestra los medios de transporte que están en el punto de origen solicitado
+    # Muestra los medios de transporte que están en el punto de origen solicitado
     if transporteSelecionado != "bus":
         cadena1 = """SELECT "Informacion" FROM public."""
         cadena2 = transporteSelecionado
@@ -390,30 +395,53 @@ def facturacion(laDistancia, origen, destino):
     # print(mapa.get_edge_data(origen, destino))
     return "El costo es de " + str(total)
 
+
 # -------------------------------------------- MÉTODO PARA RESERVACIONES -----------------------------------------------#
-def reservaciones(transporteSelecionado, elID):
-    #Actualizar espacio en BD (reservaciones), el cliente selecciona un ID de los mostrados en las consultas
+#Actualizar espacio en BD (reservaciones en bus y avion), el cliente selecciona un ID de los mostrados en las consultas
+#Primero se obtiene la cantidad que hay en la BD y luego, se le resta la cantidad de asientos
 
-    cadena1 = "SELECT * FROM public."
-    cadena2 = transporteSelecionado + " WHERE"
-    cadena3 = ' "ID" = '
-    paraConsulta = cadena1 + cadena2 + cadena3 + str(elID)
+@app.route('/viajando/reservacion', methods=['POST'])
+def reservaciones(transporteSelecionado, elID, cantidadReservaciones):
 
-    resultado = ""
-    print(paraConsulta)
+    resultado =""
 
-    cursor.execute(paraConsulta)
-    rows = cursor.fetchall()
-    for row in rows:
-        resultado += str(row)
+    if transporteSelecionado == "bus":
 
-    # APARTAR ESPACIOS EN EL BUS
-    #       cursor.execute("""UPDATE public."Bus" SET "Plaza1" = 1 WHERE "ID" = 1""")
-    #       cursor.execute(""" COMMIT; """)
+        cursor.execute("""SELECT "Capacidad" FROM public."bus" WHERE "ID" = """ + str(elID))
+        rows = cursor.fetchall()
+        for row in rows:
+            capacidad = int(str(row).replace("(","").replace(")","").replace(",",""))
 
-    return resultado
+        if cantidadReservaciones < capacidad:
+            cadena1 = "UPDATE public."
+            cadena2 = transporteSelecionado + " SET " + '"Capacidad" ' +"= " + str(capacidad-cantidadReservaciones)
+            cadena3 = " WHERE "+ '"ID"' +"= " + str(elID)
+            paraActualizar = cadena1 + cadena2 + cadena3
+
+            cursor.execute(paraActualizar)
+            cursor.execute("COMMIT;")
+            resultado = str(cantidadReservaciones)+" asiento(s) reservado(s)."
+        else:
+            resultado = "Lo sentimos. Solo hay "+str (capacidad) + " espacio(s)"
+
+    elif transporteSelecionado == "avion":
+        cadena1 = "UPDATE public."
+
+
+    else:
+        resultado = "No es posible realizar la reservación. " \
+                    "Para tren debe ir a la estación, y para taxi" \
+                    "debe contactar al conductor."
+
+    respuesta = {"Respuesta ": resultado}
+    jsonConRespuesta = json.dumps(respuesta)
+    print(jsonConRespuesta)
+
+    return jsonConRespuesta
+
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
-if __name__ == '__main__':
-    app.run(port=8000, host='127.0.0.1')
+#if __name__ == '__main__':
+ #   app.run(port=8000, host='127.0.0.1')
 
+reservaciones("bus",9,4)
