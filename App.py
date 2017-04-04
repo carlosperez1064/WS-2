@@ -359,9 +359,7 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
     # Muestra los medios de transporte que están en el punto de origen solicitado
     if transporteSelecionado != "bus":
-        cadena1 = """SELECT "Informacion" FROM public."""
-        cadena2 = transporteSelecionado
-        paraConsulta = cadena1 + cadena2
+        paraConsulta = """SELECT "Informacion" FROM public."""+transporteSelecionado
 
         resultado = ""
 
