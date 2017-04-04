@@ -417,10 +417,7 @@ def reservaciones():
             capacidad = int(str(row).replace("(","").replace(")","").replace(",",""))
 
         if cantidadReservaciones < capacidad:
-            cadena1 = "UPDATE public."
-            cadena2 = transporteSelecionado + " SET " + '"Capacidad" ' +"= " + str(capacidad-cantidadReservaciones)
-            cadena3 = " WHERE "+ '"ID"' +"= " + str(elID)
-            paraActualizar = cadena1 + cadena2 + cadena3
+            paraActualizar = "UPDATE public."+ transporteSelecionado + " SET " + '"Capacidad" ' +"= " + str(capacidad-cantidadReservaciones)+" WHERE "+ '"ID"' +"= " + str(elID)
 
             cursor.execute(paraActualizar)
             cursor.execute("COMMIT;")
