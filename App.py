@@ -4,14 +4,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import re, string
 from flask import render_template
-from flask_httpauth import HTTPBasicAuth
+from requests.auth import HTTPBasicAuth
 
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 app = Flask(__name__)
 mapa = nx.Graph()  # Crear el grafo
-auth = HTTPBasicAuth()
+
 
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
