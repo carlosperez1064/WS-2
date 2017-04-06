@@ -465,31 +465,25 @@ def reservaciones():
         else:
             resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
 
+
+
     elif transporteSelecionado == "avion":
 
-        paraConsulta = """SELECT "Informacion" FROM public."avion"; """
-
-        cantidad = 0
-        cursor.execute(paraConsulta)
+        cursor.execute("""SELECT "Capacidad" FROM public."avion" WHERE "ID" = """ + str(elID))
         rows = cursor.fetchall()
         for row in rows:
-            jsons = json.dumps(row)
-            data = json.loads(jsons)
-            for item in data:
-                cantidad = item["CantidadPasajeros"]
-            if cantidadReservaciones <= cantidad:
-                paraActualizar = "UPDATE public.avion" + " SET " + '"Informacion" ' + "= " + \
-                                 '"Informacion"' + ":: jsonb -" + " 'CantidadPasajeros' " + "||" + \
-                                 "'{"'"CantidadPasajeros"'":" + str(
-                    cantidad - cantidadReservaciones) + "}'" + ":: jsonb" + \
-                                 " WHERE " + '"ID"' + "= " + str(elID);
+            capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
 
-                cursor.execute(paraActualizar)
-                cursor.execute("COMMIT;")
-                resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
+        if cantidadReservaciones <= capacidad:
+            paraActualizar = "UPDATE public.bus" + " SET " + '"CantidadPasajeros" ' + "= " + str(
+                capacidad - cantidadReservaciones) + \
+                             " WHERE " + '"ID"' + "= " + str(elID)
 
-            else:
-                resultado = "Lo sentimos. Hay " + str(cantidad) + " espacio(s)"
+            cursor.execute(paraActualizar)
+            cursor.execute("COMMIT;")
+            resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
+        else:
+            resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
 
 
     else:
