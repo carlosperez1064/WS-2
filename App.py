@@ -43,6 +43,7 @@ def registro():
 
     if userExist != usuario:
         cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
+        cursor.execute("COMMIT;")
         respuesta = "Se ha registrado exitosamente"
     else:
         respuesta = str(usuario) + " ya existe"
