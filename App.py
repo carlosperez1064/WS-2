@@ -9,8 +9,8 @@ from flask_httpauth import HTTPBasicAuth
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 app = Flask(__name__)
-mapa = nx.Graph()  # Crear el grafo
 auth = HTTPBasicAuth()
+mapa = nx.Graph()  # Crear el grafo
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
@@ -25,6 +25,13 @@ user = ''
 def registro():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
+
+    usuarioStr = "'" + usuario + "'"
+    contrasenaStr = "'" + contrasena + "'"
+
+    consulta = ("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
+    print(consulta)
+    cursor.execute(consulta)
     print(usuario)
 
     # buscar en BD este usuario, si no existe, lo registra, sino, indica dar en login
@@ -32,16 +39,23 @@ def registro():
     return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
 
 
+# https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent
+
+# --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
+@auth.get_password
+def get_pw(username):
+    con = cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"="""+ "'" + username + "'")
+    rows = cursor.fetchall()
+    contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
+    contrasenaPura = contrasena[1:-1]
+
+    return contrasenaPura
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
 @app.route('/login', methods=['POST'])
+@auth.login_required
 def loginUser():
-    user = request.form['user']
-    passw = request.form['pass']
-    print(user)
 
-    # Buscar en BD, si no existe, dar en registrar, si existe, verificar contrasena
-
-    return json.dumps({'status': 'OK', 'usuario': user, 'contrasena': passw})
+    return json.dumps({'status': 'OK', 'usuario': auth.username()})
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
@@ -149,6 +163,7 @@ def obtengaLaZonaDe(param):
 # nodo de elNodoDeDestino final en bus o en taxi.
 
 @app.route('/viajando/consultas', methods=['POST'])
+@auth.login_required
 def consulteMediosDeTransporte():
     unOrigen = request.form['origen']
     unDestino = request.form['destino']
@@ -163,7 +178,7 @@ def consulteMediosDeTransporte():
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
 
-    costo = 0
+    elCosto = 0
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
@@ -173,7 +188,7 @@ def consulteMediosDeTransporte():
             if elTipoTransporte == 'tren':
                 lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
                 resultado = (lasEstaciones)
-                costo = facturacion(17, elNodoDeOrigen, elNodoDeDestino)
+                elCosto = facturacion(17, elNodoDeOrigen, elNodoDeDestino)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -219,13 +234,13 @@ def consulteMediosDeTransporte():
 
     elif elTipoTransporte == 'taxi':
         resultado = consulteTaxis(elNodoDeOrigen, elNodoDeDestino)
-        costo = facturacion(600, elNodoDeOrigen, elNodoDeDestino)
+        elCosto = facturacion(600, elNodoDeOrigen, elNodoDeDestino)
 
     # --------------------------- BUSES --------------------------#
 
     if elTipoTransporte == 'bus':
         resultado = consulteBuses(elNodoDeOrigen, elNodoDeDestino)
-        costo = facturacion(20, elNodoDeOrigen, elNodoDeDestino)
+        elCosto = facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
         # ----------------------- GUARDAR EN LOG -----------------------#
 
@@ -235,7 +250,7 @@ def consulteMediosDeTransporte():
     toLog = "'" + jsonToBD + "'"
     cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
     cursor.execute("COMMIT;")
-    #ID es un secuencia automática creada en al BD
+    # ID es un secuencia automática creada en al BD
 
     # --------------------------- RESPUESTA ------------------------#
 
@@ -246,9 +261,9 @@ def consulteMediosDeTransporte():
     # no muestra nada, debe seleccionar, otro medio que lo lleve a donde exista avion,
     # (esas instrucciones también son dadas anteriorme, se le sugiere ir a otros nodos donde sí hay ese medio).
     if elTipoTransporte == 'avion':
-        costo = facturacion(900,elNodoDeOrigen,elNodoDeDestino)
+        elCosto = facturacion(900, elNodoDeOrigen, elNodoDeDestino)
 
-    respuesta = {"Costo": costo, "Respuesta ": str(resultado) + str(medios)}
+    respuesta = {"Costo": elCosto, "Respuesta ": (str(resultado) + str(medios))}
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
@@ -363,7 +378,7 @@ def consulteBuses(elNodoDeOrigen, elNodoDeDestino):
 
 def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
     # Muestra los medios de transporte que están en el punto de origen solicitado
-    if transporteSelecionado != "bus":
+    if transporteSelecionado != "bus" and transporteSelecionado != "taxi":
         paraConsulta = """SELECT "Informacion" FROM public.""" + transporteSelecionado
 
         resultado = ""
@@ -392,9 +407,16 @@ def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
-def facturacion(laDistancia, origen, destino):
+def facturacion2(elCostoPorKilometro, distancia, origen, destino):
     distancia = nx.dijkstra_path_length(mapa, origen, destino)
-    total = laDistancia * distancia
+    total = elCostoPorKilometro * distancia
+    # print(mapa.get_edge_data(origen, destino))
+    return "El costo es de " + str(total)
+
+
+def facturacion(elCostoPorKilometro, origen, destino):
+    distancia = nx.dijkstra_path_length(mapa, origen, destino)
+    total = elCostoPorKilometro * distancia
     # print(mapa.get_edge_data(origen, destino))
     return "El costo es de " + str(total)
 
@@ -405,6 +427,7 @@ def facturacion(laDistancia, origen, destino):
 # Primero se obtiene la cantidad que hay en la BD y luego, se le resta la cantidad de asientos
 
 @app.route('/viajando/reservacion', methods=['POST'])
+@auth.login_required
 def reservaciones():
     transporteSelecionado = request.form['tipoTransporte']
     elID = int(request.form['ID'])
@@ -443,10 +466,11 @@ def reservaciones():
             for item in data:
                 cantidad = item["CantidadPasajeros"]
             if cantidadReservaciones <= cantidad:
-                paraActualizar = "UPDATE public.avion"+ " SET " + '"Informacion" ' +"= " + \
-                                 '"Informacion"' +":: jsonb -" +" 'CantidadPasajeros' " + "||" + \
-                                 "'{"'"CantidadPasajeros"'":"+str(cantidad-cantidadReservaciones)+"}'"+":: jsonb" + \
-                                 " WHERE "+ '"ID"' +"= " + str(elID);
+                paraActualizar = "UPDATE public.avion" + " SET " + '"Informacion" ' + "= " + \
+                                 '"Informacion"' + ":: jsonb -" + " 'CantidadPasajeros' " + "||" + \
+                                 "'{"'"CantidadPasajeros"'":" + str(
+                    cantidad - cantidadReservaciones) + "}'" + ":: jsonb" + \
+                                 " WHERE " + '"ID"' + "= " + str(elID);
 
                 cursor.execute(paraActualizar)
                 cursor.execute("COMMIT;")
@@ -466,6 +490,13 @@ def reservaciones():
     print(jsonConRespuesta)
 
     return jsonConRespuesta
+
+
+def calculeLaDistancia(losNodos):
+    laDistancia = 0
+    for elNodo in losNodos:
+        laDistancia += mapa.get_edge_data(elNodo, losNodos(elNodo + 1))
+    return laDistancia
 
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
