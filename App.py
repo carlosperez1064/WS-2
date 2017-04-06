@@ -16,9 +16,9 @@ mapa = nx.Graph()  # Crear el grafo
 
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-conn = psycopg2.connect(conexion)
-cursor = conn.cursor()
+#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
+#conn = psycopg2.connect(conexion)
+#cursor = conn.cursor()
 
 user = ''
 
@@ -125,18 +125,13 @@ lista = [(19, 24, 60),
          (20, 21, 13)]
 
 mapa.add_weighted_edges_from(lista)  # Agregar los bordes con sus respectivos pesos
-
-
 # nx.draw_networkx(mapa, with_labels=True)  # Dibujar rutas del mapa (nodos conectados)
 # plt.show()
-
-
 # -------------------------------------- MÉTODO PARA OBTENER NOMBRES DE LOS NODOS --------------------------------------#
 def obtengaElNombreDe(param):
     for nodo in mapa.node:
         if nodo == param:
             return (mapa.node[nodo]["Nombre"])
-
 
 # ---------------------------------------- MÉTODO PARA OBTENER ZONAS DE LOS NODOS --------------------------------------#
 def obtengaLaZonaDe(param):
@@ -144,21 +139,19 @@ def obtengaLaZonaDe(param):
         if nodo == param:
             return (mapa.node[nodo]["zona"])
 
-
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
-
 # Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
 # en cuyo caso, enviaría a la persona hasta ese nodo en cualquiera de esos dos medios de transporte, y luego al
 # nodo de elNodoDeDestino final en bus o en taxi.
 
 @app.route('/viajando/consultas', methods=['POST'])
 def consulteMediosDeTransporte():
-    unOrigen = request.form['origen']
-    unDestino = request.form['destino']
+    elOrigen = request.form['origen']
+    elDestino = request.form['destino']
     elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
 
-    elNodoDeOrigen = int(unOrigen)
-    elNodoDeDestino = int(unDestino)
+    elNodoDeOrigen = int(elOrigen)
+    elNodoDeDestino = int(elDestino)
 
     losVecinosDelNodoDestino = mapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = mapa.neighbors(elNodoDeOrigen)
@@ -166,7 +159,7 @@ def consulteMediosDeTransporte():
     elNodoOrigenTieneTipoDeTransporte = mapa.node[elNodoDeOrigen][elTipoTransporte]
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
 
-    costo = 0
+    elCosto = 0
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
@@ -176,7 +169,8 @@ def consulteMediosDeTransporte():
             if elTipoTransporte == 'tren':
                 lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
                 resultado = (lasEstaciones)
-                costo = facturacion(17, elNodoDeOrigen, elNodoDeDestino)
+                print(lasEstaciones)
+                elCosto = facturacion(17, elNodoDeOrigen, elNodoDeDestino)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
                 for elVecino in losVecinosDelNodoDestino:
@@ -222,13 +216,13 @@ def consulteMediosDeTransporte():
 
     elif elTipoTransporte == 'taxi':
         resultado = consulteTaxis(elNodoDeOrigen, elNodoDeDestino)
-        costo = facturacion(600, elNodoDeOrigen, elNodoDeDestino)
+        elCosto = facturacion(600, elNodoDeOrigen, elNodoDeDestino)
 
     # --------------------------- BUSES --------------------------#
 
     if elTipoTransporte == 'bus':
         resultado = consulteBuses(elNodoDeOrigen, elNodoDeDestino)
-        costo = facturacion(20, elNodoDeOrigen, elNodoDeDestino)
+        elCosto = facturacion(20, elNodoDeOrigen, elNodoDeDestino)
 
         # ----------------------- GUARDAR EN LOG -----------------------#
 
@@ -249,9 +243,9 @@ def consulteMediosDeTransporte():
     # no muestra nada, debe seleccionar, otro medio que lo lleve a donde exista avion,
     # (esas instrucciones también son dadas anteriorme, se le sugiere ir a otros nodos donde sí hay ese medio).
     if elTipoTransporte == 'avion':
-        costo = facturacion(900,elNodoDeOrigen,elNodoDeDestino)
+        elCosto = facturacion(900,elNodoDeOrigen,elNodoDeDestino)
 
-    respuesta = {"Costo": costo, "Respuesta ": str(resultado) + str(medios)}
+    respuesta = {"Costo": elCosto, "Respuesta ": str(resultado) + str(medios)}
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
@@ -474,3 +468,4 @@ def reservaciones():
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
     app.run(port=5000, host='127.0.0.1')
+consulteMediosDeTransporte(19,4)
