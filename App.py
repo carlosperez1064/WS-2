@@ -1,8 +1,11 @@
 import time
 
 import networkx as nx
+
+import matplotlib.pyplot as plt
+import re, string
+from flask import render_template
 import psycopg2
-import simplejson as json
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
 
@@ -11,6 +14,7 @@ __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 mapa = nx.Graph()  # Crear el grafo
+
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
