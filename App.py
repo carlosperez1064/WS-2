@@ -24,7 +24,7 @@ cursor = conn.cursor()
 user = ''
 
 
-# ------------------------------------------------ REGISTRO DE USUARIO -------------------------------------------------#
+# ------------------------------------------- REGISTRO DE NUEVO USUARIO ------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
     usuario = request.form['usuario']
@@ -48,7 +48,6 @@ def registro():
     else:
         respuesta = str(usuario) + " ya existe"
 
-    print(respuesta)
     return json.dumps({'respuesta': respuesta})
 
 
@@ -62,11 +61,12 @@ def get_pw(username):
 
     return contrasenaPura
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET'])
 @auth.login_required
 def loginUser():
 
-    return json.dumps({'status': 'OK', 'usuario': auth.username()})
+    respuesta = json.dumps({'status': 'OK', 'usuario': auth.username()})
+    return respuesta
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
