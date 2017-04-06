@@ -1,9 +1,6 @@
 import time
-
 import networkx as nx
-
 import matplotlib.pyplot as plt
-import re, string
 import psycopg2
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
