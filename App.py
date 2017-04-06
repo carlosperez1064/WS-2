@@ -41,9 +41,8 @@ def registro():
         usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
         userExist = usersExistentesStr[1:-1]
 
-    if userExist !=usuario:
-        consulta = ("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
-        cursor.execute(consulta)
+    if userExist != usuario:
+        cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
         respuesta = "Se ha registrado exitosamente"
     else:
         respuesta = str(usuario) + " ya existe"
