@@ -4,24 +4,24 @@ import networkx as nx
 
 import matplotlib.pyplot as plt
 import re, string
-from flask import render_template
 import psycopg2
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS, cross_origin
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+CORS(app)
 mapa = nx.Graph()  # Crear el grafo
-
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
 
-user = ''
+user = ""
 
 
 # ------------------------------------------- REGISTRO DE NUEVO USUARIO ------------------------------------------------#
@@ -508,7 +508,6 @@ def calculeLaDistancia(losNodos):
     for elNodo in losNodos:
         laDistancia += mapa.get_edge_data(elNodo, losNodos(elNodo + 1))
     return laDistancia
-
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
