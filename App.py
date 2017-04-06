@@ -1,6 +1,9 @@
 import time
+
 import networkx as nx
+
 import matplotlib.pyplot as plt
+import re, string
 import psycopg2
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
@@ -19,6 +22,9 @@ conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password=
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
 
+user = ""
+
+
 # ------------------------------------------- REGISTRO DE NUEVO USUARIO ------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
@@ -28,23 +34,20 @@ def registro():
     usuarioStr = "'" + usuario + "'"
     contrasenaStr = "'" + contrasena + "'"
 
-    elUsuarioExiste=False
+    userExist = ""
 
     cursor.execute("""SELECT correo FROM public.usuarios""")
     rows = cursor.fetchall()
     for row in rows:
         usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
-        userExist = str(usersExistentesStr[1:-1])
-        print(userExist)
-        if userExist==usuario:
-            elUsuarioExiste=True
+        userExist = usersExistentesStr[1:-1]
 
-    if not elUsuarioExiste:
-            cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
-            cursor.execute("COMMIT;")
-            respuesta = "Se ha registrado exitosamente"
+    if userExist != usuario:
+        cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
+        cursor.execute("COMMIT;")
+        respuesta = "Se ha registrado exitosamente"
     else:
-            respuesta = str(usuario) + " ya existe"
+        respuesta = str(usuario) + " ya existe"
 
     return json.dumps({'respuesta': respuesta})
 
@@ -172,10 +175,8 @@ def obtengaLaZonaDe(param):
 # nodo de elNodoDeDestino final en bus o en taxi.
 
 @app.route('/viajando/consultas', methods=['POST'])
-@cross_origin
 @auth.login_required
 def consulteMediosDeTransporte():
-
     unOrigen = request.form['origen']
     unDestino = request.form['destino']
     elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
@@ -255,7 +256,6 @@ def consulteMediosDeTransporte():
 
         # ----------------------- GUARDAR EN LOG -----------------------#
 
-    user = auth.username()
     jsonToBD = '{"usuario": "' + str(user) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(
         elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
         elTipoTransporte) + '"}'
@@ -449,25 +449,7 @@ def reservaciones():
 
     if transporteSelecionado == "bus":
 
-        cursor.execute("""SELECT "CantidadPasajeros" FROM public."bus" WHERE "ID" = """ + str(elID))
-        rows = cursor.fetchall()
-        for row in rows:
-            capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
-
-        if cantidadReservaciones <= capacidad:
-            paraActualizar = "UPDATE public.bus" + " SET " + '"CantidadPasajeros" ' + "= " + str(
-                capacidad - cantidadReservaciones) + \
-                             " WHERE " + '"ID"' + "= " + str(elID)
-
-            cursor.execute(paraActualizar)
-            cursor.execute("COMMIT;")
-            resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
-        else:
-            resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
-
-    elif transporteSelecionado == "avion":
-
-        cursor.execute("""SELECT "Capacidad" FROM public."avion" WHERE "ID" = """ + str(elID))
+        cursor.execute("""SELECT "Capacidad" FROM public."bus" WHERE "ID" = """ + str(elID))
         rows = cursor.fetchall()
         for row in rows:
             capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
@@ -482,6 +464,33 @@ def reservaciones():
             resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
         else:
             resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
+
+    elif transporteSelecionado == "avion":
+
+        paraConsulta = """SELECT "Informacion" FROM public."avion"; """
+
+        cantidad = 0
+        cursor.execute(paraConsulta)
+        rows = cursor.fetchall()
+        for row in rows:
+            jsons = json.dumps(row)
+            data = json.loads(jsons)
+            for item in data:
+                cantidad = item["CantidadPasajeros"]
+            if cantidadReservaciones <= cantidad:
+                paraActualizar = "UPDATE public.avion" + " SET " + '"Informacion" ' + "= " + \
+                                 '"Informacion"' + ":: jsonb -" + " 'CantidadPasajeros' " + "||" + \
+                                 "'{"'"CantidadPasajeros"'":" + str(
+                    cantidad - cantidadReservaciones) + "}'" + ":: jsonb" + \
+                                 " WHERE " + '"ID"' + "= " + str(elID);
+
+                cursor.execute(paraActualizar)
+                cursor.execute("COMMIT;")
+                resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
+
+            else:
+                resultado = "Lo sentimos. Hay " + str(cantidad) + " espacio(s)"
+
 
     else:
         resultado = "No es posible realizar la reservacion. " \
