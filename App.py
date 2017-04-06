@@ -33,22 +33,29 @@ def registro():
     usuarioStr = "'" + usuario + "'"
     contrasenaStr = "'" + contrasena + "'"
 
-    consulta = ("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
-    print(consulta)
-    cursor.execute(consulta)
-    print(usuario)
+    userExist = ""
 
-    # buscar en BD este usuario, si no existe, lo registra, sino, indica dar en login
+    cursor.execute("""SELECT correo FROM public.usuarios""")
+    rows = cursor.fetchall()
+    for row in rows:
+        usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
+        userExist = usersExistentesStr[1:-1]
 
-    return json.dumps({'status': 'OK', 'usuario': usuario, 'contrasena': contrasena})
+    if userExist !=usuario:
+        consulta = ("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
+        cursor.execute(consulta)
+        respuesta = "Se ha registrado exitosamente"
+    else:
+        respuesta = str(usuario) + " ya existe"
 
+    print(respuesta)
+    return json.dumps({'respuesta': respuesta})
 
-# https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent
 
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
 @auth.get_password
 def get_pw(username):
-    con = cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"="""+ "'" + username + "'")
+    cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"="""+ "'" + username + "'")
     rows = cursor.fetchall()
     contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
     contrasenaPura = contrasena[1:-1]
