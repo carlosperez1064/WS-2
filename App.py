@@ -17,17 +17,10 @@ CORS(app)
 mapa = nx.Graph()  # Crear el grafo
 
 # ---------------------------------------------- CONECTAR A BASE DE DATOS ----------------------------------------------#
-<<<<<<< HEAD
-#conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
-#conn = psycopg2.connect(conexion)
-#cursor = conn.cursor()
-=======
 
 conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password='admin'"
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
->>>>>>> origin/master
-
 user = ""
 
 
@@ -199,10 +192,7 @@ def consulteMediosDeTransporte():
             if elTipoTransporte == 'tren':
                 lasEstaciones = consulteTrenes(elNodoDeOrigen, elNodoDeDestino)
                 resultado = (lasEstaciones)
-<<<<<<< HEAD
                 print(lasEstaciones)
-=======
->>>>>>> origin/master
                 elCosto = facturacion(17, elNodoDeOrigen, elNodoDeDestino)
         else:
             if elNodoOrigenTieneTipoDeTransporte:
@@ -276,15 +266,11 @@ def consulteMediosDeTransporte():
     # no muestra nada, debe seleccionar, otro medio que lo lleve a donde exista avion,
     # (esas instrucciones también son dadas anteriorme, se le sugiere ir a otros nodos donde sí hay ese medio).
     if elTipoTransporte == 'avion':
-<<<<<<< HEAD
         elCosto = facturacion(900,elNodoDeOrigen,elNodoDeDestino)
 
     respuesta = {"Costo": elCosto, "Respuesta ": str(resultado) + str(medios)}
-=======
-        elCosto = facturacion(900, elNodoDeOrigen, elNodoDeDestino)
+    elCosto = facturacion(900, elNodoDeOrigen, elNodoDeDestino)
 
-    respuesta = {"Costo": elCosto, "Respuesta ": (str(resultado) + str(medios))}
->>>>>>> origin/master
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
