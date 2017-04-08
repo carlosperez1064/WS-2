@@ -1,4 +1,3 @@
-import time
 import networkx as nx
 import psycopg2
 from flask import Flask, request, json
