@@ -21,7 +21,6 @@ cursor = conn.cursor()
 
 user = ""
 
-
 # ------------------------------------------- REGISTRO DE NUEVO USUARIO ------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
@@ -56,12 +55,12 @@ def registro():
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
 @auth.get_password
 def get_pw(username):
-    cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"="""+ "'" + username + "'")
-    rows = cursor.fetchall()
-    contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
-    contrasenaPura = contrasena[1:-1]
+      cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"="""+ "'" + username + "'")
+      rows = cursor.fetchall()
+      contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
+      contrasenaPura = contrasena[1:-1]
 
-    return contrasenaPura
+      return contrasenaPura
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
 @app.route('/login', methods=['GET'])
 @auth.login_required
@@ -72,7 +71,6 @@ def loginUser():
     resp  = Response(respuesta,200,mimetype='application/json')
 
     return resp
-
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 
