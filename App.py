@@ -2,7 +2,7 @@ import time
 import networkx as nx
 import matplotlib.pyplot as plt
 import psycopg2
-from flask import Flask, request, json
+from flask import Flask, request, json, Response
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
 
@@ -46,7 +46,11 @@ def registro():
     else:
         respuesta = str(usuario) + " ya existe"
 
-    return json.dumps({'respuesta': respuesta})
+
+    jsonConRespuesta = json.dumps({'respuesta': respuesta})
+    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+
+    return resp
 
 
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
@@ -63,8 +67,11 @@ def get_pw(username):
 @auth.login_required
 def loginUser():
 
-    respuesta = json.dumps({'status': 'OK', 'usuario': auth.username()})
-    return respuesta
+    respuesta = json.dumps({'estado': 'OK', 'usuario': auth.username()})
+
+    resp  = Response(respuesta,200,mimetype='application/json')
+
+    return resp
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
@@ -273,10 +280,12 @@ def consulteMediosDeTransporte():
         elCosto = facturacion(900, elNodoDeOrigen, elNodoDeDestino)
 
     respuesta = {"Costo": elCosto, "Respuesta ": (str(resultado) + str(medios))}
-    jsonConRespuesta = json.dumps(respuesta)
-    print(jsonConRespuesta)
 
-    return jsonConRespuesta
+    jsonConRespuesta = json.dumps(respuesta)
+
+    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+
+    return resp
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -492,13 +501,16 @@ def reservaciones():
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
-    return jsonConRespuesta
+    resp = Response(jsonConRespuesta,200,mimetype='application/json')
 
+    return resp
 
+# ----------------------------------------------------- CÁLCULO ------------------------------------------------------#
 def calculeLaDistancia(losNodos):
     laDistancia = 0
     for elNodo in losNodos:
         laDistancia += mapa.get_edge_data(elNodo, losNodos(elNodo + 1))
+
     return laDistancia
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
