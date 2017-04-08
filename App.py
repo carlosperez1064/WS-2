@@ -19,8 +19,6 @@ conexion = "host='localhost' dbname='MediosTransporte' user='postgres' password=
 conn = psycopg2.connect(conexion)
 cursor = conn.cursor()
 
-user = ""
-
 # ------------------------------------------- REGISTRO DE NUEVO USUARIO ------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
@@ -62,6 +60,7 @@ def get_pw(username):
 
       return contrasenaPura
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
+
 @app.route('/login', methods=['GET'])
 @auth.login_required
 def loginUser():
@@ -193,6 +192,8 @@ def consulteMediosDeTransporte():
     elNodoDestinoTieneTipoDeTransporte = mapa.node[elNodoDeDestino][elTipoTransporte]
 
     elCosto = 0
+    resultado = ""
+    print(elNodoDeDestino,elNodoDeOrigen)
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elTipoTransporte == 'avion' or elTipoTransporte == 'tren':
         if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
@@ -258,7 +259,7 @@ def consulteMediosDeTransporte():
 
         # ----------------------- GUARDAR EN LOG -----------------------#
 
-    jsonToBD = '{"usuario": "' + str(user) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(
+    jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(
         elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
         elTipoTransporte) + '"}'
     toLog = "'" + jsonToBD + "'"
