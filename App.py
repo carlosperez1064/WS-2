@@ -1,14 +1,11 @@
 import time
-
 import networkx as nx
-
 import psycopg2
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS, cross_origin
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
-
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 CORS(app)
@@ -47,7 +44,6 @@ def registro():
 
     return json.dumps({'respuesta': respuesta})
 
-
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
 @auth.get_password
 def get_pw(username):
@@ -64,7 +60,6 @@ def loginUser():
 
     respuesta = json.dumps({'status': 'OK', 'usuario': auth.username()})
     return respuesta
-
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 
@@ -93,7 +88,6 @@ elMapa.add_node(22, {"Nombre": "Los Chiles", "zona": "A", "bus": True, "taxi": T
 elMapa.add_node(23, {"Nombre": "Heredia", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": False})
 elMapa.add_node(24, {"Nombre": "Santa Cruz", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 
-# Lista de edges y pesos que será insertada (nodo origen, nodo destino, distancia en km)
 laLista = [(19, 24, 60),
          (19, 6, 40),
          (19, 11, 50),
@@ -149,10 +143,6 @@ def obtengaLaZonaDe(elNodoABuscar):
             return (elMapa.node[elNodo]["zona"])
 
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
-# Determinar si en los nodos vecinos al elNodoDeDestino final, existe un medio de transporte más rápido (avión o tren)
-# en cuyo caso, enviaría a la persona hasta ese nodo en cualquiera de esos dos medios de transporte, y luego al
-# nodo de elNodoDeDestino final en bus o en taxi.
-
 @app.route('/viajando/consultas', methods=['POST'])
 @auth.login_required
 def consulteMediosDeTransporte():
@@ -262,7 +252,6 @@ def consulteMediosDeTransporte():
                 print("Las unicas opciones entre " + obtengaElNombreDe(elNodoDeOrigen) + " y " + obtengaElNombreDe(elNodoDeDestino) + " son bus y taxi")
 
         # --------------------------- TAXIS --------------------------#
-
         elif elTipoDeTransporte == 'taxi':
             print(consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino))
             print(obtengaLaFacturaDe(600, elNodoDeOrigen, elNodoDeDestino))
@@ -277,7 +266,6 @@ def consulteMediosDeTransporte():
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
-
 def consulteTrenes(elOrigen, elDestino):
     lasEstacionesDelTren = [11, 8, 16, 1, 7, 23, 15, 13, 18]
     elMensaje = []
