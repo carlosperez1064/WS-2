@@ -288,14 +288,12 @@ def consulteMediosDeTransporte():
 
     # --------------------------- RESPUESTA ------------------------#
 
+    laRespuesta = str(laRespuestaARetornar).replace("[","").replace("]","").replace("'","")
+    jsonConRespuesta = json.dumps({"respuesta ": laRespuesta})
+    print(jsonConRespuesta)
+    #resp = Response(jsonConRespuesta, 200, mimetype='application/json')
 
-    for elElemento in laRespuestaARetornar:
-        print(elElemento)
-    #jsonConRespuesta = json.dumps({"respuesta ": elResultado})
-    #print(jsonConRespuesta)
-    #laRespuestaARetornar = Response(jsonConRespuesta, 200, mimetype='application/json')
-
-    #return laRespuestaARetornar
+    return laRespuesta
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
 def consulteTrenes(elOrigen, elDestino):
@@ -351,7 +349,7 @@ def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elT
     for row in rows:
         elMensaje += str(row[1] + ". Horario: " + str(row[2]))
         if elTipoDeTransporte == 'avion':
-            elMensaje += ", CODIGO DE RESERVACION: " + str(row[0]) + ". \n"
+            elMensaje += ", CODIGO DE RESERVACION: " + str(row[0]) + ". "
 
     return elMensaje
 
@@ -411,7 +409,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
         for row in rows:
             elResultadoARetornar += ["Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
                                      + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: "
-                                     + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
+                                     + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])+". "]
     if len(lasOpcionesEnCasoDeNecesitarHacerCambio) > 0:
         for laRuta in lasOpcionesEnCasoDeNecesitarHacerCambio:
             cursor.execute(
@@ -421,7 +419,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
             for row in rows:
                 elResultadoARetornar += ["Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
                                          + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5]) + ", CODIGO DE RESERVACION: "
-                                         + str(row[0])]
+                                         + str(row[0])+". "]
     for laOpcion in elResultadoARetornar:
         return elRecordatorioDeCambio + laOpcion
 
