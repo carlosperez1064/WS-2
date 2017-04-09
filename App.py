@@ -355,7 +355,7 @@ def consulteTrenes(elOrigen, elDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen: elMensaje.append(
                 lasEstacionesDelTren[laEstacion])
-    lasIndicaciones += "Sus estaciones son: "
+    lasIndicaciones += "\nSus estaciones son: "
     for laEstacion in elMensaje:
         lasIndicaciones += obtengaElNombreDe(laEstacion)
         lasIndicaciones += ", "
@@ -365,7 +365,6 @@ def consulteTrenes(elOrigen, elDestino):
             lasIndicaciones += "y no olvide hacer cambio de tren en San Jose (estacion #7)"
 
     return (lasIndicaciones)
-
 
 # ---------------------------------------- MÉTODO VERIFICAR EN BD TREN O AVION -----------------------------------------#
 
@@ -379,9 +378,13 @@ def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elT
             """SELECT "ID", "NombreCompania","Horario" FROM public.tren WHERE "Origen"=""" + str(elNodoDeOrigen)
             + """AND "Destino"=""" + str(elNodoDeDestino))
     rows = cursor.fetchall()
+
     elMensaje = ""
     for row in rows:
-        elMensaje += str(row[1] +". Horario: "+ str(row[2]) + ", CODIGO DE RESERVACION: "+str(row[0])+". \n")
+        elMensaje += str(row[1] +". Horario: "+ str(row[2]))
+        if elTipoDeTransporte == 'avion':
+            elMensaje += ", CODIGO DE RESERVACION: "+str(row[0])+". \n"
+
     return (elMensaje)
 
 
@@ -466,7 +469,6 @@ def obtengaLaFacturaDe(elCostoPorKilometro, elOrigen, elDestino):
     elTotal = elCostoPorKilometro * laDistancia
     return "El costo es de " + str(elTotal)
 
-
 # -------------------------------------------- MÉTODO PARA RESERVACIONES -----------------------------------------------#
 
 # Actualizar espacio en BD (reservaciones en bus y avion), el cliente selecciona un ID de los mostrados en las consultas
@@ -508,7 +510,6 @@ def reservaciones():
     resp = Response(jsonConRespuesta, 200, mimetype='application/json')
 
     return resp
-
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
