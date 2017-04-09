@@ -444,11 +444,6 @@ def reservaciones():
             resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
 
 
-    else:
-        resultado = "No es posible realizar la reservacion. " \
-                    "Para tren debe ir a la estacion, y para taxi " \
-                    "debe comunicarse con el conductor"
-
     respuesta = {"Respuesta ": resultado}
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
