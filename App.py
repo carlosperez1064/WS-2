@@ -289,9 +289,9 @@ def consulteMediosDeTransporte():
     # --------------------------- RESPUESTA ------------------------#
 
     laRespuesta = str(laRespuestaARetornar).replace("[","").replace("]","").replace("'","")
-    jsonConRespuesta = json.dumps({"respuesta ": laRespuesta})
-    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
-    print(jsonConRespuesta)
+    #jsonConRespuesta = json.dumps({"respuesta ": laRespuesta})
+    #resp = Response(jsonConRespuesta, 200, mimetype='application/json')
+    print(laRespuesta)
 
     return laRespuesta
 
@@ -461,9 +461,9 @@ def realiceLaReservacion():
         else:
             elResultado = "Lo sentimos. Hay " + str(laCapacidad) + " espacio(s)"
 
-    elJsonConLaRespuesta = json.dumps({'Respuesta ': elResultado})
-    laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
-    print(elJsonConLaRespuesta)
+    #elJsonConLaRespuesta = json.dumps({'Respuesta ': elResultado})
+    #laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
+    print(elResultado)
 
     return elResultado
 
