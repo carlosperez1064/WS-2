@@ -288,14 +288,12 @@ def consulteMediosDeTransporte():
 
     # --------------------------- RESPUESTA ------------------------#
 
+    laRespuesta = str(laRespuestaARetornar).replace("[","").replace("]","").replace("'","")
+    #jsonConRespuesta = json.dumps({"respuesta ": laRespuesta})
+    #resp = Response(jsonConRespuesta, 200, mimetype='application/json')
+    print(laRespuesta)
 
-    for elElemento in laRespuestaARetornar:
-        print(elElemento)
-    #jsonConRespuesta = json.dumps({"respuesta ": elResultado})
-    #print(jsonConRespuesta)
-    #laRespuestaARetornar = Response(jsonConRespuesta, 200, mimetype='application/json')
-
-    #return laRespuestaARetornar
+    return laRespuesta
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
 def consulteTrenes(elOrigen, elDestino):
@@ -322,7 +320,7 @@ def consulteTrenes(elOrigen, elDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen: elMensaje.append(
                 lasEstacionesDelTren[laEstacion])
-    lasIndicaciones += "\nSus estaciones son: "
+    lasIndicaciones += " Sus estaciones son: "
     for laEstacion in elMensaje:
         lasIndicaciones += obtengaElNombreDe(laEstacion)
         lasIndicaciones += ", "
@@ -351,7 +349,7 @@ def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elT
     for row in rows:
         elMensaje += str(row[1] + ". Horario: " + str(row[2]))
         if elTipoDeTransporte == 'avion':
-            elMensaje += ", CODIGO DE RESERVACION: " + str(row[0]) + ". \n"
+            elMensaje += ", CODIGO DE RESERVACION: " + str(row[0]) + ". "
 
     return elMensaje
 
@@ -364,19 +362,21 @@ def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
         for elNodoRuta in laRutaCorta:
             losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
             ruta += [losNombresDeLosNodos]
+
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
         resultado = []
         cursor.execute(
             """SELECT "Informacion" FROM public."taxi" WHERE "Informacion" ->> 'Zona' = """ + "'" + zonaOrigen + "'" + """;""")
         rows = cursor.fetchall()
-
+        contadorDeOpciones = 0
         for row in rows:
-            resultado += [row]
-            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")","")
+            contadorDeOpciones +=1
+            resultado += [" OPCIÓN "+str(contadorDeOpciones)+": "+str(row)]
+            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")","").replace('"',"")
             respuesta = "La ruta mas corta es pasando por " + str(ruta).replace("[", "").replace("]", "").replace("'","")\
                         + ". Taxis de la zona: " + opciones
 
-        return respuesta
+    return respuesta
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
@@ -411,7 +411,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
         for row in rows:
             elResultadoARetornar += ["Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
                                      + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: "
-                                     + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
+                                     + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])+". "]
     if len(lasOpcionesEnCasoDeNecesitarHacerCambio) > 0:
         for laRuta in lasOpcionesEnCasoDeNecesitarHacerCambio:
             cursor.execute(
@@ -421,7 +421,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
             for row in rows:
                 elResultadoARetornar += ["Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
                                          + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5]) + ", CODIGO DE RESERVACION: "
-                                         + str(row[0])]
+                                         + str(row[0])+". "]
     for laOpcion in elResultadoARetornar:
         return elRecordatorioDeCambio + laOpcion
 
@@ -456,19 +456,19 @@ def realiceLaReservacion():
                                                     + str(laCapacidad - laCantidadDeReservaciones) + " WHERE " + '"id"' + "= " + str(elID)
             cursor.execute(elComandoSQLParaActualizarLaCapacidad)
             cursor.execute("COMMIT;")
-            elResultado = str(laCantidadDeReservaciones) + " asiento(s) reservado(s) con exito"
+            elResultado = str(laCantidadDeReservaciones) + " asiento(s) reservado(s) con éxito"
 
         else:
             elResultado = "Lo sentimos. Hay " + str(laCapacidad) + " espacio(s)"
 
-    laRespuesta = {"Respuesta ": elResultado}
-    elJsonConLaRespuesta = json.dumps(laRespuesta)
-    print(elJsonConLaRespuesta)
-    laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
+    #elJsonConLaRespuesta = json.dumps({'Respuesta ': elResultado})
+    #laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
+    print(elResultado)
 
-    return laRespuestaARetornar
-
+    return elResultado
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
     app.run(port=5000, host='127.0.0.1')
+
+#FIN
