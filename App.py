@@ -1,5 +1,4 @@
 import time
-
 import networkx as nx
 import psycopg2
 from flask import Flask, request, json, Response
@@ -22,33 +21,29 @@ cursor = conn.cursor()
 # ------------------------------------------- REGISTRO DE NUEVO USUARIO ------------------------------------------------#
 @app.route('/registro', methods=['POST'])
 def registro():
-    usuario = request.form['usuario']
-    contrasena = request.form['contrasena']
-
-    usuarioStr = "'" + usuario + "'"
-    contrasenaStr = "'" + contrasena + "'"
-
+    elUsuario = request.form['usuario']
+    laContrasena = request.form['contrasena']
+    elUsuarioComoString = "'" + elUsuario + "'"
+    laContrasenaComoString = "'" + laContrasena + "'"
     elUsuarioExiste = False
 
     cursor.execute("""SELECT correo FROM public.usuarios""")
     rows = cursor.fetchall()
     for row in rows:
-        usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']',"")
-        userExist = str(usersExistentesStr[1:-1])
-        if userExist == usuario:
+        losUsuariosExistentesComoString = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']',"")
+        elUsuarioEncontrado = str(losUsuariosExistentesComoString[1:-1])
+        if elUsuarioExiste == elUsuario:
             elUsuarioExiste = True
-
     if not elUsuarioExiste:
-        cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
+        cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + elUsuarioComoString + "," + laContrasenaComoString + ");")
         cursor.execute("COMMIT;")
-        respuesta = "Se ha registrado exitosamente"
+        laRespuesta = "Se ha registrado exitosamente"
     else:
-        respuesta = str(usuario) + " ya existe"
+        laRespuesta = str(elUsuario) + " ya existe"
+    elJsonConRespuesta = json.dumps({'respuesta': laRespuesta})
+    laRespuestaARetornar = Response(elJsonConRespuesta, 200, mimetype='application/json')
 
-    jsonConRespuesta = json.dumps({'respuesta': respuesta})
-    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
-
-    return resp
+    return laRespuestaARetornar
 
 
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
@@ -56,20 +51,20 @@ def registro():
 def get_pw(username):
     cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"=""" + "'" + username + "'")
     rows = cursor.fetchall()
-    contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']', "")
-    contrasenaPura = contrasena[1:-1]
+    laContrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']', "")
+    soloLaContrasena = laContrasena[1:-1]
 
-    return contrasenaPura
+    return soloLaContrasena
 
 
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
 @app.route('/login', methods=['GET'])
 @auth.login_required
 def loginUser():
-    respuesta = json.dumps({'estado': 'OK', 'usuario': auth.username()})
-    resp = Response(respuesta, 200, mimetype='application/json')
+    laRespuesta = json.dumps({'estado': 'OK', 'usuario': auth.username()})
+    laRespuestaARetornar = Response(laRespuesta, 200, mimetype='application/json')
 
-    return resp
+    return laRespuestaARetornar
 
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
@@ -282,8 +277,7 @@ def consulteMediosDeTransporte():
 
     jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(
         time.strftime("%c")) + '", "origen": "' + str(
-        elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
-        elTipoDeTransporte) + '"}'
+        elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(elTipoDeTransporte) + '"}'
     toLog = "'" + jsonToBD + "'"
     cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
     cursor.execute("COMMIT;")
@@ -294,9 +288,9 @@ def consulteMediosDeTransporte():
 
     jsonConRespuesta = json.dumps({"respuesta ": elResultado})
     print(jsonConRespuesta)
-    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
+    laRespuestaARetornar = Response(jsonConRespuesta, 200, mimetype='application/json')
 
-    return elResultado
+    return laRespuestaARetornar
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -374,17 +368,16 @@ def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
 
         for row in rows:
             resultado += [row]
-            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")",
-                                                                                                                  "")
-            respuesta = "La ruta mas corta es pasando por " + str(ruta).replace("[", "").replace("]", "").replace("'",
-                                                                                                                  "") + ". Taxis de la zona: " + opciones
+            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")","")
+            respuesta = "La ruta mas corta es pasando por " + str(ruta).replace("[", "").replace("]", "").replace("'","")\
+                        + ". Taxis de la zona: " + opciones
 
         return respuesta
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
-    recordatorioDeCambio = ""
+    elRecordatorioDeCambio = ""
     lasRutas = [[19, 24, 11, 3, 7],
                 [19, 6, 22, 8, 16, 1, 7],
                 [7, 1, 9, 4, 10, 21, 20, 5],
@@ -406,18 +399,15 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
                     if laRuta.count(elNodoDeDestino):
                         if lasOpcionesEnCasoDeNecesitarHacerCambio.count(lasRutas.index(laRuta)) < 1:
                             lasOpcionesEnCasoDeNecesitarHacerCambio.append(lasRutas.index(laRuta))
-        recordatorioDeCambio = "Recuerde hacer cambio en San Jose... "
+        elRecordatorioDeCambio = "Recuerde hacer cambio en San Jose... "
     elResultadoARetornar = []
     for laRuta in lasOpcionesParaLaRuta:
-        cursor.execute(
-            """SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(
-                laRuta))
+        cursor.execute("""SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(laRuta))
         rows = cursor.fetchall()
         for row in rows:
-            elResultadoARetornar += [
-                "Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
-                + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(
-                    row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
+            elResultadoARetornar += ["Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
+                                     + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: "
+                                     + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
     if len(lasOpcionesEnCasoDeNecesitarHacerCambio) > 0:
         for laRuta in lasOpcionesEnCasoDeNecesitarHacerCambio:
             cursor.execute(
@@ -425,12 +415,11 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
                     laRuta))
             rows = cursor.fetchall()
             for row in rows:
-                elResultadoARetornar += [
-                    "Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
-                    + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(
-                        row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
+                elResultadoARetornar += ["Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
+                                         + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5]) + ", CODIGO DE RESERVACION: "
+                                         + str(row[0])]
     for laOpcion in elResultadoARetornar:
-        return recordatorioDeCambio + laOpcion
+        return elRecordatorioDeCambio + laOpcion
 
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
@@ -452,35 +441,28 @@ def realiceLaReservacion():
     elTransporteSeleccionado = request.form['tipoTransporte']
     elID = int(request.form['ID'])
     laCantidadDeReservaciones = int(request.form['cantidad'])
-
     elResultado = ""
-
     if elTransporteSeleccionado == "avion" or elTransporteSeleccionado == "bus":
-        cursor.execute(
-            """SELECT "Capacidad" FROM public.""" + elTransporteSeleccionado + """ WHERE "id" = """ + str(elID))
+        cursor.execute("""SELECT "Capacidad" FROM public.""" + elTransporteSeleccionado + """ WHERE "id" = """ + str(elID))
         rows = cursor.fetchall()
         for row in rows:
-            capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
-
-        if laCantidadDeReservaciones <= capacidad:
-            paraActualizar = "UPDATE public." + elTransporteSeleccionado + " SET " + '"Capacidad" ' + "= " + str(
-                capacidad - laCantidadDeReservaciones) + \
-                             " WHERE " + '"id"' + "= " + str(elID)
-
-            cursor.execute(paraActualizar)
+            laCapacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
+        if laCantidadDeReservaciones <= laCapacidad:
+            elComandoSQLParaActualizarLaCapacidad = "UPDATE public." + elTransporteSeleccionado + " SET " + '"Capacidad" ' + "= " \
+                                                    + str(laCapacidad - laCantidadDeReservaciones) + " WHERE " + '"id"' + "= " + str(elID)
+            cursor.execute(elComandoSQLParaActualizarLaCapacidad)
             cursor.execute("COMMIT;")
-            elResultado = str(laCantidadDeReservaciones) + " asiento(s) reservado(s)"
+            elResultado = str(laCantidadDeReservaciones) + " asiento(s) reservado(s) con exito"
 
         else:
-            elResultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
+            elResultado = "Lo sentimos. Hay " + str(laCapacidad) + " espacio(s)"
 
-    respuesta = {"Respuesta ": elResultado}
-    jsonConRespuesta = json.dumps(respuesta)
-    print(jsonConRespuesta)
+    laRespuesta = {"Respuesta ": elResultado}
+    elJsonConLaRespuesta = json.dumps(laRespuesta)
+    print(elJsonConLaRespuesta)
+    laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
 
-    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
-
-    return resp
+    return laRespuestaARetornar
 
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
