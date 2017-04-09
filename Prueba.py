@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import networkx as nx
 import psycopg2
 
@@ -74,133 +75,10 @@ lista = [(19, 24, 60),
          (20, 21, 13)]
 
 elMapa.add_weighted_edges_from(lista)
-
-def consulteMediosDeTransporte():
-    # elOrigen = request.form['origen']
-    # elDestino = request.form['destino']
-    # elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
-    # elNodoDeOrigen = int(elOrigen)
-    # elNodoDeDestino = int(elDestino)
-
-    elNodoDeOrigen = 19
-    elNodoDeDestino = 2
-    elTipoDeTransporte = 'tren'
-    losVecinosDelNodoDestino = elMapa.neighbors(elNodoDeDestino)
-    losVecinosDelNodoOrigen = elMapa.neighbors(elNodoDeOrigen)
-
-    elNodoOrigenTieneTipoDeTransporte = elMapa.node[elNodoDeOrigen][elTipoDeTransporte]
-    elNodoDestinoTieneTipoDeTransporte = elMapa.node[elNodoDeDestino][elTipoDeTransporte]
-
-    # --------------------------- AVIONES Y TRENES --------------------------#
-    if elNodoDeOrigen != elNodoDeDestino:
-        if elTipoDeTransporte == 'avion' or elTipoDeTransporte == 'tren':
-            if elNodoDeDestino not in losVecinosDelNodoOrigen:
-                if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-                    elResultado = ("Viaje directo de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoDeDestino) + " en " + elTipoDeTransporte)
-                    print(elResultado)
-                    if elTipoDeTransporte=='avion':
-                        print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, 'avion'))
-                        print(obtengaLaFacturaDe(300, elNodoDeOrigen, elNodoDeDestino))
-                    else:
-                        print(consulteTrenes(elNodoDeOrigen, elNodoDeDestino))
-                        print(obtengaLaFacturaDe(5, elNodoDeOrigen, elNodoDeDestino))
-                else:
-                    if elNodoOrigenTieneTipoDeTransporte:
-                        for elNodoVecino in losVecinosDelNodoDestino:
-                            elVecinoTieneTipoDeTransporte = elMapa.node[elNodoVecino][elTipoDeTransporte]
-                            if elVecinoTieneTipoDeTransporte:
-                                elResultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoVecino)
-                                               + " en " + elTipoDeTransporte + " y luego a " + obtengaElNombreDe(elNodoDeDestino) + " en bus o taxi")
-                                print(elResultado)
-                                if elTipoDeTransporte == 'avion':
-                                    print("AVION DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+obtengaElNombreDe(elNodoVecino))
-                                    print(obtengaLaFacturaDe(300,elNodoDeOrigen, elNodoVecino))
-                                    print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoVecino, 'avion'))
-                                    print("BUS DE "+obtengaElNombreDe(elNodoVecino)+" A "+obtengaElNombreDe(elNodoDeDestino))
-                                    print(obtengaLaFacturaDe(20, elNodoVecino, elNodoDeDestino))
-                                    print(consulteLasOpcionesDeBusesDe(elNodoVecino, elNodoDeDestino))
-                                else:
-                                    print("TREN DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+obtengaElNombreDe(elNodoVecino))
-                                    print(obtengaLaFacturaDe(5, elNodoDeOrigen,elNodoVecino))
-                                    print(consulteTrenes(elNodoDeOrigen, elNodoVecino))
-                                    print("BUS DE "+obtengaElNombreDe(elNodoVecino)+" A "+obtengaElNombreDe(elNodoDeDestino))
-                                    print(obtengaLaFacturaDe(20, elNodoVecino, elNodoDeDestino))
-                                    print(consulteLasOpcionesDeBusesDe(elNodoVecino,elNodoDeDestino))
-                    elif elNodoDestinoTieneTipoDeTransporte:
-                        for elNodoVecino in losVecinosDelNodoOrigen:
-                            elVecinoTieneTipoDeTransporte = elMapa.node[elNodoVecino][elTipoDeTransporte]
-                            if elVecinoTieneTipoDeTransporte:
-                                elResultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoVecino) +
-                                               " en bus o taxi y luego de " + obtengaElNombreDe(elNodoVecino) + " a " + obtengaElNombreDe(elNodoDeDestino) +
-                                               " en " + elTipoDeTransporte)
-                                print(elResultado)
-                                if elTipoDeTransporte == 'avion':
-                                    print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+ " A "+ obtengaElNombreDe(elNodoVecino))
-                                    print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoVecino))
-                                    print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoVecino))
-                                    print("AVION DE "+obtengaElNombreDe(elNodoVecino)+ " A "+ obtengaElNombreDe(elNodoDeDestino))
-                                    print(obtengaLaFacturaDe(300, elNodoVecino, elNodoDeDestino))
-                                    print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoVecino, elNodoDeDestino, 'avion'))
-                                else:
-                                    print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+ " A "+ obtengaElNombreDe(elNodoVecino))
-                                    print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoVecino))
-                                    print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoVecino))
-                                    print("TREN DE "+obtengaElNombreDe(elNodoVecino)+ " A "+ obtengaElNombreDe(elNodoDeDestino))
-                                    print(obtengaLaFacturaDe(5, elNodoVecino, elNodoDeDestino))
-                                    print(consulteTrenes(elNodoVecino, elNodoDeDestino))
-                    else:
-                        for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
-                            if elMapa.node[elVecinodeNodoOrigen][elTipoDeTransporte]:
-                                for elVecinodeNodoDestino in losVecinosDelNodoDestino:
-                                    if elMapa.node[elVecinodeNodoDestino][elTipoDeTransporte]:
-                                        resultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elVecinodeNodoOrigen) + " en bus o taxi, luego de " +
-                                                     obtengaElNombreDe(elVecinodeNodoOrigen) + " en " + elTipoDeTransporte + " a " +
-                                                     obtengaElNombreDe(elVecinodeNodoDestino) + " y por ultimo en bus o taxi a " +
-                                                     obtengaElNombreDe(elNodoDeDestino))
-                                        print(resultado)
-                                        if elTipoDeTransporte == 'avion':
-                                            print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
-                                            print(obtengaLaFacturaDe(20,elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            print("AVION DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
-                                            print(300, elVecinodeNodoOrigen, elVecinodeNodoDestino)
-                                            print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen, elVecinodeNodoDestino, 'avion'))
-                                            print("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
-                                            print(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
-                                            print(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino, elNodoDeDestino))
-                                        else:
-                                            print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
-                                            print(obtengaLaFacturaDe(20, elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            print("TREN DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
-                                            print(obtengaLaFacturaDe(5, elVecinodeNodoOrigen, elVecinodeNodoDestino))
-                                            print(consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino))
-                                            print("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
-                                            print(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
-                                            print(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino,elNodoDeDestino))
-            else:
-                print("Las unicas opciones entre " + obtengaElNombreDe(elNodoDeOrigen) + " y " + obtengaElNombreDe(elNodoDeDestino) + " son bus y taxi")
-
-        # --------------------------- TAXIS --------------------------#
-
-        elif elTipoDeTransporte == 'taxi':
-            print(consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino))
-            print(obtengaLaFacturaDe(600, elNodoDeOrigen, elNodoDeDestino))
-
-        # --------------------------- BUSES --------------------------#
-
-        if elTipoDeTransporte == 'bus':
-            print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino))
-            print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoDeDestino))
-    else:
-        print("El origen y el destino son el mismo")
-
-
 def obtengaElNombreDe(elNodoABuscar):
     for elNodo in elMapa.node:
         if elNodo == elNodoABuscar:
             return (elMapa.node[elNodo]["Nombre"])
-
 
 def obtengaLaZonaDe(elNodoABuscar):
     for elNodo in elMapa.node:
@@ -322,9 +200,143 @@ def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elT
         elMensaje += str(row[0] + " " + row[1])
     return (elMensaje)
 
+def consulteMediosDeTransporte():
+    #elOrigen = request.form['origen']
+    #elDestino = request.form['destino']
+    #elTipoDeTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
 
-consulteMediosDeTransporte()
-# consulteAvionesOTrenesEnLaBaseDeDatosDe(19,5,'avion')
-# consulteAvionesOTrenesEnLaBaseDeDatosDe(7,18,'tren')
+    elNodoDeOrigen = 11
+    elNodoDeDestino = 20
+    elTipoDeTransporte='avion'
 
-# consulteTrenes(16,15)
+    losVecinosDelNodoDestino = elMapa.neighbors(elNodoDeDestino)
+    losVecinosDelNodoOrigen = elMapa.neighbors(elNodoDeOrigen)
+
+    elNodoOrigenTieneTipoDeTransporte = elMapa.node[elNodoDeOrigen][elTipoDeTransporte]
+    elNodoDestinoTieneTipoDeTransporte = elMapa.node[elNodoDeDestino][elTipoDeTransporte]
+
+    elResultado = ''
+    laRespuestaARetornar=[]
+    # --------------------------- AVIONES Y TRENES --------------------------#
+    if elNodoDeOrigen != elNodoDeDestino:
+        if elTipoDeTransporte == 'avion' or elTipoDeTransporte == 'tren':
+            if elNodoDeDestino not in losVecinosDelNodoOrigen:
+                if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
+                    elResultado = ("Viaje directo de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoDeDestino) + " en " + elTipoDeTransporte)
+                    laRespuestaARetornar.append(elResultado)
+                    if elTipoDeTransporte=='avion':
+                        laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, 'avion'))
+                        laRespuestaARetornar.append(obtengaLaFacturaDe(300, elNodoDeOrigen, elNodoDeDestino))
+                    else:
+                        laRespuestaARetornar.append(consulteTrenes(elNodoDeOrigen, elNodoDeDestino))
+                        laRespuestaARetornar.append(obtengaLaFacturaDe(5, elNodoDeOrigen, elNodoDeDestino))
+                else:
+                    if elNodoOrigenTieneTipoDeTransporte:
+                        for elNodoVecino in losVecinosDelNodoDestino:
+                            elVecinoTieneTipoDeTransporte = elMapa.node[elNodoVecino][elTipoDeTransporte]
+                            if elVecinoTieneTipoDeTransporte:
+                                elResultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoVecino)
+                                               + " en " + elTipoDeTransporte + " y luego a " + obtengaElNombreDe(elNodoDeDestino) + " en bus o taxi")
+                                laRespuestaARetornar.append(elResultado)
+                                if elTipoDeTransporte == 'avion':
+                                    laRespuestaARetornar.append("AVION DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+obtengaElNombreDe(elNodoVecino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(300,elNodoDeOrigen, elNodoVecino))
+                                    laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoVecino, 'avion'))
+                                    laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoVecino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(20, elNodoVecino, elNodoDeDestino))
+                                    laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoVecino, elNodoDeDestino))
+                                else:
+                                    laRespuestaARetornar.append("TREN DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+obtengaElNombreDe(elNodoVecino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(5, elNodoDeOrigen,elNodoVecino))
+                                    laRespuestaARetornar.append(consulteTrenes(elNodoDeOrigen, elNodoVecino))
+                                    laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoVecino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(20, elNodoVecino, elNodoDeDestino))
+                                    laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoVecino,elNodoDeDestino))
+                    elif elNodoDestinoTieneTipoDeTransporte:
+                        for elNodoVecino in losVecinosDelNodoOrigen:
+                            elVecinoTieneTipoDeTransporte = elMapa.node[elNodoVecino][elTipoDeTransporte]
+                            if elVecinoTieneTipoDeTransporte:
+                                elResultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoVecino) +
+                                               " en bus o taxi y luego de " + obtengaElNombreDe(elNodoVecino) + " a " + obtengaElNombreDe(elNodoDeDestino) +
+                                               " en " + elTipoDeTransporte)
+                                laRespuestaARetornar.append(elResultado)
+                                if elTipoDeTransporte == 'avion':
+                                    laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+ " A "+ obtengaElNombreDe(elNodoVecino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoVecino))
+                                    laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoVecino))
+                                    laRespuestaARetornar.append("AVION DE "+obtengaElNombreDe(elNodoVecino)+ " A "+ obtengaElNombreDe(elNodoDeDestino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(300, elNodoVecino, elNodoDeDestino))
+                                    laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoVecino, elNodoDeDestino, 'avion'))
+                                else:
+                                    laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+ " A "+ obtengaElNombreDe(elNodoVecino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoVecino))
+                                    laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoVecino))
+                                    laRespuestaARetornar.append("TREN DE "+obtengaElNombreDe(elNodoVecino)+ " A "+ obtengaElNombreDe(elNodoDeDestino))
+                                    laRespuestaARetornar.append(obtengaLaFacturaDe(5, elNodoVecino, elNodoDeDestino))
+                                    laRespuestaARetornar.append(consulteTrenes(elNodoVecino, elNodoDeDestino))
+                    else:
+                        for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
+                            if elMapa.node[elVecinodeNodoOrigen][elTipoDeTransporte]:
+                                for elVecinodeNodoDestino in losVecinosDelNodoDestino:
+                                    if elMapa.node[elVecinodeNodoDestino][elTipoDeTransporte]:
+                                        resultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elVecinodeNodoOrigen) + " en bus o taxi, luego de " +
+                                                     obtengaElNombreDe(elVecinodeNodoOrigen) + " en " + elTipoDeTransporte + " a " +
+                                                     obtengaElNombreDe(elVecinodeNodoDestino) + " y por ultimo en bus o taxi a " +
+                                                     obtengaElNombreDe(elNodoDeDestino))
+                                        laRespuestaARetornar.append(resultado)
+                                        if elTipoDeTransporte == 'avion':
+                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20,elNodoDeOrigen, elVecinodeNodoOrigen))
+                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
+                                            laRespuestaARetornar.append("AVION DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(300, elVecinodeNodoOrigen, elVecinodeNodoDestino))
+                                            laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen, elVecinodeNodoDestino, 'avion'))
+                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
+                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino, elNodoDeDestino))
+                                        else:
+                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elNodoDeOrigen, elVecinodeNodoOrigen))
+                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
+                                            laRespuestaARetornar.append("TREN DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(5, elVecinodeNodoOrigen, elVecinodeNodoDestino))
+                                            laRespuestaARetornar.append(consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino))
+                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
+                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino,elNodoDeDestino))
+            else:
+                elResultado = "Las únicas opciones entre " + obtengaElNombreDe(
+                    elNodoDeOrigen) + " y " + obtengaElNombreDe(
+                    elNodoDeDestino) + " son bus y taxi"
+                laRespuestaARetornar.append(elResultado)
+
+        # --------------------------- TAXIS --------------------------#
+        elif elTipoDeTransporte == 'taxi':
+            elResultado = consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino) + obtengaLaFacturaDe(600, elNodoDeOrigen, elNodoDeDestino)
+            laRespuestaARetornar.append(elResultado)
+        # --------------------------- BUSES --------------------------#
+
+        elif elTipoDeTransporte == 'bus':
+            elResultado = consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino) + obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoDeDestino)
+            laRespuestaARetornar.append(elResultado)
+    else:
+        elResultado +="El origen y el destino son el mismo"
+        laRespuestaARetornar.append(elResultado)
+
+        # ----------------------- GUARDAR EN LOG -----------------------#
+
+    #jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(elNodoDeOrigen) \
+               #+ '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(elTipoDeTransporte) + '"}'
+    #toLog = "'" + jsonToBD + "'"
+    #cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
+    #cursor.execute("COMMIT;")
+    # ID es un secuencia automática creada en al BD
+
+    # --------------------------- RESPUESTA ------------------------#
+
+    laRespuesta = str(laRespuestaARetornar).replace("[","").replace("]","").replace("'","")
+    #jsonConRespuesta = json.dumps({"respuesta ": laRespuesta})
+    #resp = Response(jsonConRespuesta, 200, mimetype='application/json')
+    return laRespuestaARetornar
+
+print(consulteMediosDeTransporte())
