@@ -249,7 +249,7 @@ def consulteMediosDeTransporte():
                                             laRespuestaARetornar.append(obtengaLaFacturaDe(20,elNodoDeOrigen, elVecinodeNodoOrigen))
                                             laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
                                             laRespuestaARetornar.append("AVION DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
-                                            laRespuestaARetornar.append(300, elVecinodeNodoOrigen, elVecinodeNodoDestino)
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(300, elVecinodeNodoOrigen, elVecinodeNodoDestino))
                                             laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen, elVecinodeNodoDestino, 'avion'))
                                             laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
                                             laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
