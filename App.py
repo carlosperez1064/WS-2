@@ -321,7 +321,7 @@ def consulteMediosDeTransporte():
 
     # --------------------------- RESPUESTA ------------------------#
 
-    respuesta = {"costo": elCosto, "respuesta ": (str(resultado))}
+    respuesta = {"costo": elCosto, "respuesta ": str(resultado) }
 
     jsonConRespuesta = json.dumps(respuesta)
 
