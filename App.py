@@ -1,9 +1,10 @@
+import time
+
 import networkx as nx
 import psycopg2
 from flask import Flask, request, json, Response
-from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS
-import time
+from flask_httpauth import HTTPBasicAuth
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 app = Flask(__name__)
@@ -32,7 +33,8 @@ def registro():
     cursor.execute("""SELECT correo FROM public.usuarios""")
     rows = cursor.fetchall()
     for row in rows:
-        usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
+        usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']',
+                                                                                                                  "")
         userExist = usersExistentesStr[1:-1]
 
     if userExist != usuario:
@@ -42,30 +44,32 @@ def registro():
     else:
         respuesta = str(usuario) + " ya existe"
 
-
     jsonConRespuesta = json.dumps({'respuesta': respuesta})
-    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
 
     return resp
+
 
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
 @auth.get_password
 def get_pw(username):
-    cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"="""+ "'" + username + "'")
+    cursor.execute("""SELECT pass FROM public.usuarios WHERE "correo"=""" + "'" + username + "'")
     rows = cursor.fetchall()
-    contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[',"").replace(']',"")
+    contrasena = str(rows).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']', "")
     contrasenaPura = contrasena[1:-1]
 
     return contrasenaPura
+
+
 # ------------------------------------------------ LOGIN DE USUARIO ----------------------------------------------------#
 @app.route('/login', methods=['GET'])
 @auth.login_required
 def loginUser():
-
     respuesta = json.dumps({'estado': 'OK', 'usuario': auth.username()})
-    resp  = Response(respuesta,200,mimetype='application/json')
+    resp = Response(respuesta, 200, mimetype='application/json')
 
     return resp
+
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 
@@ -77,7 +81,8 @@ elMapa.add_node(5, {"Nombre": "Golfito", "zona": "C", "bus": True, "taxi": True,
 elMapa.add_node(6, {"Nombre": "Liberia", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 elMapa.add_node(7, {"Nombre": "San Jose", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
 elMapa.add_node(8, {"Nombre": "Upala", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
-elMapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
+elMapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False,
+                    "avion": False})
 elMapa.add_node(10, {"Nombre": "Cahuita", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
 elMapa.add_node(11, {"Nombre": "Canas", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
 elMapa.add_node(12, {"Nombre": "Turrialba", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
@@ -95,47 +100,49 @@ elMapa.add_node(23, {"Nombre": "Heredia", "zona": "B", "bus": True, "taxi": True
 elMapa.add_node(24, {"Nombre": "Santa Cruz", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 
 laLista = [(19, 24, 60),
-         (19, 6, 40),
-         (19, 11, 50),
-         (24, 11, 74),
-         (11, 6, 92),
-         (11, 3, 112),
-         (6, 8, 69),
-         (6, 22, 60),
-         (8, 16, 46),
-         (22, 16, 70),
-         (16, 9, 120),
-         (16, 1, 69),
-         (3, 1, 30),
-         (3, 7, 60),
-         (1, 9, 90),
-         (7, 23, 43),
-         (7, 2, 107),
-         (7, 15, 40),
-         (9, 23, 50),
-         (9, 4, 87),
-         (2, 13, 60),
-         (2, 14, 61),
-         (15, 23, 30),
-         (15, 12, 10),
-         (15, 13, 32),
-         (23, 4, 70),
-         (4, 10, 120),
-         (4, 12, 80),
-         (14, 18, 70),
-         (14, 5, 90),
-         (14, 13, 55),
-         (13, 18, 20),
-         (12, 18, 60),
-         (12, 17, 61),
-         (5, 20, 180),
-         (18, 20, 50),
-         (18, 17, 40),
-         (17, 10, 20),
-         (10, 21, 16),
-         (20, 21, 13)]
+           (19, 6, 40),
+           (19, 11, 50),
+           (24, 11, 74),
+           (11, 6, 92),
+           (11, 3, 112),
+           (6, 8, 69),
+           (6, 22, 60),
+           (8, 16, 46),
+           (22, 16, 70),
+           (16, 9, 120),
+           (16, 1, 69),
+           (3, 1, 30),
+           (3, 7, 60),
+           (1, 9, 90),
+           (7, 23, 43),
+           (7, 2, 107),
+           (7, 15, 40),
+           (9, 23, 50),
+           (9, 4, 87),
+           (2, 13, 60),
+           (2, 14, 61),
+           (15, 23, 30),
+           (15, 12, 10),
+           (15, 13, 32),
+           (23, 4, 70),
+           (4, 10, 120),
+           (4, 12, 80),
+           (14, 18, 70),
+           (14, 5, 90),
+           (14, 13, 55),
+           (13, 18, 20),
+           (12, 18, 60),
+           (12, 17, 61),
+           (5, 20, 180),
+           (18, 20, 50),
+           (18, 17, 40),
+           (17, 10, 20),
+           (10, 21, 16),
+           (20, 21, 13)]
 
 elMapa.add_weighted_edges_from(laLista)
+
+
 # -------------------------------------- MÉTODO PARA OBTENER NOMBRES Y ZONAS DE LOS NODOS --------------------------------------#
 def obtengaElNombreDe(elNodoABuscar):
     for elNodo in elMapa.node:
@@ -147,6 +154,7 @@ def obtengaLaZonaDe(elNodoABuscar):
     for elNodo in elMapa.node:
         if elNodo == elNodoABuscar:
             return (elMapa.node[elNodo]["zona"])
+
 
 # --------------------------- MÉTODO PARA REALIZA DETERMINAR MEDIOS DE TRANSPORTE DISPONIBLES --------------------------#
 @app.route('/viajando/consultas', methods=['POST'])
@@ -172,9 +180,10 @@ def consulteMediosDeTransporte():
         if elTipoDeTransporte == 'avion' or elTipoDeTransporte == 'tren':
             if elNodoDeDestino not in losVecinosDelNodoOrigen:
                 if elNodoOrigenTieneTipoDeTransporte and elNodoDestinoTieneTipoDeTransporte:
-                    elResultado = ("Viaje directo de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoDeDestino) + " en " + elTipoDeTransporte)
+                    elResultado = ("Viaje directo de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(
+                        elNodoDeDestino) + " en " + elTipoDeTransporte)
                     print(elResultado)
-                    if elTipoDeTransporte=='avion':
+                    if elTipoDeTransporte == 'avion':
                         print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, 'avion'))
                         print(obtengaLaFacturaDe(300, elNodoDeOrigen, elNodoDeDestino))
                     else:
@@ -185,43 +194,59 @@ def consulteMediosDeTransporte():
                         for elNodoVecino in losVecinosDelNodoDestino:
                             elVecinoTieneTipoDeTransporte = elMapa.node[elNodoVecino][elTipoDeTransporte]
                             if elVecinoTieneTipoDeTransporte:
-                                elResultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoVecino)
-                                               + " en " + elTipoDeTransporte + " y luego a " + obtengaElNombreDe(elNodoDeDestino) + " en bus o taxi")
+                                elResultado = (
+                                "Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(
+                                    elNodoVecino)
+                                + " en " + elTipoDeTransporte + " y luego a " + obtengaElNombreDe(
+                                    elNodoDeDestino) + " en bus o taxi")
                                 print(elResultado)
                                 if elTipoDeTransporte == 'avion':
-                                    print("AVION DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+obtengaElNombreDe(elNodoVecino))
-                                    print(obtengaLaFacturaDe(300,elNodoDeOrigen, elNodoVecino))
-                                    print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoVecino, 'avion'))
-                                    print("BUS DE "+obtengaElNombreDe(elNodoVecino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                    print("AVION DE " + obtengaElNombreDe(elNodoDeOrigen) + " A " + obtengaElNombreDe(
+                                        elNodoVecino))
+                                    print(obtengaLaFacturaDe(300, elNodoDeOrigen, elNodoVecino))
+                                    print(
+                                        consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoVecino, 'avion'))
+                                    print("BUS DE " + obtengaElNombreDe(elNodoVecino) + " A " + obtengaElNombreDe(
+                                        elNodoDeDestino))
                                     print(obtengaLaFacturaDe(20, elNodoVecino, elNodoDeDestino))
                                     print(consulteLasOpcionesDeBusesDe(elNodoVecino, elNodoDeDestino))
                                 else:
-                                    print("TREN DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+obtengaElNombreDe(elNodoVecino))
-                                    print(obtengaLaFacturaDe(5, elNodoDeOrigen,elNodoVecino))
+                                    print("TREN DE " + obtengaElNombreDe(elNodoDeOrigen) + " A " + obtengaElNombreDe(
+                                        elNodoVecino))
+                                    print(obtengaLaFacturaDe(5, elNodoDeOrigen, elNodoVecino))
                                     print(consulteTrenes(elNodoDeOrigen, elNodoVecino))
-                                    print("BUS DE "+obtengaElNombreDe(elNodoVecino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                    print("BUS DE " + obtengaElNombreDe(elNodoVecino) + " A " + obtengaElNombreDe(
+                                        elNodoDeDestino))
                                     print(obtengaLaFacturaDe(20, elNodoVecino, elNodoDeDestino))
-                                    print(consulteLasOpcionesDeBusesDe(elNodoVecino,elNodoDeDestino))
+                                    print(consulteLasOpcionesDeBusesDe(elNodoVecino, elNodoDeDestino))
                     elif elNodoDestinoTieneTipoDeTransporte:
                         for elNodoVecino in losVecinosDelNodoOrigen:
                             elVecinoTieneTipoDeTransporte = elMapa.node[elNodoVecino][elTipoDeTransporte]
                             if elVecinoTieneTipoDeTransporte:
-                                elResultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elNodoVecino) +
-                                               " en bus o taxi y luego de " + obtengaElNombreDe(elNodoVecino) + " a " + obtengaElNombreDe(elNodoDeDestino) +
-                                               " en " + elTipoDeTransporte)
+                                elResultado = (
+                                "Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(
+                                    elNodoVecino) +
+                                " en bus o taxi y luego de " + obtengaElNombreDe(
+                                    elNodoVecino) + " a " + obtengaElNombreDe(elNodoDeDestino) +
+                                " en " + elTipoDeTransporte)
                                 print(elResultado)
                                 if elTipoDeTransporte == 'avion':
-                                    print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+ " A "+ obtengaElNombreDe(elNodoVecino))
+                                    print("BUS DE " + obtengaElNombreDe(elNodoDeOrigen) + " A " + obtengaElNombreDe(
+                                        elNodoVecino))
                                     print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoVecino))
                                     print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoVecino))
-                                    print("AVION DE "+obtengaElNombreDe(elNodoVecino)+ " A "+ obtengaElNombreDe(elNodoDeDestino))
+                                    print("AVION DE " + obtengaElNombreDe(elNodoVecino) + " A " + obtengaElNombreDe(
+                                        elNodoDeDestino))
                                     print(obtengaLaFacturaDe(300, elNodoVecino, elNodoDeDestino))
-                                    print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoVecino, elNodoDeDestino, 'avion'))
+                                    print(
+                                        consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoVecino, elNodoDeDestino, 'avion'))
                                 else:
-                                    print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+ " A "+ obtengaElNombreDe(elNodoVecino))
+                                    print("BUS DE " + obtengaElNombreDe(elNodoDeOrigen) + " A " + obtengaElNombreDe(
+                                        elNodoVecino))
                                     print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoVecino))
                                     print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoVecino))
-                                    print("TREN DE "+obtengaElNombreDe(elNodoVecino)+ " A "+ obtengaElNombreDe(elNodoDeDestino))
+                                    print("TREN DE " + obtengaElNombreDe(elNodoVecino) + " A " + obtengaElNombreDe(
+                                        elNodoDeDestino))
                                     print(obtengaLaFacturaDe(5, elNodoVecino, elNodoDeDestino))
                                     print(consulteTrenes(elNodoVecino, elNodoDeDestino))
                     else:
@@ -229,33 +254,46 @@ def consulteMediosDeTransporte():
                             if elMapa.node[elVecinodeNodoOrigen][elTipoDeTransporte]:
                                 for elVecinodeNodoDestino in losVecinosDelNodoDestino:
                                     if elMapa.node[elVecinodeNodoDestino][elTipoDeTransporte]:
-                                        resultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elVecinodeNodoOrigen) + " en bus o taxi, luego de " +
-                                                     obtengaElNombreDe(elVecinodeNodoOrigen) + " en " + elTipoDeTransporte + " a " +
-                                                     obtengaElNombreDe(elVecinodeNodoDestino) + " y por ultimo en bus o taxi a " +
-                                                     obtengaElNombreDe(elNodoDeDestino))
+                                        resultado = (
+                                        "Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(
+                                            elVecinodeNodoOrigen) + " en bus o taxi, luego de " +
+                                        obtengaElNombreDe(elVecinodeNodoOrigen) + " en " + elTipoDeTransporte + " a " +
+                                        obtengaElNombreDe(elVecinodeNodoDestino) + " y por ultimo en bus o taxi a " +
+                                        obtengaElNombreDe(elNodoDeDestino))
                                         print(resultado)
                                         if elTipoDeTransporte == 'avion':
-                                            print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
-                                            print(obtengaLaFacturaDe(20,elNodoDeOrigen, elVecinodeNodoOrigen))
+                                            print("BUS DE " + obtengaElNombreDe(
+                                                elNodoDeOrigen) + " A " + obtengaElNombreDe(elVecinodeNodoOrigen))
+                                            print(obtengaLaFacturaDe(20, elNodoDeOrigen, elVecinodeNodoOrigen))
                                             print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            print("AVION DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
+                                            print("AVION DE " + obtengaElNombreDe(
+                                                elVecinodeNodoOrigen) + " A " + obtengaElNombreDe(
+                                                elVecinodeNodoDestino))
                                             print(300, elVecinodeNodoOrigen, elVecinodeNodoDestino)
-                                            print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen, elVecinodeNodoDestino, 'avion'))
-                                            print("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                            print(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen,
+                                                                                          elVecinodeNodoDestino,
+                                                                                          'avion'))
+                                            print("BUS DE " + obtengaElNombreDe(
+                                                elVecinodeNodoDestino) + " A " + obtengaElNombreDe(elNodoDeDestino))
                                             print(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
                                             print(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino, elNodoDeDestino))
                                         else:
-                                            print("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
+                                            print("BUS DE " + obtengaElNombreDe(
+                                                elNodoDeOrigen) + " A " + obtengaElNombreDe(elVecinodeNodoOrigen))
                                             print(obtengaLaFacturaDe(20, elNodoDeOrigen, elVecinodeNodoOrigen))
                                             print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            print("TREN DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
+                                            print("TREN DE " + obtengaElNombreDe(
+                                                elVecinodeNodoOrigen) + " A " + obtengaElNombreDe(
+                                                elVecinodeNodoDestino))
                                             print(obtengaLaFacturaDe(5, elVecinodeNodoOrigen, elVecinodeNodoDestino))
                                             print(consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino))
-                                            print("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                            print("BUS DE " + obtengaElNombreDe(
+                                                elVecinodeNodoDestino) + " A " + obtengaElNombreDe(elNodoDeDestino))
                                             print(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
-                                            print(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino,elNodoDeDestino))
+                                            print(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino, elNodoDeDestino))
             else:
-                print("Las unicas opciones entre " + obtengaElNombreDe(elNodoDeOrigen) + " y " + obtengaElNombreDe(elNodoDeDestino) + " son bus y taxi")
+                print("Las unicas opciones entre " + obtengaElNombreDe(elNodoDeOrigen) + " y " + obtengaElNombreDe(
+                    elNodoDeDestino) + " son bus y taxi")
 
         # --------------------------- TAXIS --------------------------#
         elif elTipoDeTransporte == 'taxi':
@@ -272,7 +310,8 @@ def consulteMediosDeTransporte():
 
         # ----------------------- GUARDAR EN LOG -----------------------#
 
-    jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(
+    jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(
+        time.strftime("%c")) + '", "origen": "' + str(
         elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
         elTipoDeTransporte) + '"}'
     toLog = "'" + jsonToBD + "'"
@@ -286,7 +325,7 @@ def consulteMediosDeTransporte():
 
     jsonConRespuesta = json.dumps(respuesta)
 
-    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
 
     return resp
 
@@ -298,21 +337,21 @@ def consulteTrenes(elOrigen, elDestino):
     elNodoDeOrigen = lasEstacionesDelTren.index(elOrigen)
     elNodoDeDestino = lasEstacionesDelTren.index(elDestino)
     laEstacionCentral = lasEstacionesDelTren.index(7)
-    lasIndicaciones=""
+    lasIndicaciones = ""
     if elNodoDeDestino > elNodoDeOrigen:
         if elNodoDeOrigen < laEstacionCentral:
-            lasIndicaciones+=consulteAvionesOTrenesEnLaBaseDeDatosDe(11, 7, 'tren')
+            lasIndicaciones += consulteAvionesOTrenesEnLaBaseDeDatosDe(11, 7, 'tren')
         else:
-            lasIndicaciones+=consulteAvionesOTrenesEnLaBaseDeDatosDe(7, 11, 'tren')
+            lasIndicaciones += consulteAvionesOTrenesEnLaBaseDeDatosDe(7, 11, 'tren')
         for laEstacion in lasEstacionesDelTren:
             if lasEstacionesDelTren.index(laEstacion) >= elNodoDeOrigen and lasEstacionesDelTren.index(
                     laEstacion) <= elNodoDeDestino:
                 elMensaje.append(laEstacion)
     elif elNodoDeDestino < elNodoDeOrigen:
         if elNodoDeOrigen > laEstacionCentral:
-            lasIndicaciones+=consulteAvionesOTrenesEnLaBaseDeDatosDe(18, 7, 'tren')
+            lasIndicaciones += consulteAvionesOTrenesEnLaBaseDeDatosDe(18, 7, 'tren')
         else:
-            lasIndicaciones+=consulteAvionesOTrenesEnLaBaseDeDatosDe(7, 18, 'tren')
+            lasIndicaciones += consulteAvionesOTrenesEnLaBaseDeDatosDe(7, 18, 'tren')
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen: elMensaje.append(
                 lasEstacionesDelTren[laEstacion])
@@ -325,20 +364,26 @@ def consulteTrenes(elOrigen, elDestino):
         if laPosicion > 0 and laPosicion < elMensaje.__len__() - 1:
             lasIndicaciones += "y no olvide hacer cambio de tren en San Jose (estacion #7)"
 
-    return(lasIndicaciones)
+    return (lasIndicaciones)
+
+
+# ---------------------------------------- MÉTODO VERIFICAR EN BD TREN O AVION -----------------------------------------#
 
 def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elTipoDeTransporte):
     if elTipoDeTransporte == 'avion':
-        cursor.execute("""SELECT "id", "NombreAerolinea","Horario" FROM public.avion WHERE "Origen"=""" + str( elNodoDeOrigen)
-                       + """AND "Destino"=""" + str(elNodoDeDestino))
+        cursor.execute(
+            """SELECT "id", "NombreAerolinea","Horario" FROM public.avion WHERE "Origen"=""" + str(elNodoDeOrigen)
+            + """AND "Destino"=""" + str(elNodoDeDestino))
     elif elTipoDeTransporte == 'tren':
-        cursor.execute("""SELECT "ID", "NombreCompania","Horario" FROM public.tren WHERE "Origen"=""" + str(elNodoDeOrigen)
-                       + """AND "Destino"=""" + str(elNodoDeDestino))
+        cursor.execute(
+            """SELECT "ID", "NombreCompania","Horario" FROM public.tren WHERE "Origen"=""" + str(elNodoDeOrigen)
+            + """AND "Destino"=""" + str(elNodoDeDestino))
     rows = cursor.fetchall()
     elMensaje = ""
     for row in rows:
-        elMensaje += str(row[0]) + " " + str(row[1])
+        elMensaje += str(row[1] +". Horario: "+ str(row[2]) + ", CODIGO DE RESERVACION: "+str(row[0])+". \n")
     return (elMensaje)
+
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DE TAXIS -------------------------------------------#
 def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
@@ -353,10 +398,15 @@ def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
         cursor.execute(
             """SELECT "Informacion" FROM public."taxi" WHERE "Informacion" ->> 'Zona' = """ + "'" + zonaOrigen + "'" + """;""")
         rows = cursor.fetchall()
+
         for row in rows:
             resultado += [row]
-        respuesta = "La ruta mas corta es pasando por " + str(ruta) + ". \nEstos son los taxis de la zona " + str(resultado)
-        return (respuesta)
+            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")",
+                                                                                                                  "")
+            respuesta = "La ruta mas corta es pasando por " + str(ruta).replace("[", "").replace("]", "").replace("'",
+                                                                                                                  "") + ". Taxis de la zona: " + opciones
+
+        return respuesta
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
@@ -385,20 +435,29 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
         print("Recuerde hacer cambio en San Jose")
     elResultadoARetornar = []
     for laRuta in lasOpcionesParaLaRuta:
-        cursor.execute("""SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str( laRuta))
+        cursor.execute(
+            """SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(
+                laRuta))
         rows = cursor.fetchall()
         for row in rows:
-            elResultadoARetornar += ["Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
-                + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
+            elResultadoARetornar += [
+                "Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
+                + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(
+                    row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
     if len(lasOpcionesEnCasoDeNecesitarHacerCambio) > 0:
         for laRuta in lasOpcionesEnCasoDeNecesitarHacerCambio:
-            cursor.execute("""SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(laRuta))
+            cursor.execute(
+                """SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(
+                    laRuta))
             rows = cursor.fetchall()
             for row in rows:
-                elResultadoARetornar += ["Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
-                                         + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5])+ ", CODIGO DE RESERVACION: " + str(row[0])]
+                elResultadoARetornar += [
+                    "Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
+                    + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(
+                        row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
     for laOpcion in elResultadoARetornar:
-        return(laOpcion)
+        return (laOpcion)
+
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 
@@ -422,15 +481,16 @@ def reservaciones():
 
     resultado = ""
 
-    if  transporteSeleccionado == "avion" or transporteSeleccionado == "bus":
+    if transporteSeleccionado == "avion" or transporteSeleccionado == "bus":
 
-        cursor.execute("""SELECT "Capacidad" FROM public."""+ transporteSeleccionado +""" WHERE "id" = """ + str(elID))
+        cursor.execute(
+            """SELECT "Capacidad" FROM public.""" + transporteSeleccionado + """ WHERE "id" = """ + str(elID))
         rows = cursor.fetchall()
         for row in rows:
             capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
 
         if cantidadReservaciones <= capacidad:
-            paraActualizar = "UPDATE public." + transporteSeleccionado  + " SET " + '"Capacidad" ' + "= " + str(
+            paraActualizar = "UPDATE public." + transporteSeleccionado + " SET " + '"Capacidad" ' + "= " + str(
                 capacidad - cantidadReservaciones) + \
                              " WHERE " + '"id"' + "= " + str(elID)
 
@@ -441,14 +501,14 @@ def reservaciones():
         else:
             resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
 
-
     respuesta = {"Respuesta ": resultado}
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
-    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+    resp = Response(jsonConRespuesta, 200, mimetype='application/json')
 
     return resp
+
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
