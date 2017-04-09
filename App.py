@@ -456,18 +456,16 @@ def realiceLaReservacion():
                                                     + str(laCapacidad - laCantidadDeReservaciones) + " WHERE " + '"id"' + "= " + str(elID)
             cursor.execute(elComandoSQLParaActualizarLaCapacidad)
             cursor.execute("COMMIT;")
-            elResultado = str(laCantidadDeReservaciones) + " asiento(s) reservado(s) con exito"
+            elResultado = str(laCantidadDeReservaciones) + " asiento(s) reservado(s) con éxito"
 
         else:
             elResultado = "Lo sentimos. Hay " + str(laCapacidad) + " espacio(s)"
 
-    laRespuesta = {"Respuesta ": elResultado}
-    elJsonConLaRespuesta = json.dumps(laRespuesta)
-    print(elJsonConLaRespuesta)
-    laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
+   # elJsonConLaRespuesta = json.dumps({"Respuesta ": elResultado})
+   # laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
+   # print(elJsonConLaRespuesta)
 
-    return laRespuestaARetornar
-
+    return elResultado
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
