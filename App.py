@@ -23,8 +23,10 @@ cursor = conn.cursor()
 def registro():
     elUsuario = request.form['usuario']
     laContrasena = request.form['contrasena']
+
     elUsuarioComoString = "'" + elUsuario + "'"
     laContrasenaComoString = "'" + laContrasena + "'"
+
     elUsuarioExiste = False
 
     cursor.execute("""SELECT correo FROM public.usuarios""")
@@ -32,14 +34,18 @@ def registro():
     for row in rows:
         losUsuariosExistentesComoString = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']',"")
         elUsuarioEncontrado = str(losUsuariosExistentesComoString[1:-1])
-        if elUsuarioExiste == elUsuario:
+        if elUsuarioEncontrado == elUsuario:
             elUsuarioExiste = True
+
     if not elUsuarioExiste:
+        cadena = ("INSERT INTO public.usuarios(correo,pass) VALUES (" + elUsuarioComoString + "," + laContrasenaComoString + ");")
+        print(cadena)
         cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + elUsuarioComoString + "," + laContrasenaComoString + ");")
         cursor.execute("COMMIT;")
         laRespuesta = "Se ha registrado exitosamente"
     else:
         laRespuesta = str(elUsuario) + " ya existe"
+
     elJsonConRespuesta = json.dumps({'respuesta': laRespuesta})
     laRespuestaARetornar = Response(elJsonConRespuesta, 200, mimetype='application/json')
 
