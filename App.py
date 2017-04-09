@@ -385,18 +385,18 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
         print("Recuerde hacer cambio en San Jose")
     elResultadoARetornar = []
     for laRuta in lasOpcionesParaLaRuta:
-        cursor.execute("""SELECT "ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str( laRuta))
+        cursor.execute("""SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str( laRuta))
         rows = cursor.fetchall()
         for row in rows:
-            elResultadoARetornar += ["Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", ID: " + str(row[0]) + ", bus: " + row[1]
-                + ", conductor: " + row[2] + ", capacidad disponible: " + str(row[3]) + ", horario: " + row[4]]
+            elResultadoARetornar += ["Sale de: " + obtengaElNombreDe(elNodoDeOrigen) + ", Ruta: " + str(row[1]) + ", bus: " + row[2]
+                + ", conductor: " + row[3] + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
     if len(lasOpcionesEnCasoDeNecesitarHacerCambio) > 0:
         for laRuta in lasOpcionesEnCasoDeNecesitarHacerCambio:
-            cursor.execute("""SELECT "ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(laRuta))
+            cursor.execute("""SELECT "id","ID","NombreCompania", "Conductor", "Capacidad", "Horario" FROM public."bus" WHERE "ID"=""" + str(laRuta))
             rows = cursor.fetchall()
             for row in rows:
-                elResultadoARetornar += ["Sale de San Jose, ID: " + str(row[0]) + ", bus: " + row[1] + ", conductor: " + row[2]
-                                         + ", capacidad disponible: " + str(row[3]) + ", horario: " + row[4]]
+                elResultadoARetornar += ["Sale de San Jose, Ruta: " + str(row[1]) + ", bus: " + row[2] + ", conductor: " + row[3]
+                                         + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(row[5])+ ", CODIGO DE RESERVACION: " + str(row[0])]
     for laOpcion in elResultadoARetornar:
         return(laOpcion)
 
