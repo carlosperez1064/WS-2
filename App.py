@@ -319,10 +319,9 @@ def consulteMediosDeTransporte():
 
     jsonConRespuesta = json.dumps({"respuesta ": elResultado})
     print(jsonConRespuesta)
-
     resp = Response(jsonConRespuesta, 200, mimetype='application/json')
 
-    return resp
+    return elResultado
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -464,7 +463,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
 def obtengaLaFacturaDe(elCostoPorKilometro, elOrigen, elDestino):
     laDistancia = nx.dijkstra_path_length(elMapa, elOrigen, elDestino)
     elTotal = elCostoPorKilometro * laDistancia
-    return ". El costo es de ¢" + str(elTotal)
+    return ". El costo es de: " + str(elTotal)+ " colones"
 
 
 # -------------------------------------------- MÉTODO PARA RESERVACIONES -----------------------------------------------#
