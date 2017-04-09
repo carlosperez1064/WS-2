@@ -320,7 +320,7 @@ def consulteTrenes(elOrigen, elDestino):
         for laEstacion in range(len(lasEstacionesDelTren) - 1, -1, -1):
             if laEstacion >= elNodoDeDestino and laEstacion <= elNodoDeOrigen: elMensaje.append(
                 lasEstacionesDelTren[laEstacion])
-    lasIndicaciones += "\nSus estaciones son: "
+    lasIndicaciones += " Sus estaciones son: "
     for laEstacion in elMensaje:
         lasIndicaciones += obtengaElNombreDe(laEstacion)
         lasIndicaciones += ", "
