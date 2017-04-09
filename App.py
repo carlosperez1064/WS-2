@@ -1,8 +1,9 @@
 import networkx as nx
 import psycopg2
-from flask import Flask, request, json
+from flask import Flask, request, json, Response
 from flask_httpauth import HTTPBasicAuth
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
+import time
 
 __author__ = 'Carlos Perez', 'Diana Camacho', 'Hillary Brenes'
 app = Flask(__name__)
@@ -41,7 +42,10 @@ def registro():
     else:
         respuesta = str(usuario) + " ya existe"
 
-    return json.dumps({'respuesta': respuesta})
+    jsonConRespuesta = json.dumps({'respuesta': respuesta})
+    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+
+    return resp
 
 # --------------------------------------------  AUTENTICACIÓN DE USUARIO -----------------------------------------------#
 @auth.get_password
@@ -57,8 +61,10 @@ def get_pw(username):
 @auth.login_required
 def loginUser():
 
-    respuesta = json.dumps({'status': 'OK', 'usuario': auth.username()})
-    return respuesta
+    respuesta = json.dumps({'estado': 'OK', 'usuario': auth.username()})
+    resp  = Response(respuesta,200,mimetype='application/json')
+
+    return resp
 
 # ---------------- MÉTODO PARA AGREGAR NODOS CON ATRIBUTOS AL GRAFO Y LISTA CON RELACIONES Y DISTANCIAS ----------------#
 
@@ -159,6 +165,9 @@ def consulteMediosDeTransporte():
 
     elNodoOrigenTieneTipoDeTransporte = elMapa.node[elNodoDeOrigen][elTipoDeTransporte]
     elNodoDestinoTieneTipoDeTransporte = elMapa.node[elNodoDeDestino][elTipoDeTransporte]
+
+    elCosto = 0
+    resultado = ""
 
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elNodoDeOrigen != elNodoDeDestino:
@@ -262,6 +271,26 @@ def consulteMediosDeTransporte():
             print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoDeDestino))
     else:
         print("El origen y el destino son el mismo")
+
+        # ----------------------- GUARDAR EN LOG -----------------------#
+
+    jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(time.strftime("%c")) + '", "origen": "' + str(
+        elNodoDeOrigen) + '", "destino": "' + str(elNodoDeDestino) + '", "tipoTransporte": "' + str(
+        elTipoDeTransporte) + '"}'
+    toLog = "'" + jsonToBD + "'"
+    cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
+    cursor.execute("COMMIT;")
+    # ID es un secuencia automática creada en al BD
+
+    # --------------------------- RESPUESTA ------------------------#
+
+    respuesta = {"costo": elCosto, "respuesta ": (str(resultado) + str(medios))}
+
+    jsonConRespuesta = json.dumps(respuesta)
+
+    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+
+    return resp
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL TREN -------------------------------------------#
@@ -373,37 +402,8 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
     for laOpcion in elResultadoARetornar:
         return(laOpcion)
 
-# ------------------------------------------- MÉTODO PARA TRAER INFO DE BD----------------------------------------------#
-
-def ExistentesEnBaseDatos(transporteSelecionado, elNodoDeOrigen):
-    # Muestra los medios de transporte que están en el punto de origen solicitado
-    if transporteSelecionado != "bus" and transporteSelecionado != "taxi":
-        paraConsulta = """SELECT "Informacion" FROM public.""" + transporteSelecionado
-        resultado = ""
-        origenKey = {}
-        nodoOrigenDelTransporte = 0
-
-        cursor.execute(paraConsulta)
-        rows = cursor.fetchall()
-        for row in rows:
-            jsons = json.dumps(row)
-            data = json.loads(jsons)
-            for item in data:
-                origenKey = item["Ruta"]
-            for i in origenKey:
-                nodoOrigenDelTransporte = origenKey["Origen"]
-            if nodoOrigenDelTransporte == elNodoDeOrigen:
-                resultado = jsons
-    else:
-        cursor.execute("""SELECT * FROM public."bus" WHERE "RutaNodo" = """ + str(elNodoDeOrigen))
-        rows = cursor.fetchall()
-        for row in rows:
-            resultado = rows
-
-    return ". Estos son los medios disponibles : " + str(resultado)
-
-
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
+
 def obtengaLaFacturaDe(elCostoPorKilometro, elOrigen, elDestino):
     laDistancia = nx.dijkstra_path_length(elMapa, elOrigen, elDestino)
     elTotal = elCostoPorKilometro * laDistancia
@@ -478,7 +478,9 @@ def reservaciones():
     jsonConRespuesta = json.dumps(respuesta)
     print(jsonConRespuesta)
 
-    return jsonConRespuesta
+    resp = Response(jsonConRespuesta,200,mimetype='application/json')
+
+    return resp
 
 # ----------------------------------------------------- EJECUCIÓN ------------------------------------------------------#
 if __name__ == '__main__':
