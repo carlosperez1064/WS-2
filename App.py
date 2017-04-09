@@ -174,7 +174,7 @@ def consulteMediosDeTransporte():
     elNodoDestinoTieneTipoDeTransporte = elMapa.node[elNodoDeDestino][elTipoDeTransporte]
 
     elCosto = 0
-    resultado = ""
+    elResultado = ''
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elNodoDeOrigen != elNodoDeDestino:
         if elTipoDeTransporte == 'avion' or elTipoDeTransporte == 'tren':
@@ -292,19 +292,19 @@ def consulteMediosDeTransporte():
                                             print(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
                                             print(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino, elNodoDeDestino))
             else:
-                print("Las unicas opciones entre " + obtengaElNombreDe(elNodoDeOrigen) + " y " + obtengaElNombreDe(
-                    elNodoDeDestino) + " son bus y taxi")
+                elResultado = "Las únicas opciones entre " + obtengaElNombreDe(elNodoDeOrigen) + " y " + obtengaElNombreDe(
+                    elNodoDeDestino) + " son bus y taxi"
 
         # --------------------------- TAXIS --------------------------#
         elif elTipoDeTransporte == 'taxi':
-            print(consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino))
-            print(obtengaLaFacturaDe(600, elNodoDeOrigen, elNodoDeDestino))
+            elResultado = consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino)
+            elCosto = obtengaLaFacturaDe(600, elNodoDeOrigen, elNodoDeDestino)
 
         # --------------------------- BUSES --------------------------#
 
-        if elTipoDeTransporte == 'bus':
-            print(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino))
-            print(obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoDeDestino))
+        elif elTipoDeTransporte == 'bus':
+            elResultado = consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino)
+            elCosto = obtengaLaFacturaDe(20, elNodoDeOrigen, elNodoDeDestino)
     else:
         print("El origen y el destino son el mismo")
 
@@ -321,7 +321,7 @@ def consulteMediosDeTransporte():
 
     # --------------------------- RESPUESTA ------------------------#
 
-    respuesta = {"costo": elCosto, "respuesta ": str(resultado) }
+    respuesta = {"costo": elCosto, "respuesta ": elResultado}
 
     jsonConRespuesta = json.dumps(respuesta)
 
@@ -414,6 +414,7 @@ def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
 def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
+    recordatorioDeCambio = ""
     lasRutas = [[19, 24, 11, 3, 7],
                 [19, 6, 22, 8, 16, 1, 7],
                 [7, 1, 9, 4, 10, 21, 20, 5],
@@ -435,7 +436,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
                     if laRuta.count(elNodoDeDestino):
                         if lasOpcionesEnCasoDeNecesitarHacerCambio.count(lasRutas.index(laRuta)) < 1:
                             lasOpcionesEnCasoDeNecesitarHacerCambio.append(lasRutas.index(laRuta))
-        print("Recuerde hacer cambio en San Jose")
+        recordatorioDeCambio = "Recuerde hacer cambio en San Jose... "
     elResultadoARetornar = []
     for laRuta in lasOpcionesParaLaRuta:
         cursor.execute(
@@ -459,8 +460,7 @@ def consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elNodoDeDestino):
                     + ", capacidad disponible: " + str(row[4]) + ", horario: " + str(
                         row[5]) + ", CODIGO DE RESERVACION: " + str(row[0])]
     for laOpcion in elResultadoARetornar:
-        return (laOpcion)
-
+        return recordatorioDeCambio + laOpcion
 
 # ---------------------------------------------- MÉTODO PARA FACTURAR --------------------------------------------------#
 
