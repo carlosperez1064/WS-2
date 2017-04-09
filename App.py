@@ -450,6 +450,7 @@ def obtengaLaFacturaDe(elCostoPorKilometro, elOrigen, elDestino):
 @app.route('/viajando/reservacion', methods=['POST'])
 @auth.login_required
 def realiceLaReservacion():
+
     elTransporteSeleccionado = request.form['tipoTransporte']
     elID = int(request.form['ID'])
     laCantidadDeReservaciones = int(request.form['cantidad'])
@@ -468,6 +469,15 @@ def realiceLaReservacion():
 
         else:
             elResultado = "Lo sentimos. Hay " + str(laCapacidad) + " espacio(s)"
+
+
+            # ----------------------- GUARDAR EN LOG -----------------------#
+
+    jsonToBD = '{"usuario": "' + str(auth.username()) + '", "fecha": "' + str(time.strftime("%c")) + '", "tipoTransporte": "' + str(elTransporteSeleccionado) + '", "Codigo de reservación": "' + str(elID) + '"}'
+    toLog = "'" + jsonToBD + "'"
+    cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
+    cursor.execute("COMMIT;")
+    # ID es un secuencia automática creada en al BD
 
     #elJsonConLaRespuesta = json.dumps({'Respuesta ': elResultado})
     #laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
