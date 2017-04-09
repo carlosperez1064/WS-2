@@ -28,16 +28,17 @@ def registro():
     usuarioStr = "'" + usuario + "'"
     contrasenaStr = "'" + contrasena + "'"
 
-    userExist = ""
+    elUsuarioExiste = False
 
     cursor.execute("""SELECT correo FROM public.usuarios""")
     rows = cursor.fetchall()
     for row in rows:
-        usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']',
-                                                                                                                  "")
-        userExist = usersExistentesStr[1:-1]
+        usersExistentesStr = str(row).replace("(", "").replace(")", "").replace(",", "").replace('[', "").replace(']',"")
+        userExist = str(usersExistentesStr[1:-1])
+        if userExist == usuario:
+            elUsuarioExiste = True
 
-    if userExist != usuario:
+    if not elUsuarioExiste:
         cursor.execute("INSERT INTO public.usuarios(correo,pass) VALUES (" + usuarioStr + "," + contrasenaStr + ");")
         cursor.execute("COMMIT;")
         respuesta = "Se ha registrado exitosamente"
