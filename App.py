@@ -372,7 +372,7 @@ def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
         for row in rows:
             contadorDeOpciones +=1
             resultado += [" OPCIÓN "+str(contadorDeOpciones)+": "+str(row)]
-            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")","")
+            opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")","").replace('"',"")
             respuesta = "La ruta mas corta es pasando por " + str(ruta).replace("[", "").replace("]", "").replace("'","")\
                         + ". Taxis de la zona: " + opciones
 
