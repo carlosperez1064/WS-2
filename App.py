@@ -42,6 +42,7 @@ def registro():
     else:
         respuesta = str(usuario) + " ya existe"
 
+
     jsonConRespuesta = json.dumps({'respuesta': respuesta})
     resp = Response(jsonConRespuesta,200,mimetype='application/json')
 
@@ -151,15 +152,13 @@ def obtengaLaZonaDe(elNodoABuscar):
 @app.route('/viajando/consultas', methods=['POST'])
 @auth.login_required
 def consulteMediosDeTransporte():
-    # elOrigen = request.form['origen']
-    # elDestino = request.form['destino']
-    # elTipoTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
-    # elNodoDeOrigen = int(elOrigen)
-    # elNodoDeDestino = int(elDestino)
+    elOrigen = request.form['origen']
+    elDestino = request.form['destino']
+    elTipoDeTransporte = request.form['tipoTransporte']  # Seleccionar parametro con clave elTipoTransporte
 
-    elNodoDeOrigen = 19
-    elNodoDeDestino = 2
-    elTipoDeTransporte = 'tren'
+    elNodoDeOrigen = int(elOrigen)
+    elNodoDeDestino = int(elDestino)
+
     losVecinosDelNodoDestino = elMapa.neighbors(elNodoDeDestino)
     losVecinosDelNodoOrigen = elMapa.neighbors(elNodoDeOrigen)
 
@@ -168,6 +167,7 @@ def consulteMediosDeTransporte():
 
     elCosto = 0
     resultado = ""
+    print(elNodoDeDestino,elNodoDeOrigen)
 
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elNodoDeOrigen != elNodoDeDestino:
@@ -284,7 +284,7 @@ def consulteMediosDeTransporte():
 
     # --------------------------- RESPUESTA ------------------------#
 
-    respuesta = {"costo": elCosto, "respuesta ": (str(resultado) + str(medios))}
+    respuesta = {"costo": elCosto, "respuesta ": (str(resultado))}
 
     jsonConRespuesta = json.dumps(respuesta)
 
@@ -418,61 +418,36 @@ def obtengaLaFacturaDe(elCostoPorKilometro, elOrigen, elDestino):
 @app.route('/viajando/reservacion', methods=['POST'])
 @auth.login_required
 def reservaciones():
-    transporteSelecionado = request.form['tipoTransporte']
+    transporteSeleccionado = request.form['tipoTransporte']
     elID = int(request.form['ID'])
     cantidadReservaciones = int(request.form['cantidad'])
 
     resultado = ""
 
-    if transporteSelecionado == "bus":
+    if  transporteSeleccionado == "avion" or transporteSeleccionado == "bus":
 
-        cursor.execute("""SELECT "Capacidad" FROM public."bus" WHERE "ID" = """ + str(elID))
+        cursor.execute("""SELECT "Capacidad" FROM public."""+ transporteSeleccionado +""" WHERE "id" = """ + str(elID))
         rows = cursor.fetchall()
         for row in rows:
             capacidad = int(str(row).replace("(", "").replace(")", "").replace(",", ""))
 
         if cantidadReservaciones <= capacidad:
-            paraActualizar = "UPDATE public.bus" + " SET " + '"Capacidad" ' + "= " + str(
+            paraActualizar = "UPDATE public." + transporteSeleccionado  + " SET " + '"Capacidad" ' + "= " + str(
                 capacidad - cantidadReservaciones) + \
-                             " WHERE " + '"ID"' + "= " + str(elID)
+                             " WHERE " + '"id"' + "= " + str(elID)
 
             cursor.execute(paraActualizar)
             cursor.execute("COMMIT;")
             resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
+
         else:
             resultado = "Lo sentimos. Hay " + str(capacidad) + " espacio(s)"
-
-    elif transporteSelecionado == "avion":
-
-        paraConsulta = """SELECT "Informacion" FROM public."avion"; """
-
-        cantidad = 0
-        cursor.execute(paraConsulta)
-        rows = cursor.fetchall()
-        for row in rows:
-            jsons = json.dumps(row)
-            data = json.loads(jsons)
-            for item in data:
-                cantidad = item["CantidadPasajeros"]
-            if cantidadReservaciones <= cantidad:
-                paraActualizar = "UPDATE public.avion" + " SET " + '"Informacion" ' + "= " + \
-                                 '"Informacion"' + ":: jsonb -" + " 'CantidadPasajeros' " + "||" + \
-                                 "'{"'"CantidadPasajeros"'":" + str(
-                    cantidad - cantidadReservaciones) + "}'" + ":: jsonb" + \
-                                 " WHERE " + '"ID"' + "= " + str(elID);
-
-                cursor.execute(paraActualizar)
-                cursor.execute("COMMIT;")
-                resultado = str(cantidadReservaciones) + " asiento(s) reservado(s)"
-
-            else:
-                resultado = "Lo sentimos. Hay " + str(cantidad) + " espacio(s)"
 
 
     else:
         resultado = "No es posible realizar la reservacion. " \
                     "Para tren debe ir a la estacion, y para taxi " \
-                    "debe contactar al conductor"
+                    "debe comunicarse con el conductor"
 
     respuesta = {"Respuesta ": resultado}
     jsonConRespuesta = json.dumps(respuesta)
