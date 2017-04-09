@@ -167,8 +167,6 @@ def consulteMediosDeTransporte():
 
     elCosto = 0
     resultado = ""
-    print(elNodoDeDestino,elNodoDeOrigen)
-
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elNodoDeOrigen != elNodoDeDestino:
         if elTipoDeTransporte == 'avion' or elTipoDeTransporte == 'tren':
@@ -331,15 +329,15 @@ def consulteTrenes(elOrigen, elDestino):
 
 def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elTipoDeTransporte):
     if elTipoDeTransporte == 'avion':
-        cursor.execute("""SELECT "NombreAerolinea","Horario" FROM public.avion WHERE "Origen"=""" + str( elNodoDeOrigen)
+        cursor.execute("""SELECT "id", "NombreAerolinea","Horario" FROM public.avion WHERE "Origen"=""" + str( elNodoDeOrigen)
                        + """AND "Destino"=""" + str(elNodoDeDestino))
     elif elTipoDeTransporte == 'tren':
-        cursor.execute("""SELECT "NombreCompania","Horario" FROM public.tren WHERE "Origen"=""" + str(elNodoDeOrigen)
+        cursor.execute("""SELECT "ID", "NombreCompania","Horario" FROM public.tren WHERE "Origen"=""" + str(elNodoDeOrigen)
                        + """AND "Destino"=""" + str(elNodoDeDestino))
     rows = cursor.fetchall()
     elMensaje = ""
     for row in rows:
-        elMensaje += str(row[0] + " " + row[1])
+        elMensaje += str(row[0]) + " " + str(row[1])
     return (elMensaje)
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DE TAXIS -------------------------------------------#
