@@ -80,7 +80,7 @@ elMapa.add_node(2, {"Nombre": "Quepos", "zona": "C", "bus": True, "taxi": True, 
 elMapa.add_node(3, {"Nombre": "Las Juntas", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 elMapa.add_node(4, {"Nombre": "Guapiles", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": True})
 elMapa.add_node(5, {"Nombre": "Golfito", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
-elMapa.add_node(6, {"Nombre": "Liberia", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": True})
+elMapa.add_node(6, {"Nombre": "Santa Elena", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
 elMapa.add_node(7, {"Nombre": "San Jose", "zona": "B", "bus": True, "taxi": True, "tren": True, "avion": True})
 elMapa.add_node(8, {"Nombre": "Upala", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
 elMapa.add_node(9, {"Nombre": "Puerto Viejo Sarapiqui", "zona": "B", "bus": True, "taxi": True, "tren": False,
@@ -94,7 +94,7 @@ elMapa.add_node(15, {"Nombre": "Cartago", "zona": "B", "bus": True, "taxi": True
 elMapa.add_node(16, {"Nombre": "Tilaran", "zona": "A", "bus": True, "taxi": True, "tren": True, "avion": False})
 elMapa.add_node(17, {"Nombre": "Moravia", "zona": "B", "bus": True, "taxi": True, "tren": False, "avion": False})
 elMapa.add_node(18, {"Nombre": "Cerro Chirripo", "zona": "C", "bus": True, "taxi": True, "tren": True, "avion": False})
-elMapa.add_node(19, {"Nombre": "Santa Elena", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
+elMapa.add_node(19, {"Nombre": "Liberia", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": True})
 elMapa.add_node(20, {"Nombre": "Bribri", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": False})
 elMapa.add_node(21, {"Nombre": "Talamanca", "zona": "C", "bus": True, "taxi": True, "tren": False, "avion": True})
 elMapa.add_node(22, {"Nombre": "Los Chiles", "zona": "A", "bus": True, "taxi": True, "tren": False, "avion": False})
@@ -356,6 +356,8 @@ def consulteAvionesOTrenesEnLaBaseDeDatosDe(elNodoDeOrigen, elNodoDeDestino, elT
         elMensaje += str(row[1] + ". Horario: " + str(row[2]))
         if elTipoDeTransporte == 'avion':
             elMensaje += ", CODIGO DE RESERVACION: " + str(row[0]) + ". "
+
+    print(elMensaje)
 
     return elMensaje
 
