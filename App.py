@@ -362,19 +362,21 @@ def consulteLasOpcionesDeTaxisEnLaBaseDeDatos(elNodoDeOrigen, elNodoDeDestino):
         for elNodoRuta in laRutaCorta:
             losNombresDeLosNodos = obtengaElNombreDe(elNodoRuta)
             ruta += [losNombresDeLosNodos]
+
         zonaOrigen = obtengaLaZonaDe(elNodoDeOrigen)
         resultado = []
         cursor.execute(
             """SELECT "Informacion" FROM public."taxi" WHERE "Informacion" ->> 'Zona' = """ + "'" + zonaOrigen + "'" + """;""")
         rows = cursor.fetchall()
-
+        contadorDeOpciones = 0
         for row in rows:
-            resultado += [row]
+            contadorDeOpciones +=1
+            resultado += [" OPCIÓN "+str(contadorDeOpciones)+": "+str(row)]
             opciones = str(resultado).replace("[", "").replace("]", "").replace("'", "").replace("(", "").replace(")","")
             respuesta = "La ruta mas corta es pasando por " + str(ruta).replace("[", "").replace("]", "").replace("'","")\
                         + ". Taxis de la zona: " + opciones
 
-        return respuesta
+    return respuesta
 
 
 # ------------------------------------------ MÉTODO PARA RECORRIDOS DEL BUS --------------------------------------------#
