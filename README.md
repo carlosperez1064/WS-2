@@ -12,30 +12,30 @@ Para el desarrollo del servidor web encargado de manejar las transacciones que e
 La modalidad de uso depende de la ruta determinada, donde una vez seleccionada la ruta se le brindan al cliente distintas opciones de transporte. Las opciones de transporte son: bus, taxi, tren y avión.
 
 Puntos o nodos establecidos:
-1.    Volcán Arenal (ALAJUELA)
+1.    La fortuna (ALAJUELA)
 2.    Quepos (PUNTARENAS)
 3.    Las Juntas (GUANACASTE)
-4.    Cariari Pococí (LIMON)
-5.    Puerto Jiménez (PUNTARENAS)
-6.    Volcán Rincón de la Vieja (ALAJUELA)
-7.    Volcán Poás (ALAJUELA)
+4.    Guápiles (LIMON)
+5.    Golfito (PUNTARENAS)
+6.    Libería (ALAJUELA)
+7.    San José
 8.    Upala (ALAJUELA)
 9.    Puerto Viejo Sarapiquí (HEREDIA)
 10.   Cahuita (LIMON)
-11.   Filadelfia (GUANACASTE)
-12.   Volcán Turrialba (CARTAGO)
-13.   San Isidro del General (SAN JOSE)
+11.   Cañas (GUANACASTE)
+12.   Turrialba (CARTAGO)
+13.   Perez Zeledón (SAN JOSE)
 14.   Uvita (PUNTARENAS)
-15.   Volcán Irazú (CARTAGO)
-16.   Volcán Tenorio (GUANACASTE)
+15.   Cartago (CARTAGO)
+16.   Tilarán (GUANACASTE)
 17.   Moravia (SAN JOSE)
 18.   Cerro chirripó (SAN JOSE)
-19.   Casona Santa Rosa (GUANACASTE)
+19.   Santa Elena (GUANACASTE)
 20.   Bribri (LIMON)
-21.   Puerto Viejo Talamanca (LIMON)
+21.   Talamanca (LIMON)
 22.   Los chiles (ALAJUELA)
-23.   Volcán Barva (HEREDIA)
-24.   Puerto Moreno Santa Cruz (GUANACASTE)
+23.   Heredia (HEREDIA)
+24.   Santa Cruz (GUANACASTE)
 
 FUNCIONAMIENTO PARA DETERMINAR LOS MEDIOS DE TRANSPORTE POR NODO
 
@@ -83,6 +83,8 @@ Para el caso de los taxis, el grafo se divide en tres zonas A, B y C, donde en c
 •	BUSES
 
 El sistema busca los buses del nodo-origen y el nodo-destino. Al usuario reservar un espacio en el bus este debe asignarle el número de campo y reservarlo quitando la disponibilidad de este a otro usuario. 
+El sistema brinda la información del bus al usuario como chofer, espacios disponibles, precios y horarios de buses. 
 
 
 Cliente: https://github.com/DianaCM11/WS-2-cliente
+
