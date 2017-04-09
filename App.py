@@ -170,6 +170,7 @@ def consulteMediosDeTransporte():
     elNodoDestinoTieneTipoDeTransporte = elMapa.node[elNodoDeDestino][elTipoDeTransporte]
 
     elResultado = ''
+    laRespuestaARetornar=[]
     # --------------------------- AVIONES Y TRENES --------------------------#
     if elNodoDeOrigen != elNodoDeDestino:
         if elTipoDeTransporte == 'avion' or elTipoDeTransporte == 'tren':
