@@ -87,4 +87,13 @@ El sistema brinda la información del bus al usuario como chofer, espacios dispo
 
 
 Cliente: https://github.com/DianaCM11/WS-2-cliente
+Para el cliente se hizo uso de: 
+
+Ajax: La cual es una técnica de desarrollo web para crear aplicaciones interactivas o RIA (Rich Internet Applications). Estas aplicaciones se ejecutan en el cliente, mientras se mantiene la comunicación asíncrona con el servidor en segundo plano.
+
+Html: Es un estándar que sirve de referencia del software que conecta con la elaboración de páginas web en sus diferentes versiones, define una estructura básica y un código (denominado código HTML) para la definición de contenido de una página web, como texto, imágenes, videos, juegos, entre otros. 
+
+css: Es muy usado para establecer el diseño visual de las páginas web, e interfaces de usuario escritas en HTML o XHTML
+Session storage
+cors
 
