@@ -17,7 +17,7 @@ Puntos o nodos establecidos:
 3.    Las Juntas (GUANACASTE)
 4.    Guápiles (LIMON)
 5.    Golfito (PUNTARENAS)
-6.    Libería (ALAJUELA)
+6.    Santa Elena (GUANACASTE)
 7.    San José
 8.    Upala (ALAJUELA)
 9.    Puerto Viejo Sarapiquí (HEREDIA)
@@ -30,7 +30,7 @@ Puntos o nodos establecidos:
 16.   Tilarán (GUANACASTE)
 17.   Moravia (SAN JOSE)
 18.   Cerro chirripó (SAN JOSE)
-19.   Santa Elena (GUANACASTE)
+19.   Liberia (ALAJUELA)
 20.   Bribri (LIMON)
 21.   Talamanca (LIMON)
 22.   Los chiles (ALAJUELA)
