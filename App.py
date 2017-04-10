@@ -237,33 +237,36 @@ def consulteMediosDeTransporte():
                     else:
                         for elVecinodeNodoOrigen in losVecinosDelNodoOrigen:
                             if elMapa.node[elVecinodeNodoOrigen][elTipoDeTransporte]:
-                                for elVecinodeNodoDestino in losVecinosDelNodoDestino:
-                                    if elMapa.node[elVecinodeNodoDestino][elTipoDeTransporte]:
+                                for elVecinoDeNodoDestino in losVecinosDelNodoDestino:
+                                    if elMapa.node[elVecinoDeNodoDestino][elTipoDeTransporte]:
                                         resultado = ("Viaje de " + obtengaElNombreDe(elNodoDeOrigen) + " a " + obtengaElNombreDe(elVecinodeNodoOrigen) + " en bus o taxi, luego de " +
                                                      obtengaElNombreDe(elVecinodeNodoOrigen) + " en " + elTipoDeTransporte + " a " +
-                                                     obtengaElNombreDe(elVecinodeNodoDestino) + " y por ultimo en bus o taxi a " +
+                                                     obtengaElNombreDe(elVecinoDeNodoDestino) + " y por ultimo en bus o taxi a " +
                                                      obtengaElNombreDe(elNodoDeDestino))
                                         laRespuestaARetornar.append(resultado)
                                         if elTipoDeTransporte == 'avion':
                                             laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
                                             laRespuestaARetornar.append(obtengaLaFacturaDe(20,elNodoDeOrigen, elVecinodeNodoOrigen))
                                             laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            laRespuestaARetornar.append("AVION DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
-                                            laRespuestaARetornar.append(obtengaLaFacturaDe(300, elVecinodeNodoOrigen, elVecinodeNodoDestino))
-                                            laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen, elVecinodeNodoDestino, 'avion'))
-                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
-                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
-                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino, elNodoDeDestino))
+                                            laRespuestaARetornar.append("AVION DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinoDeNodoDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(300, elVecinodeNodoOrigen, elVecinoDeNodoDestino))
+                                            laRespuestaARetornar.append(consulteAvionesOTrenesEnLaBaseDeDatosDe(elVecinodeNodoOrigen, elVecinoDeNodoDestino, 'avion'))
+                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinoDeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinoDeNodoDestino, elNodoDeDestino))
+                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elVecinoDeNodoDestino, elNodoDeDestino))
                                         else:
                                             laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elNodoDeOrigen)+" A "+ obtengaElNombreDe(elVecinodeNodoOrigen))
                                             laRespuestaARetornar.append(obtengaLaFacturaDe(20, elNodoDeOrigen, elVecinodeNodoOrigen))
                                             laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elNodoDeOrigen, elVecinodeNodoOrigen))
-                                            laRespuestaARetornar.append("TREN DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinodeNodoDestino))
-                                            laRespuestaARetornar.append(obtengaLaFacturaDe(5, elVecinodeNodoOrigen, elVecinodeNodoDestino))
-                                            laRespuestaARetornar.append(consulteTrenes(elVecinodeNodoOrigen, elVecinodeNodoDestino))
-                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinodeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
-                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinodeNodoDestino, elNodoDeDestino))
-                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elVecinodeNodoDestino,elNodoDeDestino))
+                                            laRespuestaARetornar.append("TREN DE "+obtengaElNombreDe(elVecinodeNodoOrigen)+" A "+obtengaElNombreDe(elVecinoDeNodoDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(5, elVecinodeNodoOrigen, elVecinoDeNodoDestino))
+                                            laRespuestaARetornar.append(consulteTrenes(elVecinodeNodoOrigen, elVecinoDeNodoDestino))
+                                            laRespuestaARetornar.append("BUS DE "+obtengaElNombreDe(elVecinoDeNodoDestino)+" A "+obtengaElNombreDe(elNodoDeDestino))
+                                            laRespuestaARetornar.append(obtengaLaFacturaDe(20, elVecinoDeNodoDestino, elNodoDeDestino))
+                                            laRespuestaARetornar.append(consulteLasOpcionesDeBusesDe(elVecinoDeNodoDestino,elNodoDeDestino))
+                                    else:
+                                        laRespuestaARetornar = []
+                                        laRespuestaARetornar.append("Pruebe con otro medio de transporte, por favor...")
             else:
                 elResultado = "Las únicas opciones entre " + obtengaElNombreDe(
                     elNodoDeOrigen) + " y " + obtengaElNombreDe(
@@ -478,6 +481,8 @@ def realiceLaReservacion():
     cursor.execute("INSERT INTO public.log(historial)  VALUES (" + toLog + ");")
     cursor.execute("COMMIT;")
     # ID es un secuencia automática creada en al BD
+
+            # --------------------------- RESPUESTA ------------------------#
 
     #elJsonConLaRespuesta = json.dumps({'Respuesta ': elResultado})
     #laRespuestaARetornar = Response(elJsonConLaRespuesta, 200, mimetype='application/json')
